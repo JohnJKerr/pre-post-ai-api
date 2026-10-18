@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -6,11 +7,11 @@ using Domain.GitHub;
 
 namespace External.GitHub;
 
-public class GitHubMetadata(HttpClient http, GitHubOptions options) : IGitHubMetadata
+public partial class GitHubMetadata(HttpClient http, GitHubOptions options) : IGitHubMetadata
 {
     public async Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to)
     {
-        var repos = await Get<RepoResponse[]>(user, "/user/repos?per_page=100") ?? [];
+        var repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100");
         var metadata = new List<RepoMetadata>();
         foreach (var repo in repos) metadata.Add(await MetadataFor(user, repo));
 
@@ -50,6 +51,26 @@ public class GitHubMetadata(HttpClient http, GitHubOptions options) : IGitHubMet
         throw new GitHubStatsPendingException(path);
     }
 
+    private async Task<IReadOnlyList<T>> GetEveryPage<T>(GitHubUser user, string firstPage)
+    {
+        var items = new List<T>();
+        for (var page = firstPage; page is not null;)
+        {
+            using var response = await Send(user, page);
+            items.AddRange(await Read<T[]>(response) ?? []);
+            page = NextPage(response);
+        }
+
+        return items;
+    }
+
+    private static string? NextPage(HttpResponseMessage response)
+    {
+        var links = response.Headers.TryGetValues("Link", out var values) ? string.Join(",", values) : "";
+        var next = NextLink().Match(links);
+        return next.Success ? next.Groups["url"].Value : null;
+    }
+
     private async Task<T?> Get<T>(GitHubUser user, string path)
     {
         using var response = await Send(user, path);
@@ -68,4 +89,7 @@ public class GitHubMetadata(HttpClient http, GitHubOptions options) : IGitHubMet
         response.EnsureSuccessStatusCode();
         return response.StatusCode == HttpStatusCode.NoContent ? default : await response.Content.ReadFromJsonAsync<T>();
     }
+
+    [GeneratedRegex("<(?<url>[^>]+)>;\\s*rel=\"next\"")]
+    private static partial Regex NextLink();
 }

@@ -38,6 +38,20 @@ internal class GivenTheGitHubApi
         return this;
     }
 
+    public GivenTheGitHubApi WithASecondPageOfRepos()
+    {
+        const string secondPage = "/user/repos?per_page=100&page=2";
+        var firstPage = File.ReadAllText("Fixtures/user-repos.json");
+        _responses["/user/repos?per_page=100"] = [() =>
+        {
+            var response = Json(firstPage)();
+            response.Headers.Add("Link", $"<https://api.github.com{secondPage}>; rel=\"next\", <https://api.github.com{secondPage}>; rel=\"last\"");
+            return response;
+        }];
+        Serving(secondPage, "user-repos-page-2.json");
+        return WithEmptyRepo("old-tool");
+    }
+
     public FakeGitHubApi Build() => new(_responses.ToDictionary(r => r.Key, r => new Queue<Func<HttpResponseMessage>>(r.Value)));
 
     private void Serving(string pathAndQuery, string fixture) =>
