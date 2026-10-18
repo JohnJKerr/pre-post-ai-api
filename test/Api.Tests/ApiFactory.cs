@@ -1,3 +1,5 @@
+using Api.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Domain.GitHub;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -24,6 +26,14 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.AddSingleton(apiUser);
             services.AddSingleton(gitHub ?? new FakeGitHub());
         })).CreateClient();
+
+    internal HttpClient CreateBrowserSigningInWithGitHub() =>
+        WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
+            {
+                services.AddSingleton(TimeProvider.System);
+                services.PostConfigure<OAuthOptions>(GitHubSignIn.Scheme, options => options.Backchannel = new HttpClient(new FakeGitHubOAuth()));
+            }))
+            .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") });
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
