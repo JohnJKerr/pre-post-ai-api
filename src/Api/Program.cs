@@ -16,7 +16,14 @@ builder.Services.AddSingleton<IProfileRepository, MongoProfileRepository>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IApiUser, ApiUser>();
-builder.Services.AddSingleton<IGitHubMetadata, GitHubMetadata>();
+builder.Services.AddSingleton(GitHubOptions.Default);
+builder.Services.AddHttpClient<IGitHubMetadata, GitHubMetadata>(client =>
+{
+    client.BaseAddress = new Uri("https://api.github.com");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("pre-post-ai");
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+    client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+});
 builder.Services.AddControllers();
 
 var app = builder.Build();
