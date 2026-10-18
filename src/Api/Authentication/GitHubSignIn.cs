@@ -38,9 +38,17 @@ public static class GitHubSignIn
                 options.TokenEndpoint = "https://github.com/login/oauth/access_token";
                 options.UserInformationEndpoint = "https://api.github.com/user";
                 options.Events.OnCreatingTicket = AddGitHubIdentity;
+                options.Events.OnRemoteFailure = ReturnToTheFrontEnd;
             });
 
         return services;
+    }
+
+    private static Task ReturnToTheFrontEnd(RemoteFailureContext context)
+    {
+        context.Response.Redirect(context.HttpContext.RequestServices.GetRequiredService<FrontEnd>().Origin + "/");
+        context.HandleResponse();
+        return Task.CompletedTask;
     }
 
     private static async Task AddGitHubIdentity(OAuthCreatingTicketContext context)

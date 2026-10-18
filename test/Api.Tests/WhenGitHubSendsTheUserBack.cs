@@ -8,16 +8,29 @@ namespace Api.Tests;
 public class WhenGitHubSendsTheUserBack(ApiFactory factory)
 {
     [Fact]
-    public async Task They_return_to_where_they_started()
+    public async Task They_return_to_the_front_end_page_they_started_from()
     {
         // Arrange
         var browser = factory.CreateBrowserSigningInWithGitHub();
 
         // Act
-        var callback = await browser.SignInWithGitHub(returnUrl: "/r/octo-dev");
+        var callback = await browser.SignInWithGitHub(returnUrl: "/generate");
 
         // Assert
-        callback.Headers.Location!.ToString().ShouldBe("/r/octo-dev");
+        callback.Headers.Location!.ToString().ShouldBe($"{ApiFactory.FrontEndOrigin}/generate");
+    }
+
+    [Fact]
+    public async Task A_return_url_on_another_site_takes_them_to_the_front_end_s_home_page()
+    {
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub();
+
+        // Act
+        var callback = await browser.SignInWithGitHub(returnUrl: "https://evil.example");
+
+        // Assert
+        callback.Headers.Location!.ToString().ShouldBe($"{ApiFactory.FrontEndOrigin}/");
     }
 
     [Fact]

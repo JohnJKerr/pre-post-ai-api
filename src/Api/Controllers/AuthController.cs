@@ -7,13 +7,13 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController : ControllerBase
+public class AuthController(FrontEnd frontEnd) : ControllerBase
 {
     [HttpGet("sign-in")]
     public IActionResult SignInWithGitHub([FromQuery] string? returnUrl)
     {
-        var redirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : "/";
-        return Challenge(new AuthenticationProperties { RedirectUri = redirectUri }, GitHubSignIn.Scheme);
+        var path = Url.IsLocalUrl(returnUrl) ? returnUrl : "/";
+        return Challenge(new AuthenticationProperties { RedirectUri = frontEnd.Origin + path }, GitHubSignIn.Scheme);
     }
 
     [HttpPost("sign-out")]

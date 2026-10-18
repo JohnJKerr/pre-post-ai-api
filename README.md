@@ -32,7 +32,7 @@ The GitHub App needs one repository permission, **Metadata: read**, and a callba
 
 | Method and path | Purpose |
 |---|---|
-| `GET /api/auth/sign-in?returnUrl=/r/me` | Redirects to GitHub to authorise the app, then back to `returnUrl` |
+| `GET /api/auth/sign-in?returnUrl=/generate` | Redirects to GitHub to authorise the app, then to `returnUrl` on the front end (its `/` if `returnUrl` isn't a local path or sign-in fails) |
 | `POST /api/auth/sign-out` | Ends the session (204) |
 | `GET /api/session` | 200 `{ handle }` or 401 |
 | `POST /api/reports` | Generates and saves the signed-in user's report (201, 401, 422, 503) |
