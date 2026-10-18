@@ -8,7 +8,6 @@ using MongoDB.Driver;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Storage;
-using Storage.DataProtection;
 using Storage.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +19,9 @@ builder.Services.AddSingleton(services =>
     services.GetRequiredService<IMongoClient>().GetDatabase(builder.Configuration["Mongo:Database"]));
 builder.Services.AddSingleton<IProfileRepository, MongoProfileRepository>();
 builder.Services.AddSingleton<IGenerationRepository, MongoGenerationRepository>();
-builder.Services.AddDataProtection().SetApplicationName("pre-post-ai-api").PersistKeysToMongo();
+// Data Protection now guards only the OAuth state of a sign-in under way, so its keys stay in memory.
+// A restart mid-sign-in sends that user back to the front end to try again.
+builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<GenerationQueue>();
 builder.Services.AddHostedService<ReportGenerator>();
