@@ -5,11 +5,32 @@ namespace Domain.Tests;
 public class WhenNamingTheCutoff
 {
     [Fact]
-    public void The_Claude_Opus_4_5_release_is_named() => Cutoff.On(new DateOnly(2025, 11, 24)).Label.ShouldBe("Claude Opus 4.5");
+    public void The_Claude_Opus_4_5_release_is_named()
+    {
+        // Act
+        var cutoff = Cutoff.On(new DateOnly(2025, 11, 24));
+
+        // Assert
+        cutoff.Label.ShouldBe("Claude Opus 4.5");
+    }
 
     [Fact]
-    public void The_ChatGPT_launch_is_named() => Cutoff.On(new DateOnly(2022, 11, 30)).Label.ShouldBe("ChatGPT launch");
+    public void The_ChatGPT_launch_is_named()
+    {
+        // Act
+        var cutoff = Cutoff.On(new DateOnly(2022, 11, 30));
+
+        // Assert
+        cutoff.Label.ShouldBe("ChatGPT launch");
+    }
 
     [Fact]
-    public void Any_other_date_is_custom() => Cutoff.On(new DateOnly(2024, 3, 1)).Label.ShouldBe("Custom");
+    public void Any_other_date_is_custom()
+    {
+        // Act
+        var cutoff = Cutoff.On(new DateOnly(2024, 3, 1));
+
+        // Assert
+        cutoff.Label.ShouldBe("Custom");
+    }
 }

@@ -4,20 +4,68 @@ namespace Domain.Tests;
 
 public class WhenAWindowHasNoPunchCardEligibleRepos
 {
-    private readonly Report _report = Report.From(new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build());
+    [Fact]
+    public void The_punch_card_is_hidden()
+    {
+        // Arrange
+        var profile = new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build();
+
+        // Act
+        var report = Report.From(profile);
+
+        // Assert
+        report.Pre.Punch.ShouldBeNull();
+    }
 
     [Fact]
-    public void The_punch_card_is_hidden() => _report.Pre.Punch.ShouldBeNull();
+    public void Coverage_is_empty()
+    {
+        // Arrange
+        var profile = new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build();
+
+        // Act
+        var report = Report.From(profile);
+
+        // Assert
+        report.Pre.Coverage.ShouldBe(new Coverage(Eligible: 0, Total: 5, Share: 0));
+    }
 
     [Fact]
-    public void Coverage_is_empty() => _report.Pre.Coverage.ShouldBe(new Coverage(Eligible: 0, Total: 5, Share: 0));
+    public void The_out_of_hours_multiplier_is_undefined()
+    {
+        // Arrange
+        var profile = new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build();
+
+        // Act
+        var report = Report.From(profile);
+
+        // Assert
+        report.Shift.OutOfHoursX.ShouldBeNull();
+    }
 
     [Fact]
-    public void The_out_of_hours_multiplier_is_undefined() => _report.Shift.OutOfHoursX.ShouldBeNull();
+    public void Hours_are_left_out_of_the_score()
+    {
+        // Arrange
+        var profile = new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build();
+
+        // Act
+        var report = Report.From(profile);
+
+        // Assert
+        report.Score.Parts.Hours.ShouldBe(0);
+    }
 
     [Fact]
-    public void Hours_are_left_out_of_the_score() => _report.Score.Parts.Hours.ShouldBe(0);
+    public void There_is_no_tag()
+    {
+        // Arrange
+        var profile = new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build();
 
-    [Fact]
-    public void There_is_no_tag() => _report.Score.Tag.ShouldBeNull();
+        // Act
+        var report = Report.From(profile);
+
+        // Assert
+        report.Score.Tag.ShouldBeNull();
+    }
 }

@@ -4,8 +4,16 @@ namespace Domain.Tests;
 
 public class WhenThereIsNoActivityBeforeTheCutoff
 {
-    private readonly Report _report = Report.From(new GivenTheSampleProfile().WithNoActivityBeforeTheCutoff().Build());
-
     [Fact]
-    public void Pre_adds_0_lines_per_commit() => _report.Pre.PerCommit.ShouldBe(0);
+    public void Pre_adds_0_lines_per_commit()
+    {
+        // Arrange
+        var profile = new GivenTheSampleProfile().WithNoActivityBeforeTheCutoff().Build();
+
+        // Act
+        var report = Report.From(profile);
+
+        // Assert
+        report.Pre.PerCommit.ShouldBe(0);
+    }
 }
