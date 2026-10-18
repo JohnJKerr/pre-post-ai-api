@@ -1,6 +1,6 @@
 namespace Api;
 
-// The site that calls this API with the session cookie, such as https://shift.developkerr.com.
+// The site users sign in from and return to, such as https://shift.developkerr.com.
 public record FrontEnd(string Origin)
 {
     public const string CorsPolicy = "FrontEnd";
