@@ -21,12 +21,13 @@ dotnet test --artifacts-path /tmp/pre-post-ai-api-artifacts test/Api.Tests
 
 ```bash
 docker run -d -p 27017:27017 mongo:8
+dotnet user-secrets --project src/Api set GitHub:AppSlug <app slug, as in github.com/apps/<slug>>
 dotnet user-secrets --project src/Api set GitHub:ClientId <app client id>
 dotnet user-secrets --project src/Api set GitHub:ClientSecret <app client secret>
 dotnet run --project src/Api --launch-profile https
 ```
 
-The GitHub App needs one repository permission, **Metadata: read**, and a callback URL of `https://<host>/api/auth/callback`.
+The GitHub App needs one repository permission, **Metadata: read**, and a callback URL of `https://<host>/api/auth/callback`. A user who signs in without having installed the app is sent to its install page instead of being signed in. `FrontEnd:Origin` is the front end's origin (`http://localhost:5173` in Development).
 
 ## Endpoints
 

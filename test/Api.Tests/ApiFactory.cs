@@ -30,12 +30,12 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         })).CreateClient());
 
     // The browser keeps real cookies, so the server's clock must start at the real time.
-    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null, TimeProvider? clock = null) =>
+    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null, TimeProvider? clock = null, FakeGitHubOAuth? gitHubOAuth = null) =>
         FromTheFrontEnd(WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
                 services.AddSingleton(clock ?? TimeProvider.System);
                 services.AddSingleton(gitHub ?? new FakeGitHub());
-                services.PostConfigure<OAuthOptions>(GitHubSignIn.Scheme, options => options.Backchannel = new HttpClient(new FakeGitHubOAuth()));
+                services.PostConfigure<OAuthOptions>(GitHubSignIn.Scheme, options => options.Backchannel = new HttpClient(gitHubOAuth ?? new FakeGitHubOAuth()));
             }))
             .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") }));
 
@@ -50,6 +50,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Mongo:ConnectionString", _mongo.GetConnectionString());
         builder.UseSetting("Mongo:Database", "pre-post-tests");
         builder.UseSetting("FrontEnd:Origin", FrontEndOrigin);
+        builder.UseSetting("GitHub:AppSlug", "pre-post-test");
         builder.UseSetting("GitHub:ClientId", "test-client-id");
         builder.UseSetting("GitHub:ClientSecret", "test-client-secret");
         builder.ConfigureTestServices(services =>

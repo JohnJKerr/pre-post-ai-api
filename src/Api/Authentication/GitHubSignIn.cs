@@ -15,6 +15,7 @@ public static class GitHubSignIn
     // app's permissions allow, which is Metadata: read.
     public static IServiceCollection AddGitHubSignIn(this IServiceCollection services, IConfiguration configuration)
     {
+        var appSlug = configuration["GitHub:AppSlug"] ?? throw new InvalidOperationException("GitHub:AppSlug isn't set.");
         services
             .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
@@ -38,10 +39,29 @@ public static class GitHubSignIn
                 options.TokenEndpoint = "https://github.com/login/oauth/access_token";
                 options.UserInformationEndpoint = "https://api.github.com/user";
                 options.Events.OnCreatingTicket = AddGitHubIdentity;
+                options.Events.OnTicketReceived = context => InstallTheAppFirst(context, appSlug);
                 options.Events.OnRemoteFailure = ReturnToTheFrontEnd;
             });
 
         return services;
+    }
+
+    // A user token reaches only the accounts the app is installed on. Without an installation the
+    // report would be almost empty, so send them to install the app instead of signing them in.
+    private static async Task InstallTheAppFirst(TicketReceivedContext context, string appSlug)
+    {
+        var oauth = (OAuthOptions)context.Options;
+        using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/user/installations?per_page=1");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.Principal!.FindFirstValue(ApiUser.AccessTokenClaim));
+        request.Headers.UserAgent.ParseAdd("pre-post-ai");
+        using var response = await oauth.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+        response.EnsureSuccessStatusCode();
+
+        using var installations = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        if (installations.RootElement.GetProperty("total_count").GetInt32() > 0) return;
+
+        context.Response.Redirect($"https://github.com/apps/{appSlug}/installations/new");
+        context.HandleResponse();
     }
 
     private static Task ReturnToTheFrontEnd(RemoteFailureContext context)
