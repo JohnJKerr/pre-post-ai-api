@@ -13,9 +13,10 @@ public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IG
     [HttpPost]
     public async Task<IActionResult> Generate(GenerateReportRequest request)
     {
-        var user = apiUser.User!;
+        if (apiUser.User is not { } user) return Unauthorized(new ErrorResponse("Sign in with GitHub to generate your report."));
+
         var now = time.GetUtcNow();
-        var cutoff = Cutoff.Default;
+        var cutoff = request.Cutoff is null ? Cutoff.Default : Cutoff.On(DateOnly.ParseExact(request.Cutoff, "yyyy-MM-dd"));
         var post = Window.After(cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
 
         var activity = await gitHub.Fetch(user, post.Preceding().Start, post.End);
