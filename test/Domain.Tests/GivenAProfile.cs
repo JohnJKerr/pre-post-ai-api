@@ -3,10 +3,17 @@ namespace Domain.Tests;
 internal class GivenAProfile
 {
     private readonly List<Repo> _repos = [];
+    private PunchCell[] _postPunchCard = [];
 
     public GivenAProfile WithRepo(GivenARepo repo)
     {
         _repos.Add(repo.Build());
+        return this;
+    }
+
+    public GivenAProfile WithPunchCardAfterTheCutoff(params PunchCell[] cells)
+    {
+        _postPunchCard = cells;
         return this;
     }
 
@@ -18,5 +25,5 @@ internal class GivenAProfile
         _repos,
         new PerEra<WindowActivity>(
             new WindowActivity([new Week(new DateOnly(2025, 11, 16), 1_000, 100, 10)], [], ActiveDays: 3, PunchShare: 0),
-            new WindowActivity([new Week(new DateOnly(2025, 11, 23), 1_000, 100, 10)], [], ActiveDays: 3, PunchShare: 0)));
+            new WindowActivity([new Week(new DateOnly(2025, 11, 23), 1_000, 100, 10)], _postPunchCard, ActiveDays: 3, PunchShare: 1)));
 }

@@ -14,6 +14,8 @@ public record WindowSummary
     public required int Started { get; init; }
     public required int ActiveDays { get; init; }
     public required IReadOnlyList<LanguageShare> Languages { get; init; }
+    public required Punch? Punch { get; init; }
+    public required Coverage Coverage { get; init; }
 
     public int Weeks => Weekly.Count;
     public Window Range => new(Weekly[0].Start, Weeks);
@@ -28,6 +30,9 @@ public record WindowSummary
         var activity = profile.Activity[era];
         var weeks = activity.Weeks;
         var added = weeks.Sum(w => w.Added);
+        var projects = ProjectsIn(profile.Repos, era, added);
+        var eligibleRepos = profile.Repos.Count(r => r.PunchCardEra == era);
+        var punch = eligibleRepos > 0 ? Punch.From(activity.PunchCard) : null;
 
         return new WindowSummary
         {
@@ -36,10 +41,12 @@ public record WindowSummary
             Added = added,
             Deleted = weeks.Sum(w => w.Deleted),
             Commits = weeks.Sum(w => w.Commits),
-            Projects = ProjectsIn(profile.Repos, era, added),
+            Projects = projects,
             Started = profile.Repos.Count(r => r.StartedIn == era),
             ActiveDays = activity.ActiveDays,
             Languages = LanguagesIn(profile.Repos, era),
+            Punch = punch,
+            Coverage = new Coverage(eligibleRepos, projects.Count, punch is null ? 0 : activity.PunchShare),
         };
     }
 

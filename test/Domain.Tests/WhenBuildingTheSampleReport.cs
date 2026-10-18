@@ -90,4 +90,53 @@ public class WhenBuildingTheSampleReport
     [Fact]
     public void Languages_are_ordered_by_share_descending() =>
         _report.Post.Languages.Select(l => l.Share).ShouldBeInOrder(SortDirection.Descending);
+
+    [Fact]
+    public void Pre_is_busiest_on_Tuesday_at_10() => (_report.Pre.Punch!.Busiest.Day, _report.Pre.Punch.Busiest.Hour).ShouldBe((2, 10));
+
+    [Fact]
+    public void Post_is_busiest_on_Tuesday_at_21() => (_report.Post.Punch!.Busiest.Day, _report.Post.Punch.Busiest.Hour).ShouldBe((2, 21));
+
+    [Fact]
+    public void Pre_codes_from_9_to_17() => _report.Pre.Punch!.CodingWindow.ShouldBe(new CodingWindow(Start: 9, Length: 8));
+
+    [Fact]
+    public void Post_codes_from_8_to_22() => _report.Post.Punch!.CodingWindow.ShouldBe(new CodingWindow(Start: 8, Length: 14));
+
+    [Fact]
+    public void Pre_touches_15_hours_of_the_day() => _report.Pre.Punch!.HoursTouched.ShouldBe(15);
+
+    [Fact]
+    public void Post_touches_21_hours_of_the_day() => _report.Post.Punch!.HoursTouched.ShouldBe(21);
+
+    [Fact]
+    public void Every_hour_of_the_day_has_a_share() => _report.Pre.Punch!.HourShares.Count.ShouldBe(24);
+
+    [Fact]
+    public void Pre_commits_7_1_percent_on_evenings() => Percent(_report.Pre.Punch!.Evening).ShouldBe(7.1);
+
+    [Fact]
+    public void Pre_commits_5_1_percent_on_weekends() => Percent(_report.Pre.Punch!.Weekend).ShouldBe(5.1);
+
+    [Fact]
+    public void Pre_commits_12_2_percent_out_of_hours() => Percent(_report.Pre.Punch!.Combined).ShouldBe(12.2);
+
+    [Fact]
+    public void Post_commits_30_6_percent_on_evenings() => Percent(_report.Post.Punch!.Evening).ShouldBe(30.6);
+
+    [Fact]
+    public void Post_commits_24_percent_on_weekends() => Percent(_report.Post.Punch!.Weekend).ShouldBe(24.0);
+
+    [Fact]
+    public void Post_commits_54_6_percent_out_of_hours() => Percent(_report.Post.Punch!.Combined).ShouldBe(54.6);
+
+    [Fact]
+    public void Pre_punch_card_covers_3_of_5_projects_and_46_percent_of_commits() =>
+        _report.Pre.Coverage.ShouldBe(new Coverage(Eligible: 3, Total: 5, Share: 0.46));
+
+    [Fact]
+    public void Post_punch_card_covers_10_of_12_projects_and_84_percent_of_commits() =>
+        _report.Post.Coverage.ShouldBe(new Coverage(Eligible: 10, Total: 12, Share: 0.84));
+
+    private static double Percent(double share) => Math.Round(share * 100, 1);
 }

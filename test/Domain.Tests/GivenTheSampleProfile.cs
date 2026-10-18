@@ -19,5 +19,12 @@ internal class GivenTheSampleProfile
         return this;
     }
 
+    public GivenTheSampleProfile WithNoPunchCardEligibleReposBeforeTheCutoff()
+    {
+        var repos = _profile.Repos.Select(r => r.PunchCardEra == Era.Pre ? r with { PunchCardEra = null } : r).ToArray();
+        _profile = _profile with { Repos = repos };
+        return this;
+    }
+
     public Profile Build() => _profile;
 }

@@ -4,6 +4,7 @@ internal class GivenARepo(string name)
 {
     private readonly Dictionary<string, double> _languages = [];
     private PerEra<double> _share = new(0, 0);
+    private Era? _punchCardEra;
 
     public GivenARepo Writing(string language, double share)
     {
@@ -17,5 +18,11 @@ internal class GivenARepo(string name)
         return this;
     }
 
-    public Repo Build() => new(name, IsPrivate: false, _languages, _share, PunchCardEra: null, StartedIn: null);
+    public GivenARepo WithPunchCardFor(Era era)
+    {
+        _punchCardEra = era;
+        return this;
+    }
+
+    public Repo Build() => new(name, IsPrivate: false, _languages, _share, _punchCardEra, StartedIn: null);
 }
