@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Net.Http.Headers;
@@ -9,14 +10,59 @@ namespace External.GitHub;
 
 public partial class GitHubMetadata(HttpClient http, GitHubOptions options) : IGitHubMetadata
 {
+    private const string CalendarQuery = """
+        query($from: DateTime!, $to: DateTime!) {
+          viewer {
+            contributionsCollection(from: $from, to: $to) {
+              contributionCalendar { weeks { contributionDays { date contributionCount } } }
+            }
+          }
+        }
+        """;
+
     public async Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to)
     {
         var repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100");
         var metadata = new List<RepoMetadata>();
         foreach (var repo in repos) metadata.Add(await MetadataFor(user, repo));
 
-        return new GitHubActivity(metadata, []);
+        return new GitHubActivity(metadata, await ContributionDays(user, from, to));
     }
+
+    private async Task<IReadOnlyList<DateOnly>> ContributionDays(GitHubUser user, DateOnly from, DateOnly to)
+    {
+        var days = new List<DateOnly>();
+        for (var start = from; start <= to; start = start.AddYears(1))
+        {
+            var end = Min(start.AddYears(1).AddDays(-1), to);
+            var calendar = await CalendarBetween(user, start, end);
+            days.AddRange(calendar.Weeks.SelectMany(w => w.ContributionDays).Where(d => d.ContributionCount > 0).Select(d => d.Date));
+        }
+
+        return days;
+    }
+
+    private async Task<ContributionCalendar> CalendarBetween(GitHubUser user, DateOnly start, DateOnly end)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/graphql");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.AccessToken);
+        request.Content = JsonContent.Create(new
+        {
+            query = CalendarQuery,
+            variables = new
+            {
+                from = string.Create(CultureInfo.InvariantCulture, $"{start:yyyy-MM-dd}T00:00:00Z"),
+                to = string.Create(CultureInfo.InvariantCulture, $"{end:yyyy-MM-dd}T23:59:59Z"),
+            },
+        });
+        using var response = await http.SendAsync(request);
+        var body = await Read<GraphQlResponse<CalendarData>>(response);
+
+        return body?.Data?.Viewer.ContributionsCollection.ContributionCalendar
+            ?? throw new HttpRequestException("GitHub didn't return a contribution calendar.");
+    }
+
+    private static DateOnly Min(DateOnly a, DateOnly b) => a < b ? a : b;
 
     private async Task<RepoMetadata> MetadataFor(GitHubUser user, RepoResponse repo)
     {

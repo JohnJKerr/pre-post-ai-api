@@ -9,6 +9,7 @@ internal class GivenTheGitHubApi
     public GivenTheGitHubApi()
     {
         Serving("/user/repos?per_page=100", "user-repos.json");
+        _responses["/graphql"] = [Json(File.ReadAllText("Fixtures/calendar-2025.json")), Json(File.ReadAllText("Fixtures/calendar-2026.json"))];
         foreach (var repo in new[] { "ledger-sync", "side-project" })
         {
             Serving($"/repos/octo-dev/{repo}/stats/contributors", $"{repo}-contributors.json");

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "viewer": {
+      "contributionsCollection": {
+        "contributionCalendar": {
+          "weeks": [
+            {
+              "contributionDays": [
+                { "date": "2025-06-01", "contributionCount": 0 },
+                { "date": "2025-06-02", "contributionCount": 3 },
+                { "date": "2025-06-03", "contributionCount": 0 }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
