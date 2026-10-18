@@ -29,10 +29,11 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.AddSingleton(gitHub ?? new FakeGitHub());
         })).CreateClient());
 
-    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null) =>
+    // The browser keeps real cookies, so the server's clock must start at the real time.
+    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null, TimeProvider? clock = null) =>
         FromTheFrontEnd(WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
-                services.AddSingleton(TimeProvider.System);
+                services.AddSingleton(clock ?? TimeProvider.System);
                 services.AddSingleton(gitHub ?? new FakeGitHub());
                 services.PostConfigure<OAuthOptions>(GitHubSignIn.Scheme, options => options.Backchannel = new HttpClient(new FakeGitHubOAuth()));
             }))

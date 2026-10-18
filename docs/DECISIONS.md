@@ -23,3 +23,7 @@ GitHub answers `stats/*` with 202 while it computes them. The adapter retries ev
 ## The session cookie carries the GitHub user token
 
 Sign-in is the GitHub App's user authorisation flow. The encrypted, HttpOnly session cookie holds the user's login and their user access token, which `POST /api/reports` uses to read their metadata. A GitHub App user token takes no scopes: it can do only what the app's permissions allow.
+
+## The session ends when the GitHub token does
+
+Expiring GitHub App user tokens last 8 hours. Rather than keep the refresh token (valid for 6 months) in the cookie and refresh it, the session expires with the access token and doesn't slide. Generating a report is a one-off, so signing in again after 8 hours costs little, and the cookie never holds a long-lived credential. If GitHub still rejects a token, for example after the user revokes the app, `POST /api/reports` ends the session and answers 401.

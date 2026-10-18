@@ -62,5 +62,16 @@ public static class GitHubSignIn
         using var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         context.Identity!.AddClaim(new Claim(ClaimTypes.Name, user.RootElement.GetProperty("login").GetString()!));
         context.Identity.AddClaim(new Claim(ApiUser.AccessTokenClaim, context.AccessToken!));
+        EndTheSessionWithTheToken(context);
+    }
+
+    // Expiring user tokens last 8 hours. The session holds only the access token, so it ends
+    // when the token does and never slides past it.
+    private static void EndTheSessionWithTheToken(OAuthCreatingTicketContext context)
+    {
+        if (context.ExpiresIn is not { } lifetime) return;
+
+        context.Properties.ExpiresUtc = context.Options.TimeProvider!.GetUtcNow() + lifetime;
+        context.Properties.AllowRefresh = false;
     }
 }

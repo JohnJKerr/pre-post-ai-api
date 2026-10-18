@@ -8,7 +8,7 @@ internal class FakeGitHubOAuth : HttpMessageHandler
     {
         var body = request.RequestUri!.ToString() switch
         {
-            "https://github.com/login/oauth/access_token" => """{ "access_token": "user-token", "token_type": "bearer", "scope": "" }""",
+            "https://github.com/login/oauth/access_token" => """{ "access_token": "user-token", "expires_in": 28800, "refresh_token": "refresh-token", "refresh_token_expires_in": 15811200, "token_type": "bearer", "scope": "" }""",
             "https://api.github.com/user" => """{ "login": "octo-dev", "id": 42 }""",
             _ => null,
         };
