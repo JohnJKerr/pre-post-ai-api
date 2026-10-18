@@ -29,6 +29,8 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.UseSetting("Mongo:ConnectionString", _mongo.GetConnectionString());
         builder.UseSetting("Mongo:Database", "pre-post-tests");
+        builder.UseSetting("GitHub:ClientId", "test-client-id");
+        builder.UseSetting("GitHub:ClientSecret", "test-client-secret");
         builder.ConfigureTestServices(services =>
         {
             services.AddSingleton<TimeProvider>(new FakeTimeProvider(Now));

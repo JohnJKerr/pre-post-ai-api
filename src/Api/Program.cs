@@ -1,4 +1,5 @@
 using Api;
+using Api.Authentication;
 using Domain.GitHub;
 using Domain.Repositories;
 using External.GitHub;
@@ -24,11 +25,13 @@ builder.Services.AddHttpClient<IGitHubMetadata, GitHubMetadata>(client =>
     client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
     client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
 });
+builder.Services.AddGitHubSignIn(builder.Configuration);
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

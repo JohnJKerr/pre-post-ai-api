@@ -1,0 +1,58 @@
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
+
+namespace Api.Authentication;
+
+public static class GitHubSignIn
+{
+    public const string Scheme = "GitHub";
+
+    // A GitHub App's user authorisation takes no scopes: the token can do only what the
+    // app's permissions allow, which is Metadata: read.
+    public static IServiceCollection AddGitHubSignIn(this IServiceCollection services, IConfiguration configuration)
+    {
+        services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.Cookie.Name = "pre-post-session";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                };
+            })
+            .AddOAuth(Scheme, options =>
+            {
+                options.ClientId = configuration["GitHub:ClientId"]!;
+                options.ClientSecret = configuration["GitHub:ClientSecret"]!;
+                options.CallbackPath = "/api/auth/callback";
+                options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+                options.TokenEndpoint = "https://github.com/login/oauth/access_token";
+                options.UserInformationEndpoint = "https://api.github.com/user";
+                options.Events.OnCreatingTicket = AddGitHubIdentity;
+            });
+
+        return services;
+    }
+
+    private static async Task AddGitHubIdentity(OAuthCreatingTicketContext context)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+        request.Headers.UserAgent.ParseAdd("pre-post-ai");
+        using var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+        response.EnsureSuccessStatusCode();
+
+        using var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        context.Identity!.AddClaim(new Claim(ClaimTypes.Name, user.RootElement.GetProperty("login").GetString()!));
+        context.Identity.AddClaim(new Claim(ApiUser.AccessTokenClaim, context.AccessToken!));
+    }
+}
