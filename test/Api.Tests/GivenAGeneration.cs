@@ -12,6 +12,12 @@ internal class GivenAGeneration
         return this;
     }
 
+    public GivenAGeneration WithCutoffOn(DateOnly date)
+    {
+        _generation = _generation with { Cutoff = Cutoff.On(date) };
+        return this;
+    }
+
     public GivenAGeneration Completed()
     {
         _generation = _generation.Complete();

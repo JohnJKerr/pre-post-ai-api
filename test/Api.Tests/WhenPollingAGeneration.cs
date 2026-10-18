@@ -100,6 +100,19 @@ public class WhenPollingAGeneration(ApiFactory factory)
     }
 
     [Fact]
+    public async Task It_says_which_cutoff_it_compares_either_side_of()
+    {
+        // Arrange
+        var id = await factory.Saved(new GivenAGeneration().WithCutoffOn(new DateOnly(2022, 11, 30)).FailedBecause("GitHub is down.").Build());
+
+        // Act
+        var generation = await factory.CreateClient().GetFromJsonAsync<GenerationResponse>($"/api/generations/{id}");
+
+        // Assert
+        generation!.Cutoff.ShouldBe(new CutoffResponse("ChatGPT launch", "2022-11-30"));
+    }
+
+    [Fact]
     public async Task An_unknown_generation_is_not_found()
     {
         // Arrange
