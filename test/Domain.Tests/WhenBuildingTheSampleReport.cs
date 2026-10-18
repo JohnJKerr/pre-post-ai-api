@@ -138,5 +138,28 @@ public class WhenBuildingTheSampleReport
     public void Post_punch_card_covers_10_of_12_projects_and_84_percent_of_commits() =>
         _report.Post.Coverage.ShouldBe(new Coverage(Eligible: 10, Total: 12, Share: 0.84));
 
+    [Fact]
+    public void Go_Python_Rust_and_Swift_are_new_languages() =>
+        _report.Shift.NewLanguages.ShouldBe(["Go", "Python", "Rust", "Swift"], ignoreOrder: true);
+
+    [Fact]
+    public void Commits_grow_by_post_over_pre() => _report.Shift.CommitsX.ShouldBe(1_604 / 638d);
+
+    [Fact]
+    public void Out_of_hours_grows_about_four_and_a_half_times() => _report.Shift.OutOfHoursX!.Value.ShouldBeInRange(4.45, 4.50);
+
+    [Fact]
+    public void The_score_parts_are_34_9_10_and_25() =>
+        _report.Score.Parts.ShouldBe(new ScoreParts(Output: 34, Projects: 9, Languages: 10, Hours: 25));
+
+    [Fact]
+    public void The_score_is_78() => _report.Score.Total.ShouldBe(78);
+
+    [Fact]
+    public void The_verdict_is_I_built_a_software_factory() => _report.Score.Verdict.ShouldBe("I built a software factory");
+
+    [Fact]
+    public void The_tag_is_and_it_runs_nights_and_weekends() => _report.Score.Tag.ShouldBe("and it runs nights and weekends");
+
     private static double Percent(double share) => Math.Round(share * 100, 1);
 }

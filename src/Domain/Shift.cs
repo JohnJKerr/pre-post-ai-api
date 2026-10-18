@@ -8,6 +8,8 @@ public record Shift(ShiftSide Pre, ShiftSide Post)
 
     public double? CommitsX => Ratio(Post.Commits, Pre.Commits);
 
+    public double? OutOfHoursX => Pre.OutOfHours is { } pre && Post.OutOfHours is { } post ? Ratio(post, pre) : null;
+
     public IReadOnlyList<string> NewLanguages => Post.UsedLanguages.Except(Pre.UsedLanguages).ToArray();
 
     // Rounded to 1e-6 points so float noise can't push a shift across the -10 / +15 thresholds.
@@ -16,6 +18,11 @@ public record Shift(ShiftSide Pre, ShiftSide Post)
         : null;
 
     public Score Score() => Domain.Score.For(this);
+
+    public static Shift Between(WindowSummary pre, WindowSummary post) => new(SideOf(pre), SideOf(post));
+
+    private static ShiftSide SideOf(WindowSummary summary) =>
+        new(summary.Added, summary.Commits, summary.ProjectCount, summary.UsedLanguages, summary.Punch?.Combined);
 
     private static double? Ratio(double post, double pre) => pre > 0 ? post / pre : null;
 }

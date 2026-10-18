@@ -2,6 +2,10 @@ namespace Domain;
 
 public record Report(string Handle, bool IsSample, DateTimeOffset GeneratedAt, Cutoff Cutoff, WindowSummary Pre, WindowSummary Post)
 {
+    public Shift Shift => Shift.Between(Pre, Post);
+
+    public Score Score => Shift.Score();
+
     public static Report From(Profile profile) => new(
         profile.Handle,
         profile.IsSample,
