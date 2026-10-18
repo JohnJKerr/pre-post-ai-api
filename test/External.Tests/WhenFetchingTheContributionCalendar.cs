@@ -1,22 +1,32 @@
-using Domain.GitHub;
 using Shouldly;
 
 namespace External.Tests;
 
-public class WhenFetchingTheContributionCalendar : IAsyncLifetime
+public class WhenFetchingTheContributionCalendar
 {
-    private readonly FakeGitHubApi _api = new GivenTheGitHubApi().Build();
-    private GitHubActivity _activity = null!;
+    [Fact]
+    public async Task Only_days_with_a_contribution_are_kept()
+    {
+        // Arrange
+        var api = new GivenTheGitHubApi().Build();
 
-    public async Task InitializeAsync() => _activity = await GitHubClient.FetchFrom(_api);
+        // Act
+        var activity = await GitHubClient.FetchFrom(api);
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        // Assert
+        activity.ContributionDays.ShouldBe([new DateOnly(2025, 6, 2), new DateOnly(2026, 6, 8)]);
+    }
 
     [Fact]
-    public void Only_days_with_a_contribution_are_kept() =>
-        _activity.ContributionDays.ShouldBe([new DateOnly(2025, 6, 2), new DateOnly(2026, 6, 8)]);
+    public async Task The_calendar_is_fetched_a_year_at_a_time()
+    {
+        // Arrange
+        var api = new GivenTheGitHubApi().Build();
 
-    [Fact]
-    public void The_calendar_is_fetched_a_year_at_a_time() =>
-        _api.Requests.Count(r => r.RequestUri!.AbsolutePath == "/graphql").ShouldBe(2);
+        // Act
+        await GitHubClient.FetchFrom(api);
+
+        // Assert
+        api.Requests.Count(r => r.RequestUri!.AbsolutePath == "/graphql").ShouldBe(2);
+    }
 }

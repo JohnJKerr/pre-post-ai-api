@@ -1,20 +1,32 @@
-using Domain.GitHub;
 using Shouldly;
 
 namespace External.Tests;
 
-public class WhenARepoIsEmpty : IAsyncLifetime
+public class WhenARepoIsEmpty
 {
-    private RepoMetadata _repo = null!;
+    [Fact]
+    public async Task It_has_no_weeks()
+    {
+        // Arrange
+        var api = new GivenTheGitHubApi().WithEmptyRepo("side-project").Build();
 
-    public async Task InitializeAsync() =>
-        _repo = (await GitHubClient.FetchFrom(new GivenTheGitHubApi().WithEmptyRepo("side-project").Build())).Repos.Single(r => r.Name == "side-project");
+        // Act
+        var activity = await GitHubClient.FetchFrom(api);
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        // Assert
+        activity.Repos.Single(r => r.Name == "side-project").AuthorWeeks.ShouldBeEmpty();
+    }
 
     [Fact]
-    public void It_has_no_weeks() => _repo.AuthorWeeks.ShouldBeEmpty();
+    public async Task It_has_no_punch_card()
+    {
+        // Arrange
+        var api = new GivenTheGitHubApi().WithEmptyRepo("side-project").Build();
 
-    [Fact]
-    public void It_has_no_punch_card() => _repo.PunchCard.ShouldBeEmpty();
+        // Act
+        var activity = await GitHubClient.FetchFrom(api);
+
+        // Assert
+        activity.Repos.Single(r => r.Name == "side-project").PunchCard.ShouldBeEmpty();
+    }
 }
