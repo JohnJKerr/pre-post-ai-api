@@ -1,17 +1,21 @@
+using Domain.Repositories;
+using MongoDB.Driver;
+using Storage;
+using Storage.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+ClassMapRegistrar.Register();
+builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(builder.Configuration["Mongo:ConnectionString"]));
+builder.Services.AddSingleton(services =>
+    services.GetRequiredService<IMongoClient>().GetDatabase(builder.Configuration["Mongo:Database"]));
+builder.Services.AddSingleton<IProfileRepository, MongoProfileRepository>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

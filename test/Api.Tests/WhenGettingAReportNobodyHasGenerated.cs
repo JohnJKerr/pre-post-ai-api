@@ -4,7 +4,8 @@ using Shouldly;
 
 namespace Api.Tests;
 
-public class WhenGettingAReportNobodyHasGenerated(ApiFactory factory) : IClassFixture<ApiFactory>, IAsyncLifetime
+[Collection(ApiCollection.Name)]
+public class WhenGettingAReportNobodyHasGenerated(ApiFactory factory) : IAsyncLifetime
 {
     private HttpResponseMessage _response = null!;
 
