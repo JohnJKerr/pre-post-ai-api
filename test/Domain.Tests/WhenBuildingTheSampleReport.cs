@@ -7,6 +7,9 @@ public class WhenBuildingTheSampleReport
     private readonly Report _report = Report.From(new GivenTheSampleProfile().Build());
 
     [Fact]
+    public void Each_side_has_47_complete_weeks() => _report.Weeks.ShouldBe(47);
+
+    [Fact]
     public void Pre_adds_40_459_lines() => _report.Pre.Added.ShouldBe(40_459);
 
     [Fact]

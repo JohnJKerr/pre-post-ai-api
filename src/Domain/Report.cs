@@ -6,6 +6,10 @@ public record Report(string Handle, bool IsSample, DateTimeOffset GeneratedAt, C
 
     public Score Score => Shift.Score();
 
+    public int Weeks => Post.Weeks;
+
+    public Scales Scales => Scales.Across(Pre, Post);
+
     public static Report From(Profile profile) => new(
         profile.Handle,
         profile.IsSample,
