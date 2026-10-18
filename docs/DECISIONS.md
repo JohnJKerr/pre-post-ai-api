@@ -33,3 +33,9 @@ Expiring GitHub App user tokens last 8 hours. Rather than keep the refresh token
 ASP.NET Data Protection encrypts the session cookie, and with it the GitHub token. Its keys are kept in the `dataProtectionKeys` collection, under the application name `pre-post-ai-api`, so a restart or a second instance can still read sessions. The keys aren't encrypted at rest: anyone who can read the database can read session cookies. Before production, consider `ProtectKeysWithCertificate` or a cloud key vault.
 
 The tests run on a machine whose disk key ring (`~/.aspnet/DataProtection-Keys`) is shared by every test host, so "a session survives a restart" passes without Mongo. A second test proves the keys come from the database: a host using another database can't read the session.
+
+## Profiles are keyed by GitHub user id
+
+A profile's `_id` is the numeric GitHub user id from `/user`, carried in the session as the `github_id` claim. Generating again replaces that user's profile and updates its handle, so after a rename the old handle returns 404. `GET /api/reports/{handle}` still looks up by handle (case-insensitive). The handle index isn't unique: someone can take a renamed user's old name before that user generates again, and then the most recently generated profile holds the handle.
+
+Profiles saved before this change have an ObjectId `_id` and no `gitHubId`. A database that holds them also has the old unique `handle_1` index, which must be dropped, as should those profiles: their owners regenerate.

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
@@ -86,7 +87,8 @@ public static class GitHubSignIn
         response.EnsureSuccessStatusCode();
 
         using var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-        context.Identity!.AddClaim(new Claim(ClaimTypes.Name, user.RootElement.GetProperty("login").GetString()!));
+        context.Identity!.AddClaim(new Claim(ApiUser.GitHubIdClaim, user.RootElement.GetProperty("id").GetInt64().ToString(CultureInfo.InvariantCulture)));
+        context.Identity.AddClaim(new Claim(ClaimTypes.Name, user.RootElement.GetProperty("login").GetString()!));
         context.Identity.AddClaim(new Claim(ApiUser.AccessTokenClaim, context.AccessToken!));
         EndTheSessionWithTheToken(context);
     }

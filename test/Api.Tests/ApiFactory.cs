@@ -23,9 +23,10 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public new Task DisposeAsync() => _mongo.DisposeAsync().AsTask();
 
     // Clients send the front end's Origin, as a browser on the front end would.
-    internal HttpClient CreateClientFor(IApiUser apiUser, IGitHubMetadata? gitHub = null) =>
+    internal HttpClient CreateClientFor(IApiUser apiUser, IGitHubMetadata? gitHub = null, TimeProvider? clock = null) =>
         FromTheFrontEnd(WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
         {
+            if (clock is not null) services.AddSingleton(clock);
             services.AddSingleton(apiUser);
             services.AddSingleton(gitHub ?? new FakeGitHub());
         })).CreateClient());

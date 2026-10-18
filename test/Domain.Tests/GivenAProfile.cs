@@ -27,6 +27,7 @@ internal class GivenAProfile
     }
 
     public Profile Build() => new(
+        GitHubId: 1,
         "dev",
         IsSample: false,
         new DateTimeOffset(2026, 10, 18, 0, 0, 0, TimeSpan.Zero),

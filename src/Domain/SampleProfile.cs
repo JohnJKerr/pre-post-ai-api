@@ -51,6 +51,7 @@ public static class SampleProfile
         var postPunchCard = PunchCardFor(Era.Post, (int)Rounding.HalfUp(Commits.Post * PunchShare.Post), random);
 
         return new Profile(
+            GitHubId: 0,
             Handle,
             IsSample: true,
             GeneratedAt,

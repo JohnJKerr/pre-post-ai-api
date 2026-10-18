@@ -4,6 +4,7 @@ namespace Domain.Tests;
 
 internal class GivenGitHubActivity
 {
+    public const long GitHubId = 583_231;
     public static readonly DateTimeOffset Now = new(2026, 10, 18, 9, 0, 0, TimeSpan.Zero);
     public static readonly DateOnly PreWeek = new(2025, 6, 1);
     public static readonly DateOnly PostWeek = new(2026, 6, 7);
@@ -26,5 +27,5 @@ internal class GivenGitHubActivity
 
     public GitHubActivity Build() => new(_repos, _contributionDays);
 
-    public Profile Assemble() => Profile.Assemble("octo-dev", Cutoff.Default, Build(), Now);
+    public Profile Assemble() => Profile.Assemble(GitHubId, "octo-dev", Cutoff.Default, Build(), Now);
 }

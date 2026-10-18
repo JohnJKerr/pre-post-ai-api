@@ -3,6 +3,7 @@ using Domain.GitHub;
 namespace Domain;
 
 public record Profile(
+    long GitHubId,
     string Handle,
     bool IsSample,
     DateTimeOffset GeneratedAt,
@@ -10,12 +11,13 @@ public record Profile(
     IReadOnlyList<Repo> Repos,
     PerEra<WindowActivity> Activity)
 {
-    public static Profile Assemble(string handle, Cutoff cutoff, GitHubActivity activity, DateTimeOffset now)
+    public static Profile Assemble(long gitHubId, string handle, Cutoff cutoff, GitHubActivity activity, DateTimeOffset now)
     {
         var post = Window.After(cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
         var assembly = new ProfileAssembly(activity, new PerEra<Window>(post.Preceding(), post));
 
         return new Profile(
+            gitHubId,
             handle,
             IsSample: false,
             now,

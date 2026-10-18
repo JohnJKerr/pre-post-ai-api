@@ -25,6 +25,7 @@ public static class ClassMapRegistrar
             BsonClassMap.RegisterClassMap<Profile>(map =>
             {
                 map.AutoMap();
+                map.MapIdMember(p => p.GitHubId);
                 map.SetIgnoreExtraElements(true);
             });
 

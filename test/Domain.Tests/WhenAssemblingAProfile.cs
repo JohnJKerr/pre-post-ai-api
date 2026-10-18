@@ -19,6 +19,19 @@ public class WhenAssemblingAProfile
     }
 
     [Fact]
+    public void It_belongs_to_the_user_s_GitHub_account()
+    {
+        // Arrange
+        var activity = new GivenGitHubActivity();
+
+        // Act
+        var profile = activity.Assemble();
+
+        // Assert
+        profile.GitHubId.ShouldBe(GitHubId);
+    }
+
+    [Fact]
     public void It_was_generated_now()
     {
         // Arrange

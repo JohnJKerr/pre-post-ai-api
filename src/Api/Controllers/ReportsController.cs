@@ -40,7 +40,7 @@ public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IG
             return Unauthorized(new ErrorResponse("Your GitHub sign-in has expired. Sign in again."));
         }
 
-        var profile = Profile.Assemble(user.Handle, cutoff, activity, now);
+        var profile = Profile.Assemble(user.Id, user.Handle, cutoff, activity, now);
         await profiles.Save(profile);
 
         return Created($"/api/reports/{profile.Handle}", ReportResponse.From(Report.From(profile)));

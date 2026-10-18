@@ -1,3 +1,3 @@
 namespace Domain.GitHub;
 
-public record GitHubUser(string Handle, string AccessToken);
+public record GitHubUser(long Id, string Handle, string AccessToken);

@@ -5,7 +5,7 @@ namespace External.Tests;
 
 internal static class GitHubClient
 {
-    public static readonly GitHubUser User = new("octo-dev", "user-token");
+    public static readonly GitHubUser User = new(583_231, "octo-dev", "user-token");
 
     public static GitHubMetadata Over(FakeGitHubApi api) =>
         new(new HttpClient(api) { BaseAddress = new Uri("https://api.github.com") }, GitHubOptions.NoDelay);

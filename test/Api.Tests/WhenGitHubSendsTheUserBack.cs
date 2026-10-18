@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using Api.Models;
 using Shouldly;
@@ -44,5 +45,19 @@ public class WhenGitHubSendsTheUserBack(ApiFactory factory)
 
         // Assert
         (await browser.GetFromJsonAsync<SessionResponse>("/api/session"))!.Handle.ShouldBe("octo-dev");
+    }
+
+    [Fact]
+    public async Task They_can_generate_their_report()
+    {
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub();
+        await browser.SignInWithGitHub();
+
+        // Act
+        var response = await browser.PostAsJsonAsync("/api/reports", new { });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
 }
