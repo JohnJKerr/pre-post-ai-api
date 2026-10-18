@@ -1,0 +1,2750 @@
+{
+  "handle": "sam-builds",
+  "isSample": true,
+  "generatedAt": "2026-10-18T00:00:00Z",
+  "cutoff": {
+    "label": "Claude Opus 4.5",
+    "date": "2025-11-24"
+  },
+  "weeks": 47,
+  "pre": {
+    "era": "pre",
+    "range": {
+      "start": "2024-12-29",
+      "end": "2025-11-22"
+    },
+    "weeks": 47,
+    "weekly": [
+      {
+        "w": "2024-12-29",
+        "a": 57,
+        "d": 15,
+        "c": 1
+      },
+      {
+        "w": "2025-01-05",
+        "a": 1330,
+        "d": 290,
+        "c": 17
+      },
+      {
+        "w": "2025-01-12",
+        "a": 1347,
+        "d": 314,
+        "c": 25
+      },
+      {
+        "w": "2025-01-19",
+        "a": 119,
+        "d": 37,
+        "c": 3
+      },
+      {
+        "w": "2025-01-26",
+        "a": 1109,
+        "d": 427,
+        "c": 14
+      },
+      {
+        "w": "2025-02-02",
+        "a": 1667,
+        "d": 509,
+        "c": 20
+      },
+      {
+        "w": "2025-02-09",
+        "a": 1258,
+        "d": 382,
+        "c": 16
+      },
+      {
+        "w": "2025-02-16",
+        "a": 411,
+        "d": 116,
+        "c": 8
+      },
+      {
+        "w": "2025-02-23",
+        "a": 1362,
+        "d": 426,
+        "c": 17
+      },
+      {
+        "w": "2025-03-02",
+        "a": 456,
+        "d": 146,
+        "c": 8
+      },
+      {
+        "w": "2025-03-09",
+        "a": 1649,
+        "d": 407,
+        "c": 21
+      },
+      {
+        "w": "2025-03-16",
+        "a": 560,
+        "d": 167,
+        "c": 15
+      },
+      {
+        "w": "2025-03-23",
+        "a": 811,
+        "d": 210,
+        "c": 13
+      },
+      {
+        "w": "2025-03-30",
+        "a": 1283,
+        "d": 451,
+        "c": 17
+      },
+      {
+        "w": "2025-04-06",
+        "a": 1302,
+        "d": 417,
+        "c": 15
+      },
+      {
+        "w": "2025-04-13",
+        "a": 699,
+        "d": 211,
+        "c": 10
+      },
+      {
+        "w": "2025-04-20",
+        "a": 226,
+        "d": 52,
+        "c": 6
+      },
+      {
+        "w": "2025-04-27",
+        "a": 1098,
+        "d": 285,
+        "c": 21
+      },
+      {
+        "w": "2025-05-04",
+        "a": 0,
+        "d": 0,
+        "c": 0
+      },
+      {
+        "w": "2025-05-11",
+        "a": 514,
+        "d": 192,
+        "c": 12
+      },
+      {
+        "w": "2025-05-18",
+        "a": 1182,
+        "d": 324,
+        "c": 27
+      },
+      {
+        "w": "2025-05-25",
+        "a": 698,
+        "d": 253,
+        "c": 11
+      },
+      {
+        "w": "2025-06-01",
+        "a": 798,
+        "d": 319,
+        "c": 15
+      },
+      {
+        "w": "2025-06-08",
+        "a": 877,
+        "d": 325,
+        "c": 19
+      },
+      {
+        "w": "2025-06-15",
+        "a": 1223,
+        "d": 463,
+        "c": 18
+      },
+      {
+        "w": "2025-06-22",
+        "a": 954,
+        "d": 322,
+        "c": 14
+      },
+      {
+        "w": "2025-06-29",
+        "a": 672,
+        "d": 181,
+        "c": 14
+      },
+      {
+        "w": "2025-07-06",
+        "a": 961,
+        "d": 359,
+        "c": 16
+      },
+      {
+        "w": "2025-07-13",
+        "a": 552,
+        "d": 122,
+        "c": 10
+      },
+      {
+        "w": "2025-07-20",
+        "a": 215,
+        "d": 51,
+        "c": 5
+      },
+      {
+        "w": "2025-07-27",
+        "a": 975,
+        "d": 366,
+        "c": 11
+      },
+      {
+        "w": "2025-08-03",
+        "a": 854,
+        "d": 201,
+        "c": 22
+      },
+      {
+        "w": "2025-08-10",
+        "a": 1511,
+        "d": 472,
+        "c": 19
+      },
+      {
+        "w": "2025-08-17",
+        "a": 0,
+        "d": 0,
+        "c": 0
+      },
+      {
+        "w": "2025-08-24",
+        "a": 70,
+        "d": 28,
+        "c": 1
+      },
+      {
+        "w": "2025-08-31",
+        "a": 1914,
+        "d": 467,
+        "c": 22
+      },
+      {
+        "w": "2025-09-07",
+        "a": 1062,
+        "d": 390,
+        "c": 23
+      },
+      {
+        "w": "2025-09-14",
+        "a": 325,
+        "d": 102,
+        "c": 7
+      },
+      {
+        "w": "2025-09-21",
+        "a": 499,
+        "d": 171,
+        "c": 11
+      },
+      {
+        "w": "2025-09-28",
+        "a": 759,
+        "d": 211,
+        "c": 15
+      },
+      {
+        "w": "2025-10-05",
+        "a": 1193,
+        "d": 464,
+        "c": 13
+      },
+      {
+        "w": "2025-10-12",
+        "a": 1044,
+        "d": 405,
+        "c": 16
+      },
+      {
+        "w": "2025-10-19",
+        "a": 624,
+        "d": 198,
+        "c": 13
+      },
+      {
+        "w": "2025-10-26",
+        "a": 1290,
+        "d": 441,
+        "c": 23
+      },
+      {
+        "w": "2025-11-02",
+        "a": 987,
+        "d": 347,
+        "c": 11
+      },
+      {
+        "w": "2025-11-09",
+        "a": 883,
+        "d": 292,
+        "c": 11
+      },
+      {
+        "w": "2025-11-16",
+        "a": 1079,
+        "d": 337,
+        "c": 12
+      }
+    ],
+    "added": 40459,
+    "deleted": 12665,
+    "commits": 638,
+    "perCommit": 63,
+    "projects": [
+      {
+        "name": "invoice-api",
+        "lines": 18611
+      },
+      {
+        "name": "client-portal",
+        "lines": 10519
+      },
+      {
+        "name": "ledger-sync",
+        "lines": 5664
+      },
+      {
+        "name": "ops-scripts",
+        "lines": 3237
+      },
+      {
+        "name": "blog",
+        "lines": 2428
+      }
+    ],
+    "projectCount": 5,
+    "started": 2,
+    "activeDays": 161,
+    "activeDaysPerWeek": 3.4,
+    "languages": [
+      {
+        "language": "C#",
+        "share": 0.584901625320787
+      },
+      {
+        "language": "TypeScript",
+        "share": 0.227972626176219
+      },
+      {
+        "language": "Shell",
+        "share": 0.09174508126603936
+      },
+      {
+        "language": "JavaScript",
+        "share": 0.044910179640718556
+      },
+      {
+        "language": "SQL",
+        "share": 0.04191616766467066
+      },
+      {
+        "language": "Python",
+        "share": 0.00855431993156544
+      }
+    ],
+    "usedLanguages": [
+      "C#",
+      "TypeScript",
+      "Shell",
+      "JavaScript",
+      "SQL"
+    ],
+    "coverage": {
+      "eligible": 3,
+      "total": 5,
+      "share": 0.46
+    },
+    "punch": {
+      "cells": [
+        {
+          "day": 0,
+          "hour": 0,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 1,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 6,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 7,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 8,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 9,
+          "commits": 1
+        },
+        {
+          "day": 0,
+          "hour": 10,
+          "commits": 1
+        },
+        {
+          "day": 0,
+          "hour": 11,
+          "commits": 1
+        },
+        {
+          "day": 0,
+          "hour": 12,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 13,
+          "commits": 1
+        },
+        {
+          "day": 0,
+          "hour": 14,
+          "commits": 1
+        },
+        {
+          "day": 0,
+          "hour": 15,
+          "commits": 1
+        },
+        {
+          "day": 0,
+          "hour": 16,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 17,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 18,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 19,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 20,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 21,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 22,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 23,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 0,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 1,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 6,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 7,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 8,
+          "commits": 2
+        },
+        {
+          "day": 1,
+          "hour": 9,
+          "commits": 7
+        },
+        {
+          "day": 1,
+          "hour": 10,
+          "commits": 8
+        },
+        {
+          "day": 1,
+          "hour": 11,
+          "commits": 6
+        },
+        {
+          "day": 1,
+          "hour": 12,
+          "commits": 3
+        },
+        {
+          "day": 1,
+          "hour": 13,
+          "commits": 6
+        },
+        {
+          "day": 1,
+          "hour": 14,
+          "commits": 8
+        },
+        {
+          "day": 1,
+          "hour": 15,
+          "commits": 6
+        },
+        {
+          "day": 1,
+          "hour": 16,
+          "commits": 6
+        },
+        {
+          "day": 1,
+          "hour": 17,
+          "commits": 5
+        },
+        {
+          "day": 1,
+          "hour": 18,
+          "commits": 1
+        },
+        {
+          "day": 1,
+          "hour": 19,
+          "commits": 1
+        },
+        {
+          "day": 1,
+          "hour": 20,
+          "commits": 1
+        },
+        {
+          "day": 1,
+          "hour": 21,
+          "commits": 1
+        },
+        {
+          "day": 1,
+          "hour": 22,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 23,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 0,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 1,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 6,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 7,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 8,
+          "commits": 1
+        },
+        {
+          "day": 2,
+          "hour": 9,
+          "commits": 4
+        },
+        {
+          "day": 2,
+          "hour": 10,
+          "commits": 9
+        },
+        {
+          "day": 2,
+          "hour": 11,
+          "commits": 6
+        },
+        {
+          "day": 2,
+          "hour": 12,
+          "commits": 2
+        },
+        {
+          "day": 2,
+          "hour": 13,
+          "commits": 7
+        },
+        {
+          "day": 2,
+          "hour": 14,
+          "commits": 8
+        },
+        {
+          "day": 2,
+          "hour": 15,
+          "commits": 7
+        },
+        {
+          "day": 2,
+          "hour": 16,
+          "commits": 7
+        },
+        {
+          "day": 2,
+          "hour": 17,
+          "commits": 5
+        },
+        {
+          "day": 2,
+          "hour": 18,
+          "commits": 1
+        },
+        {
+          "day": 2,
+          "hour": 19,
+          "commits": 1
+        },
+        {
+          "day": 2,
+          "hour": 20,
+          "commits": 1
+        },
+        {
+          "day": 2,
+          "hour": 21,
+          "commits": 1
+        },
+        {
+          "day": 2,
+          "hour": 22,
+          "commits": 1
+        },
+        {
+          "day": 2,
+          "hour": 23,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 0,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 1,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 6,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 7,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 8,
+          "commits": 2
+        },
+        {
+          "day": 3,
+          "hour": 9,
+          "commits": 5
+        },
+        {
+          "day": 3,
+          "hour": 10,
+          "commits": 6
+        },
+        {
+          "day": 3,
+          "hour": 11,
+          "commits": 6
+        },
+        {
+          "day": 3,
+          "hour": 12,
+          "commits": 3
+        },
+        {
+          "day": 3,
+          "hour": 13,
+          "commits": 7
+        },
+        {
+          "day": 3,
+          "hour": 14,
+          "commits": 5
+        },
+        {
+          "day": 3,
+          "hour": 15,
+          "commits": 8
+        },
+        {
+          "day": 3,
+          "hour": 16,
+          "commits": 6
+        },
+        {
+          "day": 3,
+          "hour": 17,
+          "commits": 4
+        },
+        {
+          "day": 3,
+          "hour": 18,
+          "commits": 1
+        },
+        {
+          "day": 3,
+          "hour": 19,
+          "commits": 1
+        },
+        {
+          "day": 3,
+          "hour": 20,
+          "commits": 1
+        },
+        {
+          "day": 3,
+          "hour": 21,
+          "commits": 1
+        },
+        {
+          "day": 3,
+          "hour": 22,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 23,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 0,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 1,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 6,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 7,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 8,
+          "commits": 2
+        },
+        {
+          "day": 4,
+          "hour": 9,
+          "commits": 7
+        },
+        {
+          "day": 4,
+          "hour": 10,
+          "commits": 5
+        },
+        {
+          "day": 4,
+          "hour": 11,
+          "commits": 6
+        },
+        {
+          "day": 4,
+          "hour": 12,
+          "commits": 3
+        },
+        {
+          "day": 4,
+          "hour": 13,
+          "commits": 6
+        },
+        {
+          "day": 4,
+          "hour": 14,
+          "commits": 7
+        },
+        {
+          "day": 4,
+          "hour": 15,
+          "commits": 4
+        },
+        {
+          "day": 4,
+          "hour": 16,
+          "commits": 6
+        },
+        {
+          "day": 4,
+          "hour": 17,
+          "commits": 4
+        },
+        {
+          "day": 4,
+          "hour": 18,
+          "commits": 1
+        },
+        {
+          "day": 4,
+          "hour": 19,
+          "commits": 1
+        },
+        {
+          "day": 4,
+          "hour": 20,
+          "commits": 1
+        },
+        {
+          "day": 4,
+          "hour": 21,
+          "commits": 1
+        },
+        {
+          "day": 4,
+          "hour": 22,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 23,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 0,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 1,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 6,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 7,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 8,
+          "commits": 1
+        },
+        {
+          "day": 5,
+          "hour": 9,
+          "commits": 4
+        },
+        {
+          "day": 5,
+          "hour": 10,
+          "commits": 5
+        },
+        {
+          "day": 5,
+          "hour": 11,
+          "commits": 6
+        },
+        {
+          "day": 5,
+          "hour": 12,
+          "commits": 3
+        },
+        {
+          "day": 5,
+          "hour": 13,
+          "commits": 4
+        },
+        {
+          "day": 5,
+          "hour": 14,
+          "commits": 6
+        },
+        {
+          "day": 5,
+          "hour": 15,
+          "commits": 6
+        },
+        {
+          "day": 5,
+          "hour": 16,
+          "commits": 4
+        },
+        {
+          "day": 5,
+          "hour": 17,
+          "commits": 4
+        },
+        {
+          "day": 5,
+          "hour": 18,
+          "commits": 1
+        },
+        {
+          "day": 5,
+          "hour": 19,
+          "commits": 1
+        },
+        {
+          "day": 5,
+          "hour": 20,
+          "commits": 1
+        },
+        {
+          "day": 5,
+          "hour": 21,
+          "commits": 1
+        },
+        {
+          "day": 5,
+          "hour": 22,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 23,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 0,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 1,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 6,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 7,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 8,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 9,
+          "commits": 1
+        },
+        {
+          "day": 6,
+          "hour": 10,
+          "commits": 1
+        },
+        {
+          "day": 6,
+          "hour": 11,
+          "commits": 1
+        },
+        {
+          "day": 6,
+          "hour": 12,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 13,
+          "commits": 1
+        },
+        {
+          "day": 6,
+          "hour": 14,
+          "commits": 1
+        },
+        {
+          "day": 6,
+          "hour": 15,
+          "commits": 1
+        },
+        {
+          "day": 6,
+          "hour": 16,
+          "commits": 2
+        },
+        {
+          "day": 6,
+          "hour": 17,
+          "commits": 1
+        },
+        {
+          "day": 6,
+          "hour": 18,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 19,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 20,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 21,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 22,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 23,
+          "commits": 0
+        }
+      ],
+      "busiest": {
+        "day": 2,
+        "hour": 10,
+        "commits": 9
+      },
+      "window": {
+        "start": 9,
+        "length": 8,
+        "end": 17
+      },
+      "hourShares": [
+        {
+          "hour": 0,
+          "share": 0
+        },
+        {
+          "hour": 1,
+          "share": 0
+        },
+        {
+          "hour": 2,
+          "share": 0
+        },
+        {
+          "hour": 3,
+          "share": 0
+        },
+        {
+          "hour": 4,
+          "share": 0
+        },
+        {
+          "hour": 5,
+          "share": 0
+        },
+        {
+          "hour": 6,
+          "share": 0
+        },
+        {
+          "hour": 7,
+          "share": 0
+        },
+        {
+          "hour": 8,
+          "share": 0.027210884353741496
+        },
+        {
+          "hour": 9,
+          "share": 0.09863945578231292
+        },
+        {
+          "hour": 10,
+          "share": 0.11904761904761904
+        },
+        {
+          "hour": 11,
+          "share": 0.10884353741496598
+        },
+        {
+          "hour": 12,
+          "share": 0.047619047619047616
+        },
+        {
+          "hour": 13,
+          "share": 0.10884353741496598
+        },
+        {
+          "hour": 14,
+          "share": 0.12244897959183673
+        },
+        {
+          "hour": 15,
+          "share": 0.11224489795918367
+        },
+        {
+          "hour": 16,
+          "share": 0.1054421768707483
+        },
+        {
+          "hour": 17,
+          "share": 0.0782312925170068
+        },
+        {
+          "hour": 18,
+          "share": 0.017006802721088437
+        },
+        {
+          "hour": 19,
+          "share": 0.017006802721088437
+        },
+        {
+          "hour": 20,
+          "share": 0.017006802721088437
+        },
+        {
+          "hour": 21,
+          "share": 0.017006802721088437
+        },
+        {
+          "hour": 22,
+          "share": 0.003401360544217687
+        },
+        {
+          "hour": 23,
+          "share": 0
+        }
+      ],
+      "hoursTouched": 15,
+      "evening": 0.07142857142857142,
+      "weekend": 0.05102040816326531,
+      "combined": 0.12244897959183673
+    }
+  },
+  "post": {
+    "era": "post",
+    "range": {
+      "start": "2025-11-23",
+      "end": "2026-10-17"
+    },
+    "weeks": 47,
+    "weekly": [
+      {
+        "w": "2025-11-23",
+        "a": 2452,
+        "d": 1020,
+        "c": 21
+      },
+      {
+        "w": "2025-11-30",
+        "a": 3386,
+        "d": 1115,
+        "c": 18
+      },
+      {
+        "w": "2025-12-07",
+        "a": 3292,
+        "d": 785,
+        "c": 22
+      },
+      {
+        "w": "2025-12-14",
+        "a": 5612,
+        "d": 2301,
+        "c": 28
+      },
+      {
+        "w": "2025-12-21",
+        "a": 1781,
+        "d": 507,
+        "c": 13
+      },
+      {
+        "w": "2025-12-28",
+        "a": 2928,
+        "d": 748,
+        "c": 24
+      },
+      {
+        "w": "2026-01-04",
+        "a": 5396,
+        "d": 1400,
+        "c": 29
+      },
+      {
+        "w": "2026-01-11",
+        "a": 2289,
+        "d": 855,
+        "c": 27
+      },
+      {
+        "w": "2026-01-18",
+        "a": 2698,
+        "d": 972,
+        "c": 18
+      },
+      {
+        "w": "2026-01-25",
+        "a": 3384,
+        "d": 1173,
+        "c": 30
+      },
+      {
+        "w": "2026-02-01",
+        "a": 6128,
+        "d": 2533,
+        "c": 33
+      },
+      {
+        "w": "2026-02-08",
+        "a": 4550,
+        "d": 1229,
+        "c": 32
+      },
+      {
+        "w": "2026-02-15",
+        "a": 2160,
+        "d": 845,
+        "c": 17
+      },
+      {
+        "w": "2026-02-22",
+        "a": 3070,
+        "d": 1192,
+        "c": 27
+      },
+      {
+        "w": "2026-03-01",
+        "a": 4310,
+        "d": 1309,
+        "c": 34
+      },
+      {
+        "w": "2026-03-08",
+        "a": 4317,
+        "d": 1201,
+        "c": 30
+      },
+      {
+        "w": "2026-03-15",
+        "a": 6991,
+        "d": 2459,
+        "c": 43
+      },
+      {
+        "w": "2026-03-22",
+        "a": 7547,
+        "d": 2873,
+        "c": 44
+      },
+      {
+        "w": "2026-03-29",
+        "a": 6478,
+        "d": 2397,
+        "c": 40
+      },
+      {
+        "w": "2026-04-05",
+        "a": 6486,
+        "d": 1753,
+        "c": 32
+      },
+      {
+        "w": "2026-04-12",
+        "a": 4670,
+        "d": 1444,
+        "c": 24
+      },
+      {
+        "w": "2026-04-19",
+        "a": 7103,
+        "d": 2133,
+        "c": 36
+      },
+      {
+        "w": "2026-04-26",
+        "a": 6665,
+        "d": 2546,
+        "c": 36
+      },
+      {
+        "w": "2026-05-03",
+        "a": 3322,
+        "d": 1331,
+        "c": 32
+      },
+      {
+        "w": "2026-05-10",
+        "a": 3174,
+        "d": 776,
+        "c": 27
+      },
+      {
+        "w": "2026-05-17",
+        "a": 3650,
+        "d": 1270,
+        "c": 35
+      },
+      {
+        "w": "2026-05-24",
+        "a": 7749,
+        "d": 1833,
+        "c": 40
+      },
+      {
+        "w": "2026-05-31",
+        "a": 3889,
+        "d": 977,
+        "c": 29
+      },
+      {
+        "w": "2026-06-07",
+        "a": 5119,
+        "d": 1977,
+        "c": 41
+      },
+      {
+        "w": "2026-06-14",
+        "a": 6984,
+        "d": 2393,
+        "c": 38
+      },
+      {
+        "w": "2026-06-21",
+        "a": 4119,
+        "d": 1294,
+        "c": 47
+      },
+      {
+        "w": "2026-06-28",
+        "a": 3760,
+        "d": 1579,
+        "c": 37
+      },
+      {
+        "w": "2026-07-05",
+        "a": 2633,
+        "d": 782,
+        "c": 19
+      },
+      {
+        "w": "2026-07-12",
+        "a": 6943,
+        "d": 1780,
+        "c": 35
+      },
+      {
+        "w": "2026-07-19",
+        "a": 1944,
+        "d": 732,
+        "c": 24
+      },
+      {
+        "w": "2026-07-26",
+        "a": 4211,
+        "d": 1452,
+        "c": 26
+      },
+      {
+        "w": "2026-08-02",
+        "a": 5022,
+        "d": 1961,
+        "c": 38
+      },
+      {
+        "w": "2026-08-09",
+        "a": 5120,
+        "d": 1460,
+        "c": 48
+      },
+      {
+        "w": "2026-08-16",
+        "a": 5154,
+        "d": 1536,
+        "c": 53
+      },
+      {
+        "w": "2026-08-23",
+        "a": 12487,
+        "d": 3500,
+        "c": 65
+      },
+      {
+        "w": "2026-08-30",
+        "a": 5964,
+        "d": 2002,
+        "c": 42
+      },
+      {
+        "w": "2026-09-06",
+        "a": 5832,
+        "d": 2273,
+        "c": 46
+      },
+      {
+        "w": "2026-09-13",
+        "a": 7660,
+        "d": 2434,
+        "c": 53
+      },
+      {
+        "w": "2026-09-20",
+        "a": 4889,
+        "d": 1560,
+        "c": 45
+      },
+      {
+        "w": "2026-09-27",
+        "a": 5033,
+        "d": 1730,
+        "c": 49
+      },
+      {
+        "w": "2026-10-04",
+        "a": 2712,
+        "d": 1028,
+        "c": 34
+      },
+      {
+        "w": "2026-10-11",
+        "a": 5769,
+        "d": 2383,
+        "c": 43
+      }
+    ],
+    "added": 226832,
+    "deleted": 74833,
+    "commits": 1604,
+    "perCommit": 141,
+    "projects": [
+      {
+        "name": "agent-runner",
+        "lines": 43098
+      },
+      {
+        "name": "invoice-api",
+        "lines": 31756
+      },
+      {
+        "name": "snip-cast",
+        "lines": 29488
+      },
+      {
+        "name": "queue-lens",
+        "lines": 22683
+      },
+      {
+        "name": "status-board",
+        "lines": 20415
+      },
+      {
+        "name": "env-loader",
+        "lines": 18147
+      },
+      {
+        "name": "thumb-rs",
+        "lines": 15878
+      },
+      {
+        "name": "pace-coach",
+        "lines": 13610
+      },
+      {
+        "name": "league-hall",
+        "lines": 11342
+      },
+      {
+        "name": "chat-ops",
+        "lines": 7939
+      },
+      {
+        "name": "sql-reports",
+        "lines": 7939
+      },
+      {
+        "name": "ops-scripts",
+        "lines": 4537
+      }
+    ],
+    "projectCount": 12,
+    "started": 10,
+    "activeDays": 277,
+    "activeDaysPerWeek": 5.9,
+    "languages": [
+      {
+        "language": "TypeScript",
+        "share": 0.3012409513960703
+      },
+      {
+        "language": "C#",
+        "share": 0.21302998965873837
+      },
+      {
+        "language": "Python",
+        "share": 0.17321613236814892
+      },
+      {
+        "language": "Go",
+        "share": 0.10031023784901758
+      },
+      {
+        "language": "Rust",
+        "share": 0.07238883143743537
+      },
+      {
+        "language": "Swift",
+        "share": 0.06204756980351602
+      },
+      {
+        "language": "SQL",
+        "share": 0.039089968976215105
+      },
+      {
+        "language": "Shell",
+        "share": 0.03867631851085833
+      }
+    ],
+    "usedLanguages": [
+      "TypeScript",
+      "C#",
+      "Python",
+      "Go",
+      "Rust",
+      "Swift",
+      "SQL",
+      "Shell"
+    ],
+    "coverage": {
+      "eligible": 10,
+      "total": 12,
+      "share": 0.84
+    },
+    "punch": {
+      "cells": [
+        {
+          "day": 0,
+          "hour": 0,
+          "commits": 4
+        },
+        {
+          "day": 0,
+          "hour": 1,
+          "commits": 2
+        },
+        {
+          "day": 0,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 0,
+          "hour": 6,
+          "commits": 1
+        },
+        {
+          "day": 0,
+          "hour": 7,
+          "commits": 6
+        },
+        {
+          "day": 0,
+          "hour": 8,
+          "commits": 9
+        },
+        {
+          "day": 0,
+          "hour": 9,
+          "commits": 8
+        },
+        {
+          "day": 0,
+          "hour": 10,
+          "commits": 9
+        },
+        {
+          "day": 0,
+          "hour": 11,
+          "commits": 13
+        },
+        {
+          "day": 0,
+          "hour": 12,
+          "commits": 7
+        },
+        {
+          "day": 0,
+          "hour": 13,
+          "commits": 6
+        },
+        {
+          "day": 0,
+          "hour": 14,
+          "commits": 7
+        },
+        {
+          "day": 0,
+          "hour": 15,
+          "commits": 11
+        },
+        {
+          "day": 0,
+          "hour": 16,
+          "commits": 7
+        },
+        {
+          "day": 0,
+          "hour": 17,
+          "commits": 6
+        },
+        {
+          "day": 0,
+          "hour": 18,
+          "commits": 4
+        },
+        {
+          "day": 0,
+          "hour": 19,
+          "commits": 12
+        },
+        {
+          "day": 0,
+          "hour": 20,
+          "commits": 10
+        },
+        {
+          "day": 0,
+          "hour": 21,
+          "commits": 14
+        },
+        {
+          "day": 0,
+          "hour": 22,
+          "commits": 11
+        },
+        {
+          "day": 0,
+          "hour": 23,
+          "commits": 5
+        },
+        {
+          "day": 1,
+          "hour": 0,
+          "commits": 5
+        },
+        {
+          "day": 1,
+          "hour": 1,
+          "commits": 2
+        },
+        {
+          "day": 1,
+          "hour": 2,
+          "commits": 1
+        },
+        {
+          "day": 1,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 1,
+          "hour": 6,
+          "commits": 2
+        },
+        {
+          "day": 1,
+          "hour": 7,
+          "commits": 4
+        },
+        {
+          "day": 1,
+          "hour": 8,
+          "commits": 13
+        },
+        {
+          "day": 1,
+          "hour": 9,
+          "commits": 11
+        },
+        {
+          "day": 1,
+          "hour": 10,
+          "commits": 10
+        },
+        {
+          "day": 1,
+          "hour": 11,
+          "commits": 17
+        },
+        {
+          "day": 1,
+          "hour": 12,
+          "commits": 7
+        },
+        {
+          "day": 1,
+          "hour": 13,
+          "commits": 9
+        },
+        {
+          "day": 1,
+          "hour": 14,
+          "commits": 12
+        },
+        {
+          "day": 1,
+          "hour": 15,
+          "commits": 9
+        },
+        {
+          "day": 1,
+          "hour": 16,
+          "commits": 10
+        },
+        {
+          "day": 1,
+          "hour": 17,
+          "commits": 9
+        },
+        {
+          "day": 1,
+          "hour": 18,
+          "commits": 10
+        },
+        {
+          "day": 1,
+          "hour": 19,
+          "commits": 9
+        },
+        {
+          "day": 1,
+          "hour": 20,
+          "commits": 11
+        },
+        {
+          "day": 1,
+          "hour": 21,
+          "commits": 15
+        },
+        {
+          "day": 1,
+          "hour": 22,
+          "commits": 16
+        },
+        {
+          "day": 1,
+          "hour": 23,
+          "commits": 9
+        },
+        {
+          "day": 2,
+          "hour": 0,
+          "commits": 7
+        },
+        {
+          "day": 2,
+          "hour": 1,
+          "commits": 2
+        },
+        {
+          "day": 2,
+          "hour": 2,
+          "commits": 1
+        },
+        {
+          "day": 2,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 2,
+          "hour": 6,
+          "commits": 2
+        },
+        {
+          "day": 2,
+          "hour": 7,
+          "commits": 6
+        },
+        {
+          "day": 2,
+          "hour": 8,
+          "commits": 12
+        },
+        {
+          "day": 2,
+          "hour": 9,
+          "commits": 8
+        },
+        {
+          "day": 2,
+          "hour": 10,
+          "commits": 11
+        },
+        {
+          "day": 2,
+          "hour": 11,
+          "commits": 12
+        },
+        {
+          "day": 2,
+          "hour": 12,
+          "commits": 10
+        },
+        {
+          "day": 2,
+          "hour": 13,
+          "commits": 10
+        },
+        {
+          "day": 2,
+          "hour": 14,
+          "commits": 17
+        },
+        {
+          "day": 2,
+          "hour": 15,
+          "commits": 11
+        },
+        {
+          "day": 2,
+          "hour": 16,
+          "commits": 14
+        },
+        {
+          "day": 2,
+          "hour": 17,
+          "commits": 6
+        },
+        {
+          "day": 2,
+          "hour": 18,
+          "commits": 7
+        },
+        {
+          "day": 2,
+          "hour": 19,
+          "commits": 11
+        },
+        {
+          "day": 2,
+          "hour": 20,
+          "commits": 10
+        },
+        {
+          "day": 2,
+          "hour": 21,
+          "commits": 20
+        },
+        {
+          "day": 2,
+          "hour": 22,
+          "commits": 10
+        },
+        {
+          "day": 2,
+          "hour": 23,
+          "commits": 7
+        },
+        {
+          "day": 3,
+          "hour": 0,
+          "commits": 6
+        },
+        {
+          "day": 3,
+          "hour": 1,
+          "commits": 2
+        },
+        {
+          "day": 3,
+          "hour": 2,
+          "commits": 1
+        },
+        {
+          "day": 3,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 3,
+          "hour": 6,
+          "commits": 2
+        },
+        {
+          "day": 3,
+          "hour": 7,
+          "commits": 7
+        },
+        {
+          "day": 3,
+          "hour": 8,
+          "commits": 12
+        },
+        {
+          "day": 3,
+          "hour": 9,
+          "commits": 15
+        },
+        {
+          "day": 3,
+          "hour": 10,
+          "commits": 12
+        },
+        {
+          "day": 3,
+          "hour": 11,
+          "commits": 15
+        },
+        {
+          "day": 3,
+          "hour": 12,
+          "commits": 10
+        },
+        {
+          "day": 3,
+          "hour": 13,
+          "commits": 10
+        },
+        {
+          "day": 3,
+          "hour": 14,
+          "commits": 11
+        },
+        {
+          "day": 3,
+          "hour": 15,
+          "commits": 12
+        },
+        {
+          "day": 3,
+          "hour": 16,
+          "commits": 14
+        },
+        {
+          "day": 3,
+          "hour": 17,
+          "commits": 9
+        },
+        {
+          "day": 3,
+          "hour": 18,
+          "commits": 7
+        },
+        {
+          "day": 3,
+          "hour": 19,
+          "commits": 14
+        },
+        {
+          "day": 3,
+          "hour": 20,
+          "commits": 19
+        },
+        {
+          "day": 3,
+          "hour": 21,
+          "commits": 11
+        },
+        {
+          "day": 3,
+          "hour": 22,
+          "commits": 17
+        },
+        {
+          "day": 3,
+          "hour": 23,
+          "commits": 14
+        },
+        {
+          "day": 4,
+          "hour": 0,
+          "commits": 5
+        },
+        {
+          "day": 4,
+          "hour": 1,
+          "commits": 3
+        },
+        {
+          "day": 4,
+          "hour": 2,
+          "commits": 1
+        },
+        {
+          "day": 4,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 4,
+          "hour": 6,
+          "commits": 2
+        },
+        {
+          "day": 4,
+          "hour": 7,
+          "commits": 7
+        },
+        {
+          "day": 4,
+          "hour": 8,
+          "commits": 13
+        },
+        {
+          "day": 4,
+          "hour": 9,
+          "commits": 12
+        },
+        {
+          "day": 4,
+          "hour": 10,
+          "commits": 11
+        },
+        {
+          "day": 4,
+          "hour": 11,
+          "commits": 14
+        },
+        {
+          "day": 4,
+          "hour": 12,
+          "commits": 9
+        },
+        {
+          "day": 4,
+          "hour": 13,
+          "commits": 15
+        },
+        {
+          "day": 4,
+          "hour": 14,
+          "commits": 13
+        },
+        {
+          "day": 4,
+          "hour": 15,
+          "commits": 14
+        },
+        {
+          "day": 4,
+          "hour": 16,
+          "commits": 11
+        },
+        {
+          "day": 4,
+          "hour": 17,
+          "commits": 11
+        },
+        {
+          "day": 4,
+          "hour": 18,
+          "commits": 10
+        },
+        {
+          "day": 4,
+          "hour": 19,
+          "commits": 15
+        },
+        {
+          "day": 4,
+          "hour": 20,
+          "commits": 15
+        },
+        {
+          "day": 4,
+          "hour": 21,
+          "commits": 20
+        },
+        {
+          "day": 4,
+          "hour": 22,
+          "commits": 13
+        },
+        {
+          "day": 4,
+          "hour": 23,
+          "commits": 14
+        },
+        {
+          "day": 5,
+          "hour": 0,
+          "commits": 6
+        },
+        {
+          "day": 5,
+          "hour": 1,
+          "commits": 3
+        },
+        {
+          "day": 5,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 5,
+          "hour": 6,
+          "commits": 2
+        },
+        {
+          "day": 5,
+          "hour": 7,
+          "commits": 8
+        },
+        {
+          "day": 5,
+          "hour": 8,
+          "commits": 12
+        },
+        {
+          "day": 5,
+          "hour": 9,
+          "commits": 9
+        },
+        {
+          "day": 5,
+          "hour": 10,
+          "commits": 9
+        },
+        {
+          "day": 5,
+          "hour": 11,
+          "commits": 14
+        },
+        {
+          "day": 5,
+          "hour": 12,
+          "commits": 8
+        },
+        {
+          "day": 5,
+          "hour": 13,
+          "commits": 10
+        },
+        {
+          "day": 5,
+          "hour": 14,
+          "commits": 10
+        },
+        {
+          "day": 5,
+          "hour": 15,
+          "commits": 14
+        },
+        {
+          "day": 5,
+          "hour": 16,
+          "commits": 13
+        },
+        {
+          "day": 5,
+          "hour": 17,
+          "commits": 10
+        },
+        {
+          "day": 5,
+          "hour": 18,
+          "commits": 9
+        },
+        {
+          "day": 5,
+          "hour": 19,
+          "commits": 7
+        },
+        {
+          "day": 5,
+          "hour": 20,
+          "commits": 18
+        },
+        {
+          "day": 5,
+          "hour": 21,
+          "commits": 11
+        },
+        {
+          "day": 5,
+          "hour": 22,
+          "commits": 9
+        },
+        {
+          "day": 5,
+          "hour": 23,
+          "commits": 10
+        },
+        {
+          "day": 6,
+          "hour": 0,
+          "commits": 5
+        },
+        {
+          "day": 6,
+          "hour": 1,
+          "commits": 2
+        },
+        {
+          "day": 6,
+          "hour": 2,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 3,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 4,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 5,
+          "commits": 0
+        },
+        {
+          "day": 6,
+          "hour": 6,
+          "commits": 2
+        },
+        {
+          "day": 6,
+          "hour": 7,
+          "commits": 4
+        },
+        {
+          "day": 6,
+          "hour": 8,
+          "commits": 6
+        },
+        {
+          "day": 6,
+          "hour": 9,
+          "commits": 12
+        },
+        {
+          "day": 6,
+          "hour": 10,
+          "commits": 9
+        },
+        {
+          "day": 6,
+          "hour": 11,
+          "commits": 15
+        },
+        {
+          "day": 6,
+          "hour": 12,
+          "commits": 8
+        },
+        {
+          "day": 6,
+          "hour": 13,
+          "commits": 10
+        },
+        {
+          "day": 6,
+          "hour": 14,
+          "commits": 11
+        },
+        {
+          "day": 6,
+          "hour": 15,
+          "commits": 7
+        },
+        {
+          "day": 6,
+          "hour": 16,
+          "commits": 12
+        },
+        {
+          "day": 6,
+          "hour": 17,
+          "commits": 8
+        },
+        {
+          "day": 6,
+          "hour": 18,
+          "commits": 8
+        },
+        {
+          "day": 6,
+          "hour": 19,
+          "commits": 8
+        },
+        {
+          "day": 6,
+          "hour": 20,
+          "commits": 14
+        },
+        {
+          "day": 6,
+          "hour": 21,
+          "commits": 11
+        },
+        {
+          "day": 6,
+          "hour": 22,
+          "commits": 13
+        },
+        {
+          "day": 6,
+          "hour": 23,
+          "commits": 7
+        }
+      ],
+      "busiest": {
+        "day": 2,
+        "hour": 21,
+        "commits": 20
+      },
+      "window": {
+        "start": 8,
+        "length": 14,
+        "end": 22
+      },
+      "hourShares": [
+        {
+          "hour": 0,
+          "share": 0.028169014084507043
+        },
+        {
+          "hour": 1,
+          "share": 0.011860637509266123
+        },
+        {
+          "hour": 2,
+          "share": 0.0029651593773165306
+        },
+        {
+          "hour": 3,
+          "share": 0
+        },
+        {
+          "hour": 4,
+          "share": 0
+        },
+        {
+          "hour": 5,
+          "share": 0
+        },
+        {
+          "hour": 6,
+          "share": 0.009636767976278725
+        },
+        {
+          "hour": 7,
+          "share": 0.031134173461823574
+        },
+        {
+          "hour": 8,
+          "share": 0.05707931801334322
+        },
+        {
+          "hour": 9,
+          "share": 0.05559673832468495
+        },
+        {
+          "hour": 10,
+          "share": 0.05263157894736842
+        },
+        {
+          "hour": 11,
+          "share": 0.07412898443291327
+        },
+        {
+          "hour": 12,
+          "share": 0.04373610081541883
+        },
+        {
+          "hour": 13,
+          "share": 0.05189028910303929
+        },
+        {
+          "hour": 14,
+          "share": 0.060044477390659746
+        },
+        {
+          "hour": 15,
+          "share": 0.05782060785767235
+        },
+        {
+          "hour": 16,
+          "share": 0.060044477390659746
+        },
+        {
+          "hour": 17,
+          "share": 0.04373610081541883
+        },
+        {
+          "hour": 18,
+          "share": 0.040770941438102296
+        },
+        {
+          "hour": 19,
+          "share": 0.056338028169014086
+        },
+        {
+          "hour": 20,
+          "share": 0.07190511489992588
+        },
+        {
+          "hour": 21,
+          "share": 0.07561156412157154
+        },
+        {
+          "hour": 22,
+          "share": 0.06597479614529281
+        },
+        {
+          "hour": 23,
+          "share": 0.04892512972572276
+        }
+      ],
+      "hoursTouched": 21,
+      "evening": 0.3061527057079318,
+      "weekend": 0.24017790956263899,
+      "combined": 0.5463306152705708
+    }
+  },
+  "shift": {
+    "linesX": 5.6064658048889,
+    "projectsX": 2.4,
+    "commitsX": 2.5141065830721003,
+    "outOfHoursX": 4.461700024709661,
+    "newLanguages": [
+      "Python",
+      "Go",
+      "Rust",
+      "Swift"
+    ],
+    "hoursShift": 42.388164
+  },
+  "score": {
+    "total": 78,
+    "parts": {
+      "output": {
+        "points": 34,
+        "max": 45
+      },
+      "projects": {
+        "points": 9,
+        "max": 15
+      },
+      "languages": {
+        "points": 10,
+        "max": 10
+      },
+      "hours": {
+        "points": 25,
+        "max": 30
+      }
+    },
+    "rung": 4,
+    "verdict": "I built a software factory",
+    "tag": "and it runs nights and weekends",
+    "ladder": [
+      {
+        "min": 0,
+        "verdict": "I'm still hand-crafting"
+      },
+      {
+        "min": 15,
+        "verdict": "I'm still prompting"
+      },
+      {
+        "min": 30,
+        "verdict": "I've got a pair programmer"
+      },
+      {
+        "min": 45,
+        "verdict": "I run a one-person dev shop"
+      },
+      {
+        "min": 65,
+        "verdict": "I built a software factory"
+      },
+      {
+        "min": 85,
+        "verdict": "I run a lights-out factory"
+      }
+    ]
+  },
+  "scales": {
+    "weekMax": 12487,
+    "projectMax": 43098,
+    "cellMax": 20,
+    "hourMax": 0.13224489795918368
+  }
+}

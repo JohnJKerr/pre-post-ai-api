@@ -1,3 +1,4 @@
+using Api.Models;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,5 +9,5 @@ namespace Api.Controllers;
 public class SampleReportController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get() => Ok(Report.From(SampleProfile.Generate()));
+    public IActionResult Get() => Ok(ReportResponse.From(Report.From(SampleProfile.Generate())));
 }
