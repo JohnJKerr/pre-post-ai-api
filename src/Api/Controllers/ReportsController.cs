@@ -3,6 +3,8 @@ using Api.Models;
 using Domain;
 using Domain.GitHub;
 using Domain.Repositories;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -31,6 +33,11 @@ public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IG
         catch (GitHubStatsPendingException)
         {
             return StatusCode(StatusCodes.Status503ServiceUnavailable, new ErrorResponse("GitHub is still crunching your repository stats. Try again in a minute."));
+        }
+        catch (GitHubTokenRejectedException)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Unauthorized(new ErrorResponse("Your GitHub sign-in has expired. Sign in again."));
         }
 
         var profile = Profile.Assemble(user.Handle, cutoff, activity, now);

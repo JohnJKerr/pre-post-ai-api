@@ -29,10 +29,11 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.AddSingleton(gitHub ?? new FakeGitHub());
         })).CreateClient());
 
-    internal HttpClient CreateBrowserSigningInWithGitHub() =>
+    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null) =>
         FromTheFrontEnd(WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
                 services.AddSingleton(TimeProvider.System);
+                services.AddSingleton(gitHub ?? new FakeGitHub());
                 services.PostConfigure<OAuthOptions>(GitHubSignIn.Scheme, options => options.Backchannel = new HttpClient(new FakeGitHubOAuth()));
             }))
             .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") }));

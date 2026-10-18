@@ -132,6 +132,7 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options) : IG
 
     private static async Task<T?> Read<T>(HttpResponseMessage response)
     {
+        if (response.StatusCode == HttpStatusCode.Unauthorized) throw new GitHubTokenRejectedException();
         response.EnsureSuccessStatusCode();
         return response.StatusCode == HttpStatusCode.NoContent ? default : await response.Content.ReadFromJsonAsync<T>();
     }

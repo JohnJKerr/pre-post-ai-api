@@ -31,6 +31,12 @@ internal class GivenTheGitHubApi
         return this;
     }
 
+    public GivenTheGitHubApi WithTheTokenExpiredBeforeFetching(string repo)
+    {
+        _responses[$"/repos/octo-dev/{repo}/stats/contributors"] = [Status(HttpStatusCode.Unauthorized)];
+        return this;
+    }
+
     public GivenTheGitHubApi WithEmptyRepo(string repo)
     {
         _responses[$"/repos/octo-dev/{repo}/stats/contributors"] = [Status(HttpStatusCode.NoContent)];
