@@ -13,6 +13,7 @@ namespace Api.Tests;
 public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public static readonly DateTimeOffset Now = new(2026, 10, 18, 9, 0, 0, TimeSpan.Zero);
+    public const string FrontEndOrigin = "https://shift.example";
 
     private readonly MongoDbContainer _mongo = new MongoDbBuilder().WithImage("mongo:8").Build();
 
@@ -39,6 +40,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.UseSetting("Mongo:ConnectionString", _mongo.GetConnectionString());
         builder.UseSetting("Mongo:Database", "pre-post-tests");
+        builder.UseSetting("FrontEnd:Origin", FrontEndOrigin);
         builder.UseSetting("GitHub:ClientId", "test-client-id");
         builder.UseSetting("GitHub:ClientSecret", "test-client-secret");
         builder.ConfigureTestServices(services =>

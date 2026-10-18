@@ -8,6 +8,7 @@ using Storage;
 using Storage.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+var frontEnd = FrontEnd.From(builder.Configuration);
 
 ClassMapRegistrar.Register();
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(builder.Configuration["Mongo:ConnectionString"]));
@@ -25,12 +26,19 @@ builder.Services.AddHttpClient<IGitHubMetadata, GitHubMetadata>(client =>
     client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
     client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
 });
+builder.Services.AddSingleton(frontEnd);
+builder.Services.AddCors(options => options.AddPolicy(FrontEnd.CorsPolicy, policy => policy
+    .WithOrigins(frontEnd.Origin)
+    .AllowCredentials()
+    .WithHeaders("Content-Type")
+    .WithMethods("GET", "POST")));
 builder.Services.AddGitHubSignIn(builder.Configuration);
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseCors(FrontEnd.CorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
