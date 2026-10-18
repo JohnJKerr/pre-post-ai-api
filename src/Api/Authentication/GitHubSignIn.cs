@@ -40,7 +40,7 @@ public static class GitHubSignIn
                 options.UserInformationEndpoint = "https://api.github.com/user";
                 options.Events.OnCreatingTicket = AddGitHubIdentity;
                 options.Events.OnTicketReceived = context => InstallTheAppFirst(context, appSlug);
-                options.Events.OnRemoteFailure = ReturnToTheFrontEnd;
+                options.Events.OnRemoteFailure = RecoverFromAFailedSignIn;
             });
 
         return services;
@@ -64,9 +64,15 @@ public static class GitHubSignIn
         context.HandleResponse();
     }
 
-    private static Task ReturnToTheFrontEnd(RemoteFailureContext context)
+    // An install that starts on GitHub's app page sends the user here without the state this
+    // handler created, so the callback fails. They've authorised the app, so signing in again
+    // returns straight away.
+    private static Task RecoverFromAFailedSignIn(RemoteFailureContext context)
     {
-        context.Response.Redirect(context.HttpContext.RequestServices.GetRequiredService<FrontEnd>().Origin + "/");
+        var installedFromGitHub = context.Request.Query["setup_action"] == "install";
+        context.Response.Redirect(installedFromGitHub
+            ? "/api/auth/sign-in?returnUrl=%2Fgenerate"
+            : context.HttpContext.RequestServices.GetRequiredService<FrontEnd>().Origin + "/");
         context.HandleResponse();
         return Task.CompletedTask;
     }

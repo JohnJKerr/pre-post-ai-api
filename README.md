@@ -27,7 +27,7 @@ dotnet user-secrets --project src/Api set GitHub:ClientSecret <app client secret
 dotnet run --project src/Api --launch-profile https
 ```
 
-The GitHub App needs one repository permission, **Metadata: read**, and a callback URL of `https://<host>/api/auth/callback`. A user who signs in without having installed the app is sent to its install page instead of being signed in. `FrontEnd:Origin` is the front end's origin (`http://localhost:5173` in Development).
+The GitHub App needs one repository permission, **Metadata: read**, and a callback URL of `https://<host>/api/auth/callback`. Turn on "Request user authorization (OAuth) during installation": a user who installs from the app's GitHub page returns to the callback, which restarts sign-in and lands them on the front end's `/generate`. A user who signs in without having installed the app is sent to its install page instead of being signed in. `FrontEnd:Origin` is the front end's origin (`http://localhost:5173` in Development).
 
 ## Endpoints
 
