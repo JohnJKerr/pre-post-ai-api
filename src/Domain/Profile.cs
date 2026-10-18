@@ -11,6 +11,8 @@ public record Profile(
     IReadOnlyList<Repo> Repos,
     PerEra<WindowActivity> Activity)
 {
+    public bool HasCommits => Activity.Pre.Weeks.Concat(Activity.Post.Weeks).Any(w => w.Commits > 0);
+
     public static Profile Assemble(long gitHubId, string handle, Cutoff cutoff, GitHubActivity activity, DateTimeOffset now)
     {
         var post = Window.After(cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));

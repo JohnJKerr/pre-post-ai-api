@@ -38,7 +38,7 @@ Behind a proxy or load balancer that ends TLS, list its address ranges in `Forwa
 | `GET /api/auth/sign-in?returnUrl=/generate` | Redirects to GitHub to authorise the app, then to `returnUrl` on the front end (its `/` if `returnUrl` isn't a local path or sign-in fails) |
 | `POST /api/auth/sign-out` | Ends the session (204) |
 | `GET /api/session` | 200 `{ handle }` or 401 |
-| `POST /api/reports` | Generates and saves the signed-in user's report (201, 401, 422, 503) |
+| `POST /api/reports` | Generates and saves the signed-in user's report (201, 401, 403, 415, 422, 503), or 204 without saving when they have no commits in either window |
 | `GET /api/reports/{handle}` | A saved report (200) or 404 |
 | `GET /api/sample-report` | The seeded sample report |
 

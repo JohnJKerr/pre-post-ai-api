@@ -174,6 +174,32 @@ public class WhenAssemblingAProfile
     }
 
     [Fact]
+    public void Commits_in_either_window_count_as_activity()
+    {
+        // Arrange
+        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo("legacy").WithAuthorWeek(PreWeek, added: 300, commits: 3));
+
+        // Act
+        var profile = activity.Assemble();
+
+        // Assert
+        profile.HasCommits.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Commits_only_outside_both_windows_are_no_activity()
+    {
+        // Arrange
+        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo("legacy").WithAuthorWeek(BeforeBothWindows, added: 300, commits: 3));
+
+        // Act
+        var profile = activity.Assemble();
+
+        // Assert
+        profile.HasCommits.ShouldBeFalse();
+    }
+
+    [Fact]
     public void Active_days_are_counted_within_the_window()
     {
         // Arrange

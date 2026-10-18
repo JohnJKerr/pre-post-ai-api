@@ -41,6 +41,8 @@ public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IG
         }
 
         var profile = Profile.Assemble(user.Id, user.Handle, cutoff, activity, now);
+        if (!profile.HasCommits) return NoContent();
+
         await profiles.Save(profile);
 
         return Created($"/api/reports/{profile.Handle}", ReportResponse.From(Report.From(profile)));

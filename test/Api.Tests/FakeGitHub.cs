@@ -3,8 +3,10 @@ using Domain.GitHub;
 
 namespace Api.Tests;
 
-internal class FakeGitHub(Exception? failure = null) : IGitHubMetadata
+internal class FakeGitHub(Exception? failure = null, bool hasCommits = true) : IGitHubMetadata
 {
+    public static FakeGitHub WithNoCommits() => new(hasCommits: false);
+
     public static FakeGitHub StillComputingStats() => new(new GitHubStatsPendingException("octo-dev/agent-runner"));
 
     public static FakeGitHub RejectingTheToken() => new(new GitHubTokenRejectedException());
@@ -19,6 +21,6 @@ internal class FakeGitHub(Exception? failure = null) : IGitHubMetadata
         [new PunchCell(2, 21, 25)]);
 
     public Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to) => failure is null
-        ? Task.FromResult(new GitHubActivity([Repo], [new DateOnly(2026, 6, 8)]))
+        ? Task.FromResult(hasCommits ? new GitHubActivity([Repo], [new DateOnly(2026, 6, 8)]) : new GitHubActivity([], []))
         : throw failure;
 }
