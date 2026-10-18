@@ -4,6 +4,8 @@ public record Window(DateOnly Start, int Weeks)
 {
     public DateOnly End => Start.AddDays(Weeks * 7 - 1);
 
+    public IEnumerable<DateOnly> WeekStarts => Enumerable.Range(0, Weeks).Select(k => Start.AddDays(k * 7));
+
     public static Window After(DateOnly cutoff, DateOnly today)
     {
         var cutoffWeekStart = WeekStart(cutoff);
@@ -12,6 +14,8 @@ public record Window(DateOnly Start, int Weeks)
     }
 
     public Window Preceding() => this with { Start = Start.AddDays(-Weeks * 7) };
+
+    public bool Contains(DateOnly date) => date >= Start && date <= End;
 
     public static DateOnly WeekStart(DateOnly date) => date.AddDays(-(int)date.DayOfWeek);
 }
