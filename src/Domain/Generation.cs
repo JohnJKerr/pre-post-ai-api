@@ -20,6 +20,9 @@ public record Generation(
 
     public Generation Complete() => this with { Status = GenerationStatus.Ready };
 
+    // No commits in either window: nothing is saved, because an empty report isn't worth showing.
+    public Generation FindNothingToCompare() => this with { Status = GenerationStatus.Empty };
+
     public Generation Fail(string message) => this with { Status = GenerationStatus.Failed, Message = message };
 
     public Generation AsOf(DateTimeOffset now) =>

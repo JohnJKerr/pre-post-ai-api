@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using Api.Models;
-using Microsoft.Extensions.Time.Testing;
 using Shouldly;
 
 namespace Api.Tests;
@@ -12,13 +11,12 @@ public class WhenSomeoneTakesARenamedUsersOldHandle(ApiFactory factory)
     public async Task The_handle_shows_the_new_owner_s_report()
     {
         // Arrange
-        await factory.CreateClientFor(FakeApiUser.SignedInAs("passed-on", gitHubId: 8_001)).PostAsJsonAsync("/api/reports", new { });
-
-        var aDayLater = new FakeTimeProvider(ApiFactory.Now.AddDays(1));
+        var formerOwner = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("passed-on", 8_001));
+        await formerOwner.WaitForTheGeneration(await formerOwner.SignInWithGitHub());
+        var newOwner = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("passed-on", 8_002));
 
         // Act
-        await factory.CreateClientFor(FakeApiUser.SignedInAs("passed-on", gitHubId: 8_002), clock: aDayLater)
-            .PostAsJsonAsync("/api/reports", new { cutoff = "2022-11-30" });
+        await newOwner.WaitForTheGeneration(await newOwner.SignInWithGitHub(cutoff: "2022-11-30"));
 
         // Assert
         (await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/passed-on"))!.Cutoff.Label.ShouldBe("ChatGPT launch");

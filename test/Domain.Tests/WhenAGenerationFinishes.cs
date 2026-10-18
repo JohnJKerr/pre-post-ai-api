@@ -18,6 +18,19 @@ public class WhenAGenerationFinishes
     }
 
     [Fact]
+    public void A_generation_with_no_commits_to_compare_is_empty()
+    {
+        // Arrange
+        var generation = new GivenAGeneration().Build();
+
+        // Act
+        var finished = generation.FindNothingToCompare();
+
+        // Assert
+        finished.Status.ShouldBe(GenerationStatus.Empty);
+    }
+
+    [Fact]
     public void A_failed_generation_is_failed()
     {
         // Arrange

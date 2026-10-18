@@ -10,25 +10,25 @@ public class WhenSigningInWithoutInstallingTheApp(ApiFactory factory)
     public async Task They_are_sent_to_install_it()
     {
         // Arrange
-        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.WithoutTheAppInstalled());
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.WithoutTheAppInstalled("uninstalled-dev"));
 
         // Act
-        var callback = await browser.SignInWithGitHub(returnUrl: "/generate");
+        var callback = await browser.SignInWithGitHub();
 
         // Assert
         callback.Headers.Location!.ToString().ShouldBe("https://github.com/apps/pre-post-test/installations/new");
     }
 
     [Fact]
-    public async Task They_are_not_signed_in()
+    public async Task No_report_is_generated()
     {
         // Arrange
-        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.WithoutTheAppInstalled());
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.WithoutTheAppInstalled("uninstalled-dev"));
 
         // Act
-        await browser.SignInWithGitHub(returnUrl: "/generate");
+        await browser.SignInWithGitHub();
 
         // Assert
-        (await browser.GetAsync("/api/session")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        (await factory.CreateClient().GetAsync("/api/reports/uninstalled-dev")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }

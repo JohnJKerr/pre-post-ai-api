@@ -9,55 +9,84 @@ namespace Api.Tests;
 public class WhenGitHubSendsTheUserBack(ApiFactory factory)
 {
     [Fact]
-    public async Task They_return_to_the_front_end_page_they_started_from()
+    public async Task They_are_sent_to_watch_their_report_being_generated()
     {
         // Arrange
-        var browser = factory.CreateBrowserSigningInWithGitHub();
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("returning-dev", 10_001));
 
         // Act
-        var callback = await browser.SignInWithGitHub(returnUrl: "/generate");
+        var callback = await browser.SignInWithGitHub();
 
         // Assert
-        callback.Headers.Location!.ToString().ShouldBe($"{ApiFactory.FrontEndOrigin}/generate");
+        callback.Headers.Location!.ToString().ShouldStartWith($"{ApiFactory.FrontEndOrigin}/generating?id=");
     }
 
     [Fact]
-    public async Task A_return_url_on_another_site_takes_them_to_the_front_end_s_home_page()
+    public async Task They_are_not_given_a_session_only_the_sign_in_cookie_is_cleared()
     {
         // Arrange
-        var browser = factory.CreateBrowserSigningInWithGitHub();
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("returning-dev", 10_001));
 
         // Act
-        var callback = await browser.SignInWithGitHub(returnUrl: "https://evil.example");
+        var callback = await browser.SignInWithGitHub();
 
         // Assert
-        callback.Headers.Location!.ToString().ShouldBe($"{ApiFactory.FrontEndOrigin}/");
+        callback.Headers.GetValues("Set-Cookie").ShouldAllBe(cookie => cookie.Contains("expires=Thu, 01 Jan 1970"));
     }
 
     [Fact]
-    public async Task They_are_signed_in_as_their_GitHub_login()
+    public async Task Their_report_is_generated_in_the_background()
     {
         // Arrange
-        var browser = factory.CreateBrowserSigningInWithGitHub();
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("background-dev", 10_002));
+        var callback = await browser.SignInWithGitHub();
 
         // Act
-        await browser.SignInWithGitHub();
+        var generation = await browser.WaitForTheGeneration(callback);
 
         // Assert
-        (await browser.GetFromJsonAsync<SessionResponse>("/api/session"))!.Handle.ShouldBe("octo-dev");
+        generation.Status.ShouldBe("ready");
     }
 
     [Fact]
-    public async Task They_can_generate_their_report()
+    public async Task Their_report_is_saved_for_anyone_to_view()
     {
         // Arrange
-        var browser = factory.CreateBrowserSigningInWithGitHub();
-        await browser.SignInWithGitHub();
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("viewable-dev", 10_003));
+        await browser.WaitForTheGeneration(await browser.SignInWithGitHub());
 
         // Act
-        var response = await browser.PostAsJsonAsync("/api/reports", new { });
+        var response = await factory.CreateClient().GetAsync("/api/reports/viewable-dev");
 
         // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Their_report_is_built_from_their_GitHub_activity()
+    {
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("active-dev", 10_004));
+        await browser.WaitForTheGeneration(await browser.SignInWithGitHub());
+
+        // Act
+        var report = await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/active-dev");
+
+        // Assert
+        report!.Post.Added.ShouldBe(2_000);
+    }
+
+    [Fact]
+    public async Task Their_report_compares_either_side_of_Claude_Opus_4_5_by_default()
+    {
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("default-dev", 10_005));
+        await browser.WaitForTheGeneration(await browser.SignInWithGitHub());
+
+        // Act
+        var report = await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/default-dev");
+
+        // Assert
+        report!.Cutoff.ShouldBe(new CutoffResponse("Claude Opus 4.5", "2025-11-24"));
     }
 }

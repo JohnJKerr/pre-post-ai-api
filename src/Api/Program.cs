@@ -1,5 +1,6 @@
 using Api;
 using Api.Authentication;
+using Api.Generating;
 using Domain.GitHub;
 using Domain.Repositories;
 using External.GitHub;
@@ -21,8 +22,8 @@ builder.Services.AddSingleton<IProfileRepository, MongoProfileRepository>();
 builder.Services.AddSingleton<IGenerationRepository, MongoGenerationRepository>();
 builder.Services.AddDataProtection().SetApplicationName("pre-post-ai-api").PersistKeysToMongo();
 builder.Services.AddSingleton(TimeProvider.System);
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IApiUser, ApiUser>();
+builder.Services.AddSingleton<GenerationQueue>();
+builder.Services.AddHostedService<ReportGenerator>();
 builder.Services.AddSingleton(GitHubOptions.Default);
 builder.Services.AddHttpClient<IGitHubMetadata, GitHubMetadata>(client =>
 {

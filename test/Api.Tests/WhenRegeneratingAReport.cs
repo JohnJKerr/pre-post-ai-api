@@ -11,13 +11,13 @@ public class WhenRegeneratingAReport(ApiFactory factory)
     public async Task The_earlier_report_is_replaced()
     {
         // Arrange
-        var client = factory.CreateClientFor(FakeApiUser.SignedInAs("Second-Go"));
-        await client.PostAsJsonAsync("/api/reports", new { });
+        var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("Second-Go", 10_501));
+        await browser.WaitForTheGeneration(await browser.SignInWithGitHub());
 
         // Act
-        await client.PostAsJsonAsync("/api/reports", new { cutoff = "2022-11-30" });
+        await browser.WaitForTheGeneration(await browser.SignInWithGitHub(cutoff: "2022-11-30"));
 
         // Assert
-        (await client.GetFromJsonAsync<ReportResponse>("/api/reports/second-go"))!.Cutoff.Label.ShouldBe("ChatGPT launch");
+        (await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/second-go"))!.Cutoff.Label.ShouldBe("ChatGPT launch");
     }
 }
