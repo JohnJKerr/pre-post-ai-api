@@ -47,4 +47,4 @@ Because the job can wait as long as it needs, GitHub's 202 "still computing" is 
 
 ## Data Protection keys stay in memory
 
-ASP.NET Data Protection now guards only the OAuth state of a sign-in under way, for about 15 minutes, so its keys are ephemeral. A restart in the middle of a sign-in sends that user to the front end's home page to try again. With more than one instance, a sign-in must return to the instance that started it (sticky sessions); otherwise persist the keys again.
+ASP.NET Data Protection now guards only the OAuth state of a sign-in under way, for about 15 minutes, so its keys are ephemeral. A restart in the middle of a sign-in sends that user to the front end's `/?error=sign-in-failed` to try again. With more than one instance, a sign-in must return to the instance that started it (sticky sessions); otherwise persist the keys again.

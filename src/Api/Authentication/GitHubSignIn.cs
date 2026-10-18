@@ -107,7 +107,7 @@ public static class GitHubSignIn
         var installedFromGitHub = context.Request.Query["setup_action"] == "install";
         context.Response.Redirect(installedFromGitHub
             ? "/api/auth/sign-in"
-            : context.HttpContext.RequestServices.GetRequiredService<FrontEnd>().Origin + "/");
+            : context.HttpContext.RequestServices.GetRequiredService<FrontEnd>().Origin + "/?error=sign-in-failed");
         context.HandleResponse();
         return Task.CompletedTask;
     }

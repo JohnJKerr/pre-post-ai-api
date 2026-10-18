@@ -35,7 +35,7 @@ Behind a proxy or load balancer that ends TLS, list its address ranges in `Forwa
 
 | Method and path | Purpose |
 |---|---|
-| `GET /api/auth/sign-in?cutoff=YYYY-MM-DD` | Starts generating the user's report. Redirects to GitHub, then to the front end's `/generating?id={id}`. The cut-off is optional (default 2025-11-24). If it isn't a date, the API redirects to `/generate?error=invalid-cutoff`; if it's less than a full week ago, to `/generate?error=cutoff-too-recent`. A failed sign-in goes to `/`. |
+| `GET /api/auth/sign-in?cutoff=YYYY-MM-DD` | Starts generating the user's report. Redirects to GitHub, then to the front end's `/generating?id={id}`. The cut-off is optional (default 2025-11-24). If it isn't a date, the API redirects to `/generate?error=invalid-cutoff`; if it's less than a full week ago, to `/generate?error=cutoff-too-recent`. A failed sign-in goes to `/?error=sign-in-failed`. |
 | `GET /api/generations/{id}` | `{ status, cutoff: { label, date }, handle, message }`, where `status` is `pending`, `ready` (`handle` names the report), `empty` (no commits in either window, nothing saved) or `failed` (`message` says why). 404 if unknown. |
 | `GET /api/reports/{handle}` | A saved report (200) or 404 |
 | `GET /api/sample-report` | The seeded sample report |
