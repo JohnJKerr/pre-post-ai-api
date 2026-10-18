@@ -5,6 +5,7 @@ using Domain.Repositories;
 using External.GitHub;
 using MongoDB.Driver;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Storage;
 using Storage.DataProtection;
 using Storage.Repositories;
@@ -29,6 +30,16 @@ builder.Services.AddHttpClient<IGitHubMetadata, GitHubMetadata>(client =>
     client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
     client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
 });
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    // TLS can end at a load balancer. Without this the OAuth redirect_uri would be http and GitHub
+    // would reject it. Only proxies in ForwardedHeaders:KnownNetworks (and loopback) are trusted.
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+    foreach (var network in builder.Configuration.GetSection("ForwardedHeaders:KnownNetworks").Get<string[]>() ?? [])
+    {
+        options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(network));
+    }
+});
 builder.Services.AddSingleton(frontEnd);
 builder.Services.AddCors(options => options.AddPolicy(FrontEnd.CorsPolicy, policy => policy
     .WithOrigins(frontEnd.Origin)
@@ -40,6 +51,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseCors(FrontEnd.CorsPolicy);
 app.UseAuthentication();

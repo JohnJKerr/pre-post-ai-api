@@ -29,6 +29,8 @@ dotnet run --project src/Api --launch-profile https
 
 The GitHub App needs one repository permission, **Metadata: read**, and a callback URL of `https://<host>/api/auth/callback`. Turn on "Request user authorization (OAuth) during installation": a user who installs from the app's GitHub page returns to the callback, which restarts sign-in and lands them on the front end's `/generate`. A user who signs in without having installed the app is sent to its install page instead of being signed in. `FrontEnd:Origin` is the front end's origin (`http://localhost:5173` in Development).
 
+Behind a proxy or load balancer that ends TLS, list its address ranges in `ForwardedHeaders:KnownNetworks` (for example `["10.0.0.0/8"]`). The API then trusts its `X-Forwarded-Proto` and `X-Forwarded-Host`, so the OAuth `redirect_uri` is the public https address.
+
 ## Endpoints
 
 | Method and path | Purpose |
