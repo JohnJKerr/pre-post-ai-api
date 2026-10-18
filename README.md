@@ -40,3 +40,5 @@ The GitHub App needs one repository permission, **Metadata: read**, and a callba
 | `GET /api/sample-report` | The seeded sample report |
 
 Errors are `{ "message": string }`, written to be shown to people.
+
+Both POSTs answer 403 unless their `Origin` header is `FrontEnd:Origin`, and `POST /api/reports` takes only `application/json` (415 otherwise).

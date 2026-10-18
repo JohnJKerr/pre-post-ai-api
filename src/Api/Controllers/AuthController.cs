@@ -17,6 +17,7 @@ public class AuthController(FrontEnd frontEnd) : ControllerBase
     }
 
     [HttpPost("sign-out")]
+    [FromTheFrontEnd]
     public async Task<IActionResult> EndSession()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

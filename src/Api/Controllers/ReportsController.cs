@@ -12,6 +12,7 @@ namespace Api.Controllers;
 public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IGitHubMetadata gitHub, TimeProvider time) : ControllerBase
 {
     [HttpPost]
+    [FromTheFrontEnd]
     public async Task<IActionResult> Generate(GenerateReportRequest request)
     {
         if (apiUser.User is not { } user) return Unauthorized(new ErrorResponse("Sign in with GitHub to generate your report."));

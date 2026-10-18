@@ -21,20 +21,27 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public new Task DisposeAsync() => _mongo.DisposeAsync().AsTask();
 
+    // Clients send the front end's Origin, as a browser on the front end would.
     internal HttpClient CreateClientFor(IApiUser apiUser, IGitHubMetadata? gitHub = null) =>
-        WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
+        FromTheFrontEnd(WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
         {
             services.AddSingleton(apiUser);
             services.AddSingleton(gitHub ?? new FakeGitHub());
-        })).CreateClient();
+        })).CreateClient());
 
     internal HttpClient CreateBrowserSigningInWithGitHub() =>
-        WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
+        FromTheFrontEnd(WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
                 services.AddSingleton(TimeProvider.System);
                 services.PostConfigure<OAuthOptions>(GitHubSignIn.Scheme, options => options.Backchannel = new HttpClient(new FakeGitHubOAuth()));
             }))
-            .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") });
+            .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") }));
+
+    private static HttpClient FromTheFrontEnd(HttpClient client)
+    {
+        client.DefaultRequestHeaders.Add("Origin", FrontEndOrigin);
+        return client;
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
