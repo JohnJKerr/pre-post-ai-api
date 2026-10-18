@@ -16,30 +16,35 @@ The brief makes a repo punch-card eligible when the user wrote at least 90% of i
 
 The reference implementation uses `Math.round`, which rounds halves towards positive infinity. `Rounding.HalfUp` does the same, because .NET's default banker's rounding would move scores and line counts.
 
-## 503 while GitHub is still computing stats
-
-GitHub answers `stats/*` with 202 while it computes them. The adapter retries every 2 seconds, up to 15 attempts per call. If a repo still isn't ready, `POST /api/reports` answers 503 with a message to try again. The front end retries any status other than 401, 404 and 422 twice, and GitHub caches stats once computed, so a retry usually succeeds. POST stays blocking for now. Switching to 202 plus polling is still open.
-
-## The session cookie carries the GitHub user token
-
-Sign-in is the GitHub App's user authorisation flow. The encrypted, HttpOnly session cookie holds the user's login and their user access token, which `POST /api/reports` uses to read their metadata. A GitHub App user token takes no scopes: it can do only what the app's permissions allow.
-
-## The session ends when the GitHub token does
-
-Expiring GitHub App user tokens last 8 hours. Rather than keep the refresh token (valid for 6 months) in the cookie and refresh it, the session expires with the access token and doesn't slide. Generating a report is a one-off, so signing in again after 8 hours costs little, and the cookie never holds a long-lived credential. If GitHub still rejects a token, for example after the user revokes the app, `POST /api/reports` ends the session and answers 401.
-
-## The cookie's encryption keys live in MongoDB
-
-ASP.NET Data Protection encrypts the session cookie, and with it the GitHub token. Its keys are kept in the `dataProtectionKeys` collection, under the application name `pre-post-ai-api`, so a restart or a second instance can still read sessions. The keys aren't encrypted at rest: anyone who can read the database can read session cookies. Before production, consider `ProtectKeysWithCertificate` or a cloud key vault.
-
-The tests run on a machine whose disk key ring (`~/.aspnet/DataProtection-Keys`) is shared by every test host, so "a session survives a restart" passes without Mongo. A second test proves the keys come from the database: a host using another database can't read the session.
-
 ## Profiles are keyed by GitHub user id
 
-A profile's `_id` is the numeric GitHub user id from `/user`, carried in the session as the `github_id` claim. Generating again replaces that user's profile and updates its handle, so after a rename the old handle returns 404. `GET /api/reports/{handle}` still looks up by handle (case-insensitive). The handle index isn't unique: someone can take a renamed user's old name before that user generates again, and then the most recently generated profile holds the handle.
+A profile's `_id` is the numeric GitHub user id from `/user`, read at sign-in. Generating again replaces that user's profile and updates its handle, so after a rename the old handle returns 404. `GET /api/reports/{handle}` still looks up by handle (case-insensitive). The handle index isn't unique: someone can take a renamed user's old name before that user generates again, and then the most recently generated profile holds the handle.
 
 Profiles saved before this change have an ObjectId `_id` and no `gitHubId`. A database that holds them also has the old unique `handle_1` index, which must be dropped, as should those profiles: their owners regenerate.
 
-## Repos are skipped, not fetched in parallel
+## Reports are generated in the background after sign-in, with no session
 
-`/user/repos` lists every repo the user can see, and each one costs three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. The remaining calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+The only thing that needs authenticating is gathering a user's metadata, and the GitHub user token from the OAuth callback is all that takes. So signing in doesn't start a session:
+
+1. `GET /api/auth/sign-in?cutoff=` checks the cut-off, then sends the user to GitHub.
+2. The callback saves a pending `Generation` under an unguessable id and puts the user's token on an in-memory queue. It then redirects to the front end's `/generating?id=`.
+3. A hosted service (`ReportGenerator`) fetches the metadata, saves the profile, and marks the generation `ready`, `empty` (no commits in either window, nothing saved) or `failed` with a message.
+4. The front end polls `GET /api/generations/{id}`.
+
+The token never leaves the back end and is never stored. Rejected alternatives:
+- **A session cookie holding the token:** needs persisted encryption keys, CSRF checks and expiry handling.
+- **A JWT of our own:** still needs a signing key, and it would carry GitHub's token.
+- **Giving the token to the front end:** puts a credential that can list private repo names within reach of any XSS.
+- **Hangfire:** serialises job arguments, and so the token, into its store.
+
+The queue is a bounded `Channel` read by four workers. GitHub's secondary rate limits are per token, so different users' jobs can run at once while each job's calls stay sequential. A restart loses jobs in flight, which is the intended failure, because the token is gone. A generation still pending after 30 minutes reads as failed.
+
+Because the job can wait as long as it needs, GitHub's 202 "still computing" is retried within the job. If a repo still isn't ready after 15 attempts, the generation fails and asks the user to sign in again in a minute.
+
+## Repos are skipped rather than fetched in parallel
+
+`/user/repos` lists every repo the user can see, and each one costs three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+
+## Data Protection keys stay in memory
+
+ASP.NET Data Protection now guards only the OAuth state of a sign-in under way, for about 15 minutes, so its keys are ephemeral. A restart in the middle of a sign-in sends that user to the front end's home page to try again. With more than one instance, a sign-in must return to the instance that started it (sticky sessions); otherwise persist the keys again.
