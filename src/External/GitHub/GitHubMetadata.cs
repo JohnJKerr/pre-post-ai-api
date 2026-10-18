@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Domain;
@@ -18,8 +19,8 @@ public class GitHubMetadata(HttpClient http, GitHubOptions options) : IGitHubMet
 
     private async Task<RepoMetadata> MetadataFor(GitHubUser user, RepoResponse repo)
     {
-        var contributors = await Get<ContributorResponse[]>(user, $"/repos/{repo.FullName}/stats/contributors") ?? [];
-        var punchCard = await Get<int[][]>(user, $"/repos/{repo.FullName}/stats/punch_card") ?? [];
+        var contributors = await GetStats<ContributorResponse[]>(user, $"/repos/{repo.FullName}/stats/contributors") ?? [];
+        var punchCard = await GetStats<int[][]>(user, $"/repos/{repo.FullName}/stats/punch_card") ?? [];
         var languages = await Get<Dictionary<string, long>>(user, $"/repos/{repo.FullName}/languages") ?? [];
         var author = contributors.FirstOrDefault(c => string.Equals(c.Author?.Login, user.Handle, StringComparison.OrdinalIgnoreCase));
 
@@ -36,12 +37,35 @@ public class GitHubMetadata(HttpClient http, GitHubOptions options) : IGitHubMet
     private static Week WeekFrom(ContributorWeekResponse week) =>
         new(DateOnly.FromDateTime(DateTimeOffset.FromUnixTimeSeconds(week.W).UtcDateTime), week.A, week.D, week.C);
 
+    private async Task<T?> GetStats<T>(GitHubUser user, string path)
+    {
+        for (var attempt = 1; attempt <= options.StatsAttempts; attempt++)
+        {
+            using var response = await Send(user, path);
+            if (response.StatusCode != HttpStatusCode.Accepted) return await Read<T>(response);
+
+            await Task.Delay(options.StatsRetryDelay);
+        }
+
+        throw new GitHubStatsPendingException(path);
+    }
+
     private async Task<T?> Get<T>(GitHubUser user, string path)
+    {
+        using var response = await Send(user, path);
+        return await Read<T>(response);
+    }
+
+    private async Task<HttpResponseMessage> Send(GitHubUser user, string path)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, path);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.AccessToken);
-        using var response = await http.SendAsync(request);
+        return await http.SendAsync(request);
+    }
+
+    private static async Task<T?> Read<T>(HttpResponseMessage response)
+    {
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<T>();
+        return response.StatusCode == HttpStatusCode.NoContent ? default : await response.Content.ReadFromJsonAsync<T>();
     }
 }

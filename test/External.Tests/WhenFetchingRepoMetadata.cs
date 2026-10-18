@@ -1,6 +1,5 @@
 using Domain;
 using Domain.GitHub;
-using External.GitHub;
 using Shouldly;
 
 namespace External.Tests;
@@ -10,11 +9,7 @@ public class WhenFetchingRepoMetadata : IAsyncLifetime
     private readonly FakeGitHubApi _api = new GivenTheGitHubApi().Build();
     private GitHubActivity _activity = null!;
 
-    public async Task InitializeAsync()
-    {
-        var gitHub = new GitHubMetadata(new HttpClient(_api) { BaseAddress = new Uri("https://api.github.com") }, GitHubOptions.NoDelay);
-        _activity = await gitHub.Fetch(new GitHubUser("octo-dev", "user-token"), new DateOnly(2024, 12, 29), new DateOnly(2026, 10, 17));
-    }
+    public async Task InitializeAsync() => _activity = await GitHubClient.FetchFrom(_api);
 
     public Task DisposeAsync() => Task.CompletedTask;
 
