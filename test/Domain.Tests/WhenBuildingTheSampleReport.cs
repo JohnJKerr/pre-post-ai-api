@@ -23,4 +23,24 @@ public class WhenBuildingTheSampleReport
 
     [Fact]
     public void Post_has_1_604_commits() => _report.Post.Commits.ShouldBe(1_604);
+
+    [Fact]
+    public void Pre_has_5_projects() => _report.Pre.ProjectCount.ShouldBe(5);
+
+    [Fact]
+    public void Pre_started_2_projects() => _report.Pre.Started.ShouldBe(2);
+
+    [Fact]
+    public void Post_has_12_projects() => _report.Post.ProjectCount.ShouldBe(12);
+
+    [Fact]
+    public void Post_started_10_projects() => _report.Post.Started.ShouldBe(10);
+
+    [Fact]
+    public void Projects_are_ordered_by_lines_descending() =>
+        _report.Post.Projects.Select(p => p.Lines).ShouldBeInOrder(SortDirection.Descending);
+
+    [Fact]
+    public void A_project_gets_its_share_of_the_window_s_lines() =>
+        _report.Pre.Projects.ShouldContain(new Project("invoice-api", 18_611));
 }
