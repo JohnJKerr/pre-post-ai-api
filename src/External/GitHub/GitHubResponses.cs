@@ -6,7 +6,8 @@ internal record RepoResponse(
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("full_name")] string FullName,
     [property: JsonPropertyName("private")] bool Private,
-    [property: JsonPropertyName("created_at")] DateTimeOffset CreatedAt);
+    [property: JsonPropertyName("created_at")] DateTimeOffset CreatedAt,
+    [property: JsonPropertyName("pushed_at")] DateTimeOffset? PushedAt);
 
 internal record ContributorResponse(
     [property: JsonPropertyName("author")] AuthorResponse? Author,

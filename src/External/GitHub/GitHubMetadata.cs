@@ -24,10 +24,15 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options) : IG
     {
         var repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100");
         var metadata = new List<RepoMetadata>();
-        foreach (var repo in repos) metadata.Add(await MetadataFor(user, repo));
+        foreach (var repo in repos.Where(r => PushedSince(r, from))) metadata.Add(await MetadataFor(user, repo));
 
         return new GitHubActivity(metadata, await ContributionDays(user, from, to));
     }
+
+    // Each repo costs three calls, made one after another as GitHub asks. A repo nobody has pushed
+    // to since the pre window started can't have activity in either window.
+    private static bool PushedSince(RepoResponse repo, DateOnly from) =>
+        repo.PushedAt is { } pushedAt && DateOnly.FromDateTime(pushedAt.UtcDateTime) >= from;
 
     private async Task<IReadOnlyList<DateOnly>> ContributionDays(GitHubUser user, DateOnly from, DateOnly to)
     {

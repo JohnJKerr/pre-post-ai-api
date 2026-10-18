@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json.Nodes;
 
 namespace External.Tests;
 
@@ -57,6 +58,17 @@ internal class GivenTheGitHubApi
         }];
         Serving(secondPage, "user-repos-page-2.json");
         return WithEmptyRepo("old-tool");
+    }
+
+    public GivenTheGitHubApi WithARepoLastPushedBeforeBothWindows(string repo)
+    {
+        var repos = JsonNode.Parse(File.ReadAllText("Fixtures/user-repos.json"))!.AsArray();
+        repos.Add(JsonNode.Parse($$"""
+            { "id": 9, "name": "{{repo}}", "full_name": "octo-dev/{{repo}}", "private": false, "owner": { "login": "octo-dev" },
+              "created_at": "2018-05-01T00:00:00Z", "pushed_at": "2024-12-28T23:59:59Z" }
+            """));
+        _responses["/user/repos?per_page=100"] = [Json(repos.ToJsonString())];
+        return this;
     }
 
     public FakeGitHubApi Build() => new(_responses.ToDictionary(r => r.Key, r => new Queue<Func<HttpResponseMessage>>(r.Value)));

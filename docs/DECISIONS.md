@@ -39,3 +39,7 @@ The tests run on a machine whose disk key ring (`~/.aspnet/DataProtection-Keys`)
 A profile's `_id` is the numeric GitHub user id from `/user`, carried in the session as the `github_id` claim. Generating again replaces that user's profile and updates its handle, so after a rename the old handle returns 404. `GET /api/reports/{handle}` still looks up by handle (case-insensitive). The handle index isn't unique: someone can take a renamed user's old name before that user generates again, and then the most recently generated profile holds the handle.
 
 Profiles saved before this change have an ObjectId `_id` and no `gitHubId`. A database that holds them also has the old unique `handle_1` index, which must be dropped, as should those profiles: their owners regenerate.
+
+## Repos are skipped, not fetched in parallel
+
+`/user/repos` lists every repo the user can see, and each one costs three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. The remaining calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
