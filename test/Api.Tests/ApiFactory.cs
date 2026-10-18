@@ -14,6 +14,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public static readonly DateTimeOffset Now = new(2026, 10, 18, 9, 0, 0, TimeSpan.Zero);
     public const string FrontEndOrigin = "https://shift.example";
+    private const string Database = "pre-post-tests";
 
     private readonly MongoDbContainer _mongo = new MongoDbBuilder().WithImage("mongo:8").Build();
 
@@ -30,8 +31,9 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         })).CreateClient());
 
     // The browser keeps real cookies, so the server's clock must start at the real time.
-    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null, TimeProvider? clock = null, FakeGitHubOAuth? gitHubOAuth = null) =>
-        FromTheFrontEnd(WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
+    internal HttpClient CreateBrowserSigningInWithGitHub(
+        IGitHubMetadata? gitHub = null, TimeProvider? clock = null, FakeGitHubOAuth? gitHubOAuth = null, string database = Database) =>
+        FromTheFrontEnd(WithWebHostBuilder(builder => builder.UseSetting("Mongo:Database", database).ConfigureTestServices(services =>
             {
                 services.AddSingleton(clock ?? TimeProvider.System);
                 services.AddSingleton(gitHub ?? new FakeGitHub());
@@ -48,7 +50,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting("Mongo:ConnectionString", _mongo.GetConnectionString());
-        builder.UseSetting("Mongo:Database", "pre-post-tests");
+        builder.UseSetting("Mongo:Database", Database);
         builder.UseSetting("FrontEnd:Origin", FrontEndOrigin);
         builder.UseSetting("GitHub:AppSlug", "pre-post-test");
         builder.UseSetting("GitHub:ClientId", "test-client-id");

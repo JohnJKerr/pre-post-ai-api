@@ -27,3 +27,9 @@ Sign-in is the GitHub App's user authorisation flow. The encrypted, HttpOnly ses
 ## The session ends when the GitHub token does
 
 Expiring GitHub App user tokens last 8 hours. Rather than keep the refresh token (valid for 6 months) in the cookie and refresh it, the session expires with the access token and doesn't slide. Generating a report is a one-off, so signing in again after 8 hours costs little, and the cookie never holds a long-lived credential. If GitHub still rejects a token, for example after the user revokes the app, `POST /api/reports` ends the session and answers 401.
+
+## The cookie's encryption keys live in MongoDB
+
+ASP.NET Data Protection encrypts the session cookie, and with it the GitHub token. Its keys are kept in the `dataProtectionKeys` collection, under the application name `pre-post-ai-api`, so a restart or a second instance can still read sessions. The keys aren't encrypted at rest: anyone who can read the database can read session cookies. Before production, consider `ProtectKeysWithCertificate` or a cloud key vault.
+
+The tests run on a machine whose disk key ring (`~/.aspnet/DataProtection-Keys`) is shared by every test host, so "a session survives a restart" passes without Mongo. A second test proves the keys come from the database: a host using another database can't read the session.
