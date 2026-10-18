@@ -1,3 +1,4 @@
+using System.Globalization;
 using Api.Models;
 using Domain;
 using Domain.GitHub;
@@ -15,9 +16,11 @@ public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IG
     {
         if (apiUser.User is not { } user) return Unauthorized(new ErrorResponse("Sign in with GitHub to generate your report."));
 
+        if (CutoffFrom(request) is not { } cutoff) return UnprocessableEntity(new ErrorResponse($"{request.Cutoff} isn't a valid date. Use YYYY-MM-DD."));
+
         var now = time.GetUtcNow();
-        var cutoff = request.Cutoff is null ? Cutoff.Default : Cutoff.On(DateOnly.ParseExact(request.Cutoff, "yyyy-MM-dd"));
         var post = Window.After(cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
+        if (post.Weeks == 0) return UnprocessableEntity(new ErrorResponse("Pick a cut-off at least one full week ago, so there's a week to compare."));
 
         var activity = await gitHub.Fetch(user, post.Preceding().Start, post.End);
         var profile = Profile.Assemble(user.Handle, cutoff, activity, now);
@@ -33,5 +36,13 @@ public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IG
         if (profile is null) return NotFound(new ErrorResponse($"{handle} hasn't generated a report yet."));
 
         return Ok(ReportResponse.From(Report.From(profile)));
+    }
+
+    private static Cutoff? CutoffFrom(GenerateReportRequest request)
+    {
+        if (request.Cutoff is null) return Cutoff.Default;
+
+        var isDate = DateOnly.TryParseExact(request.Cutoff, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date);
+        return isDate ? Cutoff.On(date) : null;
     }
 }
