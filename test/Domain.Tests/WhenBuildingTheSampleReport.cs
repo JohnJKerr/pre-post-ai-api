@@ -76,4 +76,18 @@ public class WhenBuildingTheSampleReport
 
     [Fact]
     public void Post_adds_141_lines_per_commit() => _report.Post.PerCommit.ShouldBe(141);
+
+    [Fact]
+    public void Pre_uses_5_languages() => _report.Pre.UsedLanguages.Count.ShouldBe(5);
+
+    [Fact]
+    public void Post_uses_8_languages() => _report.Post.UsedLanguages.Count.ShouldBe(8);
+
+    [Fact]
+    public void Markup_is_left_out_of_languages() =>
+        _report.Pre.Languages.Select(l => l.Language).ShouldNotContain("CSS");
+
+    [Fact]
+    public void Languages_are_ordered_by_share_descending() =>
+        _report.Post.Languages.Select(l => l.Share).ShouldBeInOrder(SortDirection.Descending);
 }

@@ -2,6 +2,9 @@ namespace Domain;
 
 public record WindowSummary
 {
+    private const double UsedThreshold = 0.02;
+    private static readonly HashSet<string> Markup = ["CSS", "HTML", "SCSS", "Markdown", "MDX", "Dockerfile"];
+
     public required Era Era { get; init; }
     public required IReadOnlyList<Week> Weekly { get; init; }
     public required int Added { get; init; }
@@ -10,10 +13,12 @@ public record WindowSummary
     public required IReadOnlyList<Project> Projects { get; init; }
     public required int Started { get; init; }
     public required int ActiveDays { get; init; }
+    public required IReadOnlyList<LanguageShare> Languages { get; init; }
 
     public int Weeks => Weekly.Count;
     public Window Range => new(Weekly[0].Start, Weeks);
     public int PerCommit => Commits > 0 ? (int)Rounding.HalfUp((double)Added / Commits) : 0;
+    public IReadOnlyList<string> UsedLanguages => Languages.Where(l => l.Share >= UsedThreshold).Select(l => l.Language).ToArray();
     public double ActiveDaysPerWeek => Weeks > 0 ? Math.Round((double)ActiveDays / Weeks, 1, MidpointRounding.AwayFromZero) : 0;
 
     public int ProjectCount => Projects.Count;
@@ -34,6 +39,7 @@ public record WindowSummary
             Projects = ProjectsIn(profile.Repos, era, added),
             Started = profile.Repos.Count(r => r.StartedIn == era),
             ActiveDays = activity.ActiveDays,
+            Languages = LanguagesIn(profile.Repos, era),
         };
     }
 
@@ -43,4 +49,20 @@ public record WindowSummary
             .Select(r => new Project(r.IsPrivate ? null : r.Name, (int)Rounding.HalfUp(r.Share[era] * added)))
             .OrderByDescending(p => p.Lines)
             .ToArray();
+
+    private static IReadOnlyList<LanguageShare> LanguagesIn(IReadOnlyList<Repo> repos, Era era)
+    {
+        var weighted = new Dictionary<string, double>();
+        foreach (var repo in repos.Where(r => r.Share[era] > 0))
+            foreach (var (language, share) in repo.Languages.Where(l => !Markup.Contains(l.Key)))
+                weighted[language] = weighted.GetValueOrDefault(language) + share * repo.Share[era];
+
+        var total = weighted.Values.Sum();
+        if (total == 0) return [];
+
+        return weighted
+            .Select(l => new LanguageShare(l.Key, l.Value / total))
+            .OrderByDescending(l => l.Share)
+            .ToArray();
+    }
 }
