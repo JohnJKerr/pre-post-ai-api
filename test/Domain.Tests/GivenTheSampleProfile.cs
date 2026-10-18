@@ -11,5 +11,13 @@ internal class GivenTheSampleProfile
         return this;
     }
 
+    public GivenTheSampleProfile WithNoActivityBeforeTheCutoff()
+    {
+        var pre = _profile.Activity.Pre;
+        var emptyWeeks = pre.Weeks.Select(w => w with { Added = 0, Deleted = 0, Commits = 0 }).ToArray();
+        _profile = _profile with { Activity = _profile.Activity with { Pre = pre with { Weeks = emptyWeeks } } };
+        return this;
+    }
+
     public Profile Build() => _profile;
 }

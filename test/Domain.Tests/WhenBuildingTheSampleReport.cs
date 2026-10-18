@@ -43,4 +43,37 @@ public class WhenBuildingTheSampleReport
     [Fact]
     public void A_project_gets_its_share_of_the_window_s_lines() =>
         _report.Pre.Projects.ShouldContain(new Project("invoice-api", 18_611));
+
+    [Fact]
+    public void Pre_spans_from_2024_12_29() => _report.Pre.Range.Start.ShouldBe(new DateOnly(2024, 12, 29));
+
+    [Fact]
+    public void Pre_spans_to_2025_11_22() => _report.Pre.Range.End.ShouldBe(new DateOnly(2025, 11, 22));
+
+    [Fact]
+    public void Post_spans_from_2025_11_23() => _report.Post.Range.Start.ShouldBe(new DateOnly(2025, 11, 23));
+
+    [Fact]
+    public void Post_spans_to_2026_10_17() => _report.Post.Range.End.ShouldBe(new DateOnly(2026, 10, 17));
+
+    [Fact]
+    public void Every_week_of_the_window_is_kept() => _report.Pre.Weekly.Count.ShouldBe(47);
+
+    [Fact]
+    public void Pre_was_active_on_161_days() => _report.Pre.ActiveDays.ShouldBe(161);
+
+    [Fact]
+    public void Pre_was_active_3_4_days_a_week() => _report.Pre.ActiveDaysPerWeek.ShouldBe(3.4);
+
+    [Fact]
+    public void Post_was_active_on_277_days() => _report.Post.ActiveDays.ShouldBe(277);
+
+    [Fact]
+    public void Post_was_active_5_9_days_a_week() => _report.Post.ActiveDaysPerWeek.ShouldBe(5.9);
+
+    [Fact]
+    public void Pre_adds_63_lines_per_commit() => _report.Pre.PerCommit.ShouldBe(63);
+
+    [Fact]
+    public void Post_adds_141_lines_per_commit() => _report.Post.PerCommit.ShouldBe(141);
 }
