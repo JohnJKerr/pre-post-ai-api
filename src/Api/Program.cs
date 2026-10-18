@@ -45,9 +45,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddSingleton(frontEnd);
 builder.Services.AddCors(options => options.AddPolicy(FrontEnd.CorsPolicy, policy => policy
     .WithOrigins(frontEnd.Origin)
-    .AllowCredentials()
-    .WithHeaders("Content-Type")
-    .WithMethods("GET", "POST")));
+    .WithMethods("GET")));
 builder.Services.AddGitHubSignIn(builder.Configuration);
 builder.Services.AddControllers();
 
