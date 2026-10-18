@@ -5,23 +5,31 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenGitHubSendsTheUserBack(ApiFactory factory) : IAsyncLifetime
+public class WhenGitHubSendsTheUserBack(ApiFactory factory)
 {
-    private HttpClient _browser = null!;
-    private HttpResponseMessage _callback = null!;
-
-    public async Task InitializeAsync()
+    [Fact]
+    public async Task They_return_to_where_they_started()
     {
-        _browser = factory.CreateBrowserSigningInWithGitHub();
-        _callback = await _browser.SignInWithGitHub(returnUrl: "/r/octo-dev");
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub();
+
+        // Act
+        var callback = await browser.SignInWithGitHub(returnUrl: "/r/octo-dev");
+
+        // Assert
+        callback.Headers.Location!.ToString().ShouldBe("/r/octo-dev");
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
-
     [Fact]
-    public void They_return_to_where_they_started() => _callback.Headers.Location!.ToString().ShouldBe("/r/octo-dev");
+    public async Task They_are_signed_in_as_their_GitHub_login()
+    {
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub();
 
-    [Fact]
-    public async Task They_are_signed_in_as_their_GitHub_login() =>
-        (await _browser.GetFromJsonAsync<SessionResponse>("/api/session"))!.Handle.ShouldBe("octo-dev");
+        // Act
+        await browser.SignInWithGitHub();
+
+        // Assert
+        (await browser.GetFromJsonAsync<SessionResponse>("/api/session"))!.Handle.ShouldBe("octo-dev");
+    }
 }

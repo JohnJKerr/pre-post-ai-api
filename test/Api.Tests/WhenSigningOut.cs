@@ -4,23 +4,33 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenSigningOut(ApiFactory factory) : IAsyncLifetime
+public class WhenSigningOut(ApiFactory factory)
 {
-    private HttpClient _browser = null!;
-    private HttpResponseMessage _response = null!;
-
-    public async Task InitializeAsync()
+    [Fact]
+    public async Task It_succeeds_with_nothing_to_say()
     {
-        _browser = factory.CreateBrowserSigningInWithGitHub();
-        await _browser.SignInWithGitHub();
-        _response = await _browser.PostAsync("/api/auth/sign-out", null);
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub();
+        await browser.SignInWithGitHub();
+
+        // Act
+        var response = await browser.PostAsync("/api/auth/sign-out", null);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
-
     [Fact]
-    public void It_succeeds_with_nothing_to_say() => _response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+    public async Task They_are_no_longer_signed_in()
+    {
+        // Arrange
+        var browser = factory.CreateBrowserSigningInWithGitHub();
+        await browser.SignInWithGitHub();
 
-    [Fact]
-    public async Task They_are_no_longer_signed_in() => (await _browser.GetAsync("/api/session")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        // Act
+        await browser.PostAsync("/api/auth/sign-out", null);
+
+        // Assert
+        (await browser.GetAsync("/api/session")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+    }
 }

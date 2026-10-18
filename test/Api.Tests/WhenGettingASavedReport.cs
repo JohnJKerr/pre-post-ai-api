@@ -8,27 +8,44 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenGettingASavedReport(ApiFactory factory) : IAsyncLifetime
+public class WhenGettingASavedReport(ApiFactory factory)
 {
-    private HttpResponseMessage _response = null!;
-
-    public async Task InitializeAsync()
+    [Fact]
+    public async Task It_is_found_whatever_the_handle_s_case()
     {
-        var profiles = factory.Services.GetRequiredService<IProfileRepository>();
-        await profiles.Save(new GivenAProfile().For("octo-dev").Build());
-        _response = await factory.CreateClient().GetAsync("/api/reports/Octo-Dev");
+        // Arrange
+        await factory.Services.GetRequiredService<IProfileRepository>().Save(new GivenAProfile().For("octo-dev").Build());
+
+        // Act
+        var response = await factory.CreateClient().GetAsync("/api/reports/Octo-Dev");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    [Fact]
+    public async Task It_is_the_saved_user_s_report()
+    {
+        // Arrange
+        await factory.Services.GetRequiredService<IProfileRepository>().Save(new GivenAProfile().For("octo-dev").Build());
+
+        // Act
+        var report = await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/octo-dev");
+
+        // Assert
+        report!.Handle.ShouldBe("octo-dev");
+    }
 
     [Fact]
-    public void It_is_found_whatever_the_handle_s_case() => _response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    public async Task It_is_built_from_the_saved_activity()
+    {
+        // Arrange
+        await factory.Services.GetRequiredService<IProfileRepository>().Save(new GivenAProfile().For("octo-dev").Build());
 
-    [Fact]
-    public async Task It_is_the_saved_user_s_report() =>
-        (await _response.Content.ReadFromJsonAsync<ReportResponse>())!.Handle.ShouldBe("octo-dev");
+        // Act
+        var report = await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/octo-dev");
 
-    [Fact]
-    public async Task It_is_built_from_the_saved_activity() =>
-        (await _response.Content.ReadFromJsonAsync<ReportResponse>())!.Score.Total.ShouldBe(78);
+        // Assert
+        report!.Score.Total.ShouldBe(78);
+    }
 }

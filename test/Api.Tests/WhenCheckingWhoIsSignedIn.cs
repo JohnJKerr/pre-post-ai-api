@@ -6,18 +6,31 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenCheckingWhoIsSignedIn(ApiFactory factory) : IAsyncLifetime
+public class WhenCheckingWhoIsSignedIn(ApiFactory factory)
 {
-    private HttpResponseMessage _response = null!;
+    [Fact]
+    public async Task It_succeeds()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedInAs("octo-dev"));
 
-    public async Task InitializeAsync() => _response = await factory.CreateClientFor(FakeApiUser.SignedInAs("octo-dev")).GetAsync("/api/session");
+        // Act
+        var response = await client.GetAsync("/api/session");
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
 
     [Fact]
-    public void It_succeeds() => _response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    public async Task It_names_the_signed_in_user()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedInAs("octo-dev"));
 
-    [Fact]
-    public async Task It_names_the_signed_in_user() =>
-        (await _response.Content.ReadFromJsonAsync<SessionResponse>())!.Handle.ShouldBe("octo-dev");
+        // Act
+        var session = await client.GetFromJsonAsync<SessionResponse>("/api/session");
+
+        // Assert
+        session!.Handle.ShouldBe("octo-dev");
+    }
 }

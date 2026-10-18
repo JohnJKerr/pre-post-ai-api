@@ -5,21 +5,31 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenGeneratingAReportFromTheChatGPTLaunch(ApiFactory factory) : IAsyncLifetime
+public class WhenGeneratingAReportFromTheChatGPTLaunch(ApiFactory factory)
 {
-    private ReportResponse _report = null!;
-
-    public async Task InitializeAsync()
+    [Fact]
+    public async Task The_cutoff_is_named_ChatGPT_launch()
     {
-        var response = await factory.CreateClientFor(FakeApiUser.SignedInAs("early-adopter")).PostAsJsonAsync("/api/reports", new { cutoff = "2022-11-30" });
-        _report = (await response.Content.ReadFromJsonAsync<ReportResponse>())!;
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedInAs("early-adopter"));
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/reports", new { cutoff = "2022-11-30" });
+
+        // Assert
+        (await response.Content.ReadFromJsonAsync<ReportResponse>())!.Cutoff.ShouldBe(new CutoffResponse("ChatGPT launch", "2022-11-30"));
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
-
     [Fact]
-    public void The_cutoff_is_named_ChatGPT_launch() => _report.Cutoff.ShouldBe(new CutoffResponse("ChatGPT launch", "2022-11-30"));
+    public async Task Each_side_spans_every_complete_week_since()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedInAs("early-adopter"));
 
-    [Fact]
-    public void Each_side_spans_every_complete_week_since() => _report.Weeks.ShouldBe(203);
+        // Act
+        var response = await client.PostAsJsonAsync("/api/reports", new { cutoff = "2022-11-30" });
+
+        // Assert
+        (await response.Content.ReadFromJsonAsync<ReportResponse>())!.Weeks.ShouldBe(203);
+    }
 }

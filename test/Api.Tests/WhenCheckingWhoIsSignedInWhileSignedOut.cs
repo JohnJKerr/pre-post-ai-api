@@ -6,18 +6,31 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenCheckingWhoIsSignedInWhileSignedOut(ApiFactory factory) : IAsyncLifetime
+public class WhenCheckingWhoIsSignedInWhileSignedOut(ApiFactory factory)
 {
-    private HttpResponseMessage _response = null!;
+    [Fact]
+    public async Task It_is_unauthorised()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedOut());
 
-    public async Task InitializeAsync() => _response = await factory.CreateClientFor(FakeApiUser.SignedOut()).GetAsync("/api/session");
+        // Act
+        var response = await client.GetAsync("/api/session");
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+    }
 
     [Fact]
-    public void It_is_unauthorised() => _response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+    public async Task The_message_says_nobody_is_signed_in()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedOut());
 
-    [Fact]
-    public async Task The_message_says_nobody_is_signed_in() =>
-        (await _response.Content.ReadFromJsonAsync<ErrorResponse>())!.Message.ShouldBe("You're not signed in.");
+        // Act
+        var response = await client.GetAsync("/api/session");
+
+        // Assert
+        (await response.Content.ReadFromJsonAsync<ErrorResponse>())!.Message.ShouldBe("You're not signed in.");
+    }
 }

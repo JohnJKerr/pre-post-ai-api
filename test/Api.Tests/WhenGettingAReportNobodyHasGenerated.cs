@@ -1,24 +1,36 @@
 using System.Net;
 using System.Net.Http.Json;
+using Api.Models;
 using Shouldly;
 
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenGettingAReportNobodyHasGenerated(ApiFactory factory) : IAsyncLifetime
+public class WhenGettingAReportNobodyHasGenerated(ApiFactory factory)
 {
-    private HttpResponseMessage _response = null!;
+    [Fact]
+    public async Task It_is_not_found()
+    {
+        // Arrange
+        var client = factory.CreateClient();
 
-    public async Task InitializeAsync() => _response = await factory.CreateClient().GetAsync("/api/reports/nobody-yet");
+        // Act
+        var response = await client.GetAsync("/api/reports/nobody-yet");
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
 
     [Fact]
-    public void It_is_not_found() => _response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    public async Task The_message_says_nobody_has_generated_one()
+    {
+        // Arrange
+        var client = factory.CreateClient();
 
-    [Fact]
-    public async Task The_message_says_nobody_has_generated_one() =>
-        (await _response.Content.ReadFromJsonAsync<ErrorBody>())!.Message.ShouldBe("nobody-yet hasn't generated a report yet.");
+        // Act
+        var response = await client.GetAsync("/api/reports/nobody-yet");
 
-    private record ErrorBody(string Message);
+        // Assert
+        (await response.Content.ReadFromJsonAsync<ErrorResponse>())!.Message.ShouldBe("nobody-yet hasn't generated a report yet.");
+    }
 }

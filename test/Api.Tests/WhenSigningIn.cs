@@ -5,25 +5,47 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenSigningIn(ApiFactory factory) : IAsyncLifetime
+public class WhenSigningIn(ApiFactory factory)
 {
-    private HttpResponseMessage _response = null!;
-
-    public async Task InitializeAsync()
+    [Fact]
+    public async Task It_is_a_redirect()
     {
-        var client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") });
-        _response = await client.GetAsync("/api/auth/sign-in");
+        // Arrange
+        var browser = ABrowser();
+
+        // Act
+        var response = await browser.GetAsync("/api/auth/sign-in");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Redirect);
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    [Fact]
+    public async Task The_user_is_sent_to_GitHub_to_authorise_the_app()
+    {
+        // Arrange
+        var browser = ABrowser();
+
+        // Act
+        var response = await browser.GetAsync("/api/auth/sign-in");
+
+        // Assert
+        response.Headers.Location!.GetLeftPart(UriPartial.Path).ShouldBe("https://github.com/login/oauth/authorize");
+    }
 
     [Fact]
-    public void The_user_is_sent_to_GitHub_to_authorise_the_app() =>
-        _response.Headers.Location!.GetLeftPart(UriPartial.Path).ShouldBe("https://github.com/login/oauth/authorize");
+    public async Task GitHub_is_told_which_app_is_asking()
+    {
+        // Arrange
+        var browser = ABrowser();
 
-    [Fact]
-    public void GitHub_is_told_which_app_is_asking() => _response.Headers.Location!.Query.ShouldContain("client_id=test-client-id");
+        // Act
+        var response = await browser.GetAsync("/api/auth/sign-in");
 
-    [Fact]
-    public void It_is_a_redirect() => _response.StatusCode.ShouldBe(HttpStatusCode.Redirect);
+        // Assert
+        response.Headers.Location!.Query.ShouldContain("client_id=test-client-id");
+    }
+
+    private HttpClient ABrowser() =>
+        factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") });
 }

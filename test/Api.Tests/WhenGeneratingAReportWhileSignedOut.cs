@@ -6,19 +6,31 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenGeneratingAReportWhileSignedOut(ApiFactory factory) : IAsyncLifetime
+public class WhenGeneratingAReportWhileSignedOut(ApiFactory factory)
 {
-    private HttpResponseMessage _response = null!;
+    [Fact]
+    public async Task It_is_unauthorised()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedOut());
 
-    public async Task InitializeAsync() =>
-        _response = await factory.CreateClientFor(FakeApiUser.SignedOut()).PostAsJsonAsync("/api/reports", new { });
+        // Act
+        var response = await client.PostAsJsonAsync("/api/reports", new { });
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+    }
 
     [Fact]
-    public void It_is_unauthorised() => _response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+    public async Task The_message_asks_them_to_sign_in()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedOut());
 
-    [Fact]
-    public async Task The_message_asks_them_to_sign_in() =>
-        (await _response.Content.ReadFromJsonAsync<ErrorResponse>())!.Message.ShouldBe("Sign in with GitHub to generate your report.");
+        // Act
+        var response = await client.PostAsJsonAsync("/api/reports", new { });
+
+        // Assert
+        (await response.Content.ReadFromJsonAsync<ErrorResponse>())!.Message.ShouldBe("Sign in with GitHub to generate your report.");
+    }
 }

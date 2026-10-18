@@ -5,20 +5,19 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenRegeneratingAReport(ApiFactory factory) : IAsyncLifetime
+public class WhenRegeneratingAReport(ApiFactory factory)
 {
-    private ReportResponse _saved = null!;
-
-    public async Task InitializeAsync()
+    [Fact]
+    public async Task The_earlier_report_is_replaced()
     {
+        // Arrange
         var client = factory.CreateClientFor(FakeApiUser.SignedInAs("Second-Go"));
         await client.PostAsJsonAsync("/api/reports", new { });
+
+        // Act
         await client.PostAsJsonAsync("/api/reports", new { cutoff = "2022-11-30" });
-        _saved = (await client.GetFromJsonAsync<ReportResponse>("/api/reports/second-go"))!;
+
+        // Assert
+        (await client.GetFromJsonAsync<ReportResponse>("/api/reports/second-go"))!.Cutoff.Label.ShouldBe("ChatGPT launch");
     }
-
-    public Task DisposeAsync() => Task.CompletedTask;
-
-    [Fact]
-    public void The_earlier_report_is_replaced() => _saved.Cutoff.Label.ShouldBe("ChatGPT launch");
 }

@@ -6,19 +6,32 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenGeneratingAReportFromThisWeek(ApiFactory factory) : IAsyncLifetime
+public class WhenGeneratingAReportFromThisWeek(ApiFactory factory)
 {
-    private HttpResponseMessage _response = null!;
+    [Fact]
+    public async Task It_is_unprocessable()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedInAs("eager-dev"));
 
-    public async Task InitializeAsync() =>
-        _response = await factory.CreateClientFor(FakeApiUser.SignedInAs("eager-dev")).PostAsJsonAsync("/api/reports", new { cutoff = "2026-10-18" });
+        // Act
+        var response = await client.PostAsJsonAsync("/api/reports", new { cutoff = "2026-10-18" });
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+    }
 
     [Fact]
-    public void It_is_unprocessable() => _response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+    public async Task The_message_says_a_full_week_must_pass()
+    {
+        // Arrange
+        var client = factory.CreateClientFor(FakeApiUser.SignedInAs("eager-dev"));
 
-    [Fact]
-    public async Task The_message_says_a_full_week_must_pass() =>
-        (await _response.Content.ReadFromJsonAsync<ErrorResponse>())!.Message.ShouldBe("Pick a cut-off at least one full week ago, so there's a week to compare.");
+        // Act
+        var response = await client.PostAsJsonAsync("/api/reports", new { cutoff = "2026-10-18" });
+
+        // Assert
+        (await response.Content.ReadFromJsonAsync<ErrorResponse>())!.Message
+            .ShouldBe("Pick a cut-off at least one full week ago, so there's a week to compare.");
+    }
 }
