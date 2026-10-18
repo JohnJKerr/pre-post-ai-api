@@ -1,6 +1,8 @@
 using Api.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Domain;
 using Domain.GitHub;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -21,6 +23,12 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public Task InitializeAsync() => _mongo.StartAsync();
 
     public new Task DisposeAsync() => _mongo.DisposeAsync().AsTask();
+
+    internal async Task<string> Saved(Generation generation)
+    {
+        await Services.GetRequiredService<IGenerationRepository>().Save(generation);
+        return generation.Id;
+    }
 
     // Clients send the front end's Origin, as a browser on the front end would.
     internal HttpClient CreateClientFor(IApiUser apiUser, IGitHubMetadata? gitHub = null, TimeProvider? clock = null) =>

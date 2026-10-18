@@ -18,6 +18,7 @@ builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(builder.Configu
 builder.Services.AddSingleton(services =>
     services.GetRequiredService<IMongoClient>().GetDatabase(builder.Configuration["Mongo:Database"]));
 builder.Services.AddSingleton<IProfileRepository, MongoProfileRepository>();
+builder.Services.AddSingleton<IGenerationRepository, MongoGenerationRepository>();
 builder.Services.AddDataProtection().SetApplicationName("pre-post-ai-api").PersistKeysToMongo();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHttpContextAccessor();
