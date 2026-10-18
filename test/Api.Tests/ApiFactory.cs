@@ -18,8 +18,12 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public new Task DisposeAsync() => _mongo.DisposeAsync().AsTask();
 
-    internal HttpClient CreateClientFor(IApiUser apiUser) =>
-        WithWebHostBuilder(builder => builder.ConfigureTestServices(services => services.AddSingleton(apiUser))).CreateClient();
+    internal HttpClient CreateClientFor(IApiUser apiUser, IGitHubMetadata? gitHub = null) =>
+        WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
+        {
+            services.AddSingleton(apiUser);
+            services.AddSingleton(gitHub ?? new FakeGitHub());
+        })).CreateClient();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -28,7 +32,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.ConfigureTestServices(services =>
         {
             services.AddSingleton<TimeProvider>(new FakeTimeProvider(Now));
-            services.AddSingleton<IGitHubMetadata, FakeGitHub>();
+            services.AddSingleton<IGitHubMetadata>(new FakeGitHub());
         });
     }
 }

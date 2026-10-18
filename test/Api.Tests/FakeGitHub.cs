@@ -3,8 +3,10 @@ using Domain.GitHub;
 
 namespace Api.Tests;
 
-internal class FakeGitHub : IGitHubMetadata
+internal class FakeGitHub(bool statsReady = true) : IGitHubMetadata
 {
+    public static FakeGitHub StillComputingStats() => new(statsReady: false);
+
     private static readonly RepoMetadata Repo = new(
         "agent-runner",
         IsPrivate: false,
@@ -14,6 +16,7 @@ internal class FakeGitHub : IGitHubMetadata
         TotalCommits: 25,
         [new PunchCell(2, 21, 25)]);
 
-    public Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to) =>
-        Task.FromResult(new GitHubActivity([Repo], [new DateOnly(2026, 6, 8)]));
+    public Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to) => statsReady
+        ? Task.FromResult(new GitHubActivity([Repo], [new DateOnly(2026, 6, 8)]))
+        : throw new GitHubStatsPendingException("octo-dev/agent-runner");
 }

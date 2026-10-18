@@ -22,7 +22,16 @@ public class ReportsController(IProfileRepository profiles, IApiUser apiUser, IG
         var post = Window.After(cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
         if (post.Weeks == 0) return UnprocessableEntity(new ErrorResponse("Pick a cut-off at least one full week ago, so there's a week to compare."));
 
-        var activity = await gitHub.Fetch(user, post.Preceding().Start, post.End);
+        GitHubActivity activity;
+        try
+        {
+            activity = await gitHub.Fetch(user, post.Preceding().Start, post.End);
+        }
+        catch (GitHubStatsPendingException)
+        {
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new ErrorResponse("GitHub is still crunching your repository stats. Try again in a minute."));
+        }
+
         var profile = Profile.Assemble(user.Handle, cutoff, activity, now);
         await profiles.Save(profile);
 
