@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using System.Web;
 using Api.Models;
 using Shouldly;
 
@@ -14,9 +13,7 @@ public class WhenGitHubSendsTheUserBack(ApiFactory factory) : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _browser = factory.CreateBrowserSigningInWithGitHub();
-        var signIn = await _browser.GetAsync("/api/auth/sign-in?returnUrl=/r/octo-dev");
-        var state = HttpUtility.ParseQueryString(signIn.Headers.Location!.Query)["state"];
-        _callback = await _browser.GetAsync($"/api/auth/callback?code=github-code&state={Uri.EscapeDataString(state!)}");
+        _callback = await _browser.SignInWithGitHub(returnUrl: "/r/octo-dev");
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
