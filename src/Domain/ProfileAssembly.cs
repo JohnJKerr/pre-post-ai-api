@@ -25,7 +25,7 @@ internal class ProfileAssembly(GitHubActivity activity, PerEra<Window> windows)
     }
 
     private Repo RepoFrom(RepoMetadata repo) => new(
-        repo.Name,
+        Name: null,
         repo.IsPrivate,
         ByteShares(repo.LanguageBytes),
         new PerEra<double>(ShareOfLines(repo, Era.Pre), ShareOfLines(repo, Era.Post)),

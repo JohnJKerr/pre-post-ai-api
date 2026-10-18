@@ -12,7 +12,6 @@ internal class FakeGitHub(Exception? failure = null, bool hasCommits = true) : I
     public static FakeGitHub RejectingTheToken() => new(new GitHubTokenRejectedException());
 
     private static readonly RepoMetadata Repo = new(
-        "agent-runner",
         IsPrivate: false,
         new DateOnly(2026, 1, 10),
         new Dictionary<string, long> { ["TypeScript"] = 9_000 },

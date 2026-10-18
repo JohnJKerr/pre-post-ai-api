@@ -1,7 +1,7 @@
 namespace Domain.GitHub;
 
+// No name: the report doesn't show repo names, so they never leave the GitHub adapter.
 public record RepoMetadata(
-    string Name,
     bool IsPrivate,
     DateOnly CreatedOn,
     IReadOnlyDictionary<string, long> LanguageBytes,

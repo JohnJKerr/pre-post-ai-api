@@ -36,7 +36,7 @@ public class WhenChoosingPunchCardRepos
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("spanning")
+            .WithRepo(new GivenAGitHubRepo()
                 .WithAuthorWeek(PreWeek, added: 300, commits: 3)
                 .WithAuthorWeek(PostWeek, added: 100, commits: 1)
                 .WithPunchCell(day: 0, hour: 0, commits: 4));
@@ -53,7 +53,7 @@ public class WhenChoosingPunchCardRepos
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("abandoned")
+            .WithRepo(new GivenAGitHubRepo()
                 .WithAuthorWeek(BeforeBothWindows, added: 500, commits: 5)
                 .WithPunchCell(day: 4, hour: 4, commits: 5));
 
@@ -103,13 +103,13 @@ public class WhenChoosingPunchCardRepos
         profile.Activity.Post.PunchShare.ShouldBe(9 / 17d);
     }
 
-    private static GivenAGitHubRepo ASoloRepo() => new GivenAGitHubRepo("solo")
+    private static GivenAGitHubRepo ASoloRepo() => new GivenAGitHubRepo()
         .WithAuthorWeek(PostWeek, added: 900, commits: 9)
         .WithCommitsByOthers(1)
         .WithPunchCell(day: 2, hour: 21, commits: 6)
         .WithPunchCell(day: 3, hour: 22, commits: 4);
 
-    private static GivenAGitHubRepo ASharedRepo() => new GivenAGitHubRepo("shared")
+    private static GivenAGitHubRepo ASharedRepo() => new GivenAGitHubRepo()
         .WithAuthorWeek(PostWeek, added: 800, commits: 8)
         .WithCommitsByOthers(2)
         .WithPunchCell(day: 1, hour: 10, commits: 10);

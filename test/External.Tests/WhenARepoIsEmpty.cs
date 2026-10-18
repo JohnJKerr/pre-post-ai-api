@@ -14,7 +14,7 @@ public class WhenARepoIsEmpty
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "side-project").AuthorWeeks.ShouldBeEmpty();
+        activity.Repos[1].AuthorWeeks.ShouldBeEmpty();
     }
 
     [Fact]
@@ -27,6 +27,6 @@ public class WhenARepoIsEmpty
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "side-project").PunchCard.ShouldBeEmpty();
+        activity.Repos[1].PunchCard.ShouldBeEmpty();
     }
 }

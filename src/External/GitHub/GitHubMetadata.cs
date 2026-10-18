@@ -77,7 +77,6 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options) : IG
         var author = contributors.FirstOrDefault(c => string.Equals(c.Author?.Login, user.Handle, StringComparison.OrdinalIgnoreCase));
 
         return new RepoMetadata(
-            repo.Name,
             repo.Private,
             DateOnly.FromDateTime(repo.CreatedAt.UtcDateTime),
             languages,

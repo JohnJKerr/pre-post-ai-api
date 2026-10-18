@@ -27,6 +27,6 @@ public class WhenARepoWasLastPushedBeforeBothWindows
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Select(r => r.Name).ShouldNotContain("abandoned");
+        activity.Repos.Count.ShouldBe(2);
     }
 }

@@ -15,7 +15,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Select(r => r.Name).ShouldBe(["ledger-sync", "side-project"]);
+        activity.Repos.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "side-project").IsPrivate.ShouldBeTrue();
+        activity.Repos[1].IsPrivate.ShouldBeTrue();
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "side-project").CreatedOn.ShouldBe(new DateOnly(2026, 2, 1));
+        activity.Repos[1].CreatedOn.ShouldBe(new DateOnly(2026, 2, 1));
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "ledger-sync").AuthorWeeks
+        activity.Repos[0].AuthorWeeks
             .ShouldBe([new Week(new DateOnly(2025, 6, 1), 300, 30, 3), new Week(new DateOnly(2025, 6, 8), 120, 10, 4)]);
     }
 
@@ -68,7 +68,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "ledger-sync").TotalCommits.ShouldBe(9);
+        activity.Repos[0].TotalCommits.ShouldBe(9);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "ledger-sync").PunchCard.ShouldBe([new PunchCell(2, 10, 6), new PunchCell(3, 14, 3)]);
+        activity.Repos[0].PunchCard.ShouldBe([new PunchCell(2, 10, 6), new PunchCell(3, 14, 3)]);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "ledger-sync").LanguageBytes["SQL"].ShouldBe(10_000);
+        activity.Repos[0].LanguageBytes["SQL"].ShouldBe(10_000);
     }
 
     [Fact]

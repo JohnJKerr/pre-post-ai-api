@@ -75,8 +75,8 @@ public class WhenAssemblingAProfile
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("legacy").WithAuthorWeek(PostWeek, added: 100, commits: 1))
-            .WithRepo(new GivenAGitHubRepo("side-project").WithAuthorWeek(PostWeek, added: 300, commits: 5));
+            .WithRepo(new GivenAGitHubRepo().WithAuthorWeek(PostWeek, added: 100, commits: 1))
+            .WithRepo(new GivenAGitHubRepo().WithAuthorWeek(PostWeek, added: 300, commits: 5));
 
         // Act
         var profile = activity.Assemble();
@@ -90,7 +90,7 @@ public class WhenAssemblingAProfile
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("legacy")
+            .WithRepo(new GivenAGitHubRepo()
                 .WithAuthorWeek(BeforeBothWindows, added: 9_999, commits: 99)
                 .WithAuthorWeek(PreWeek, added: 300, commits: 3));
 
@@ -106,16 +106,16 @@ public class WhenAssemblingAProfile
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("legacy")
+            .WithRepo(new GivenAGitHubRepo()
                 .WithAuthorWeek(PreWeek, added: 300, commits: 3)
                 .WithAuthorWeek(PostWeek, added: 100, commits: 1))
-            .WithRepo(new GivenAGitHubRepo("side-project").WithAuthorWeek(PostWeek, added: 300, commits: 5));
+            .WithRepo(new GivenAGitHubRepo().WithAuthorWeek(PostWeek, added: 300, commits: 5));
 
         // Act
         var profile = activity.Assemble();
 
         // Assert
-        profile.Repos.Single(r => r.Name == "legacy").Share.ShouldBe(new PerEra<double>(Pre: 1, Post: 0.25));
+        profile.Repos[0].Share.ShouldBe(new PerEra<double>(Pre: 1, Post: 0.25));
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class WhenAssemblingAProfile
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("side-project").CreatedOn(new DateOnly(2026, 2, 1)));
+            .WithRepo(new GivenAGitHubRepo().CreatedOn(new DateOnly(2026, 2, 1)));
 
         // Act
         var profile = activity.Assemble();
@@ -137,7 +137,7 @@ public class WhenAssemblingAProfile
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("legacy").CreatedOn(new DateOnly(2020, 1, 1)));
+            .WithRepo(new GivenAGitHubRepo().CreatedOn(new DateOnly(2020, 1, 1)));
 
         // Act
         var profile = activity.Assemble();
@@ -151,7 +151,7 @@ public class WhenAssemblingAProfile
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo("legacy").Writing("C#", 3_000).Writing("SQL", 1_000));
+            .WithRepo(new GivenAGitHubRepo().Writing("C#", 3_000).Writing("SQL", 1_000));
 
         // Act
         var profile = activity.Assemble();
@@ -161,10 +161,23 @@ public class WhenAssemblingAProfile
     }
 
     [Fact]
+    public void The_report_names_none_of_the_user_s_projects()
+    {
+        // Arrange
+        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo().WithAuthorWeek(PostWeek, added: 300, commits: 5));
+
+        // Act
+        var report = Report.From(activity.Assemble());
+
+        // Assert
+        report.Post.Projects.Single().Name.ShouldBeNull();
+    }
+
+    [Fact]
     public void A_private_repo_stays_private()
     {
         // Arrange
-        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo("side-project").Private());
+        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo().Private());
 
         // Act
         var profile = activity.Assemble();
@@ -177,7 +190,7 @@ public class WhenAssemblingAProfile
     public void Commits_in_either_window_count_as_activity()
     {
         // Arrange
-        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo("legacy").WithAuthorWeek(PreWeek, added: 300, commits: 3));
+        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo().WithAuthorWeek(PreWeek, added: 300, commits: 3));
 
         // Act
         var profile = activity.Assemble();
@@ -190,7 +203,7 @@ public class WhenAssemblingAProfile
     public void Commits_only_outside_both_windows_are_no_activity()
     {
         // Arrange
-        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo("legacy").WithAuthorWeek(BeforeBothWindows, added: 300, commits: 3));
+        var activity = new GivenGitHubActivity().WithRepo(new GivenAGitHubRepo().WithAuthorWeek(BeforeBothWindows, added: 300, commits: 3));
 
         // Act
         var profile = activity.Assemble();

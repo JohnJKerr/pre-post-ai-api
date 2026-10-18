@@ -2,7 +2,7 @@ using Domain.GitHub;
 
 namespace Domain.Tests;
 
-internal class GivenAGitHubRepo(string name)
+internal class GivenAGitHubRepo
 {
     private readonly Dictionary<string, long> _languageBytes = [];
     private readonly List<Week> _authorWeeks = [];
@@ -48,7 +48,6 @@ internal class GivenAGitHubRepo(string name)
     }
 
     public RepoMetadata Build() => new(
-        name,
         _isPrivate,
         _createdOn,
         _languageBytes,

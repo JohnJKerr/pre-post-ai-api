@@ -14,6 +14,6 @@ public class WhenGitHubIsStillComputingStats
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos.Single(r => r.Name == "ledger-sync").AuthorWeeks.Count.ShouldBe(2);
+        activity.Repos[0].AuthorWeeks.Count.ShouldBe(2);
     }
 }

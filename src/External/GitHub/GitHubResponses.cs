@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 namespace External.GitHub;
 
 internal record RepoResponse(
-    [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("full_name")] string FullName,
     [property: JsonPropertyName("private")] bool Private,
     [property: JsonPropertyName("created_at")] DateTimeOffset CreatedAt,
