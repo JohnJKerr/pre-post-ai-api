@@ -2683,6 +2683,7 @@
     "projectsX": 2.4,
     "commitsX": 2.5141065830721003,
     "outOfHoursX": 4.461700024709661,
+    "activeDaysX": 1.720496894409938,
     "newLanguages": [
       "Python",
       "Go",
@@ -2692,23 +2693,23 @@
     "hoursShift": 42.388164
   },
   "score": {
-    "total": 78,
+    "total": 69,
     "parts": {
       "output": {
-        "points": 34,
-        "max": 45
+        "points": 20,
+        "max": 40
       },
       "projects": {
         "points": 9,
         "max": 15
       },
       "languages": {
-        "points": 10,
-        "max": 10
+        "points": 20,
+        "max": 20
       },
-      "hours": {
-        "points": 25,
-        "max": 30
+      "time": {
+        "points": 20,
+        "max": 25
       }
     },
     "rung": 4,

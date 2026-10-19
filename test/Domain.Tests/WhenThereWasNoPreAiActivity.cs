@@ -57,4 +57,17 @@ public class WhenThereWasNoPreAiActivity
         // Assert
         score.Parts.Projects.ShouldBe(0);
     }
+
+    [Fact]
+    public void Time_scores_0()
+    {
+        // Arrange
+        var shift = new Shift(new GivenAShiftSide().WithNoActivity().Build(), new GivenAShiftSide().Build());
+
+        // Act
+        var score = shift.Score();
+
+        // Assert
+        score.Parts.Time.ShouldBe(0);
+    }
 }

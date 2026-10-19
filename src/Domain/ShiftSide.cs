@@ -1,3 +1,9 @@
 namespace Domain;
 
-public record ShiftSide(int Added, int Commits, int ProjectCount, IReadOnlyList<string> UsedLanguages, double? OutOfHours);
+public record ShiftSide(
+    int Added,
+    int Commits,
+    int ProjectCount,
+    IReadOnlyDictionary<string, double> Languages,
+    int ActiveDays,
+    double? OutOfHours);

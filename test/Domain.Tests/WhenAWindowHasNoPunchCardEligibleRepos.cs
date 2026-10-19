@@ -44,19 +44,6 @@ public class WhenAWindowHasNoPunchCardEligibleRepos
     }
 
     [Fact]
-    public void Hours_are_left_out_of_the_score()
-    {
-        // Arrange
-        var profile = new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build();
-
-        // Act
-        var report = Report.From(profile);
-
-        // Assert
-        report.Score.Parts.Hours.ShouldBe(0);
-    }
-
-    [Fact]
     public void There_is_no_tag()
     {
         // Arrange

@@ -14,7 +14,7 @@ public class WhenGrowthIsExtreme
         var score = shift.Score();
 
         // Assert
-        score.Parts.ShouldBe(new ScoreParts(Output: 45, Projects: 15, Languages: 10, Hours: 30));
+        score.Parts.ShouldBe(new ScoreParts(Output: 40, Projects: 15, Languages: 20, Time: 25));
     }
 
     [Fact]
@@ -44,11 +44,12 @@ public class WhenGrowthIsExtreme
     }
 
     private static Shift ExtremeGrowth() => new(
-        new GivenAShiftSide().WithLinesAdded(1).WithProjects(1).WithLanguages().WithOutOfHours(0).Build(),
+        new GivenAShiftSide().WithLinesAdded(1).WithCommits(1).WithProjects(1).WithLanguages().WithActiveDays(1).Build(),
         new GivenAShiftSide()
             .WithLinesAdded(1_000_000)
+            .WithCommits(1_000_000)
             .WithProjects(100)
             .WithLanguages("A", "B", "C", "D", "E", "F")
-            .WithOutOfHours(1)
+            .WithActiveDays(100)
             .Build());
 }

@@ -603,7 +603,7 @@ public class WhenBuildingTheSampleReport
     }
 
     [Fact]
-    public void The_score_parts_are_34_9_10_and_25()
+    public void The_score_parts_are_20_9_20_and_20()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -612,11 +612,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Score.Parts.ShouldBe(new ScoreParts(Output: 34, Projects: 9, Languages: 10, Hours: 25));
+        report.Score.Parts.ShouldBe(new ScoreParts(Output: 20, Projects: 9, Languages: 20, Time: 20));
     }
 
     [Fact]
-    public void The_score_is_78()
+    public void The_score_is_69()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -625,7 +625,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Score.Total.ShouldBe(78);
+        report.Score.Total.ShouldBe(69);
     }
 
     [Fact]

@@ -56,3 +56,15 @@ The report doesn't need to know what a repo is called, only how much of the work
 ## The app asks for Metadata only, so stats come from REST
 
 GraphQL commit history would avoid the stats endpoints' 202s and give each commit's time, which an active-hours measure needs. But reading commits needs the **Contents: read** permission, and GitHub's consent screen then tells users the app can read their code. That is too much to ask for a report about their habits. With **Metadata: read** alone, GraphQL returns no history for private repos, and a report built that way silently drops most of a user's work. So the adapter stays on REST `stats/contributors`, `stats/punch_card` and `languages`, which Metadata covers, and a cold account still waits for GitHub to compute its stats.
+
+## The score weighs commits, new languages and active days
+
+The score is out of 100, in four parts. Each part rounds to whole points before they're added.
+- **Output (40):** commits score up to 28 and lines up to 12, each as `log10(post / pre)`, so 10× earns the full amount. A commit is a change someone chose to make. Lines swell with generated code and lockfiles: one week of 82k lines can dominate a year.
+- **Languages (20):** 5 points for each new language, up to four. To count as new, a language must be at least 5% of the post window and at most 1% of the pre window, so a language hovering near a threshold can't score by chance.
+- **Time (25):** `25 × log2(post / pre)` of active days from the contribution calendar, so twice as many days earns the full amount and fewer days score 0. Active days are dated and cover every repo, private ones included. Active hours would be a better measure, but they need commit timestamps (see above).
+- **Projects (15):** unchanged, `15 × log2(post / pre) / 2`.
+
+The out-of-hours share is no longer scored. It came only from punch-card-eligible repos, which can be a small fraction of the work. It still sets the tag.
+
+Every part measures change relative to the user's own past. Someone already coding six days a week has little room to grow their active days, and that's intended: the score is about how much AI changed their work, not how much they work.

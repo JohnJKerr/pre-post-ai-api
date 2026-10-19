@@ -5,16 +5,18 @@ namespace Domain.Tests;
 public class WhenScoringTheSampleDeveloper
 {
     [Fact]
-    public void Output_scores_34()
+    public void Output_scores_20()
     {
         // Arrange
-        var shift = new Shift(new GivenAShiftSide().WithLinesAdded(40_459).Build(), new GivenAShiftSide().WithLinesAdded(226_832).Build());
+        var shift = new Shift(
+            new GivenAShiftSide().WithLinesAdded(40_459).WithCommits(638).Build(),
+            new GivenAShiftSide().WithLinesAdded(226_832).WithCommits(1_604).Build());
 
         // Act
         var score = shift.Score();
 
         // Assert
-        score.Parts.Output.ShouldBe(34);
+        score.Parts.Output.ShouldBe(20);
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class WhenScoringTheSampleDeveloper
     }
 
     [Fact]
-    public void Languages_score_10()
+    public void Languages_score_20()
     {
         // Arrange
         var shift = new Shift(
@@ -42,24 +44,24 @@ public class WhenScoringTheSampleDeveloper
         var score = shift.Score();
 
         // Assert
-        score.Parts.Languages.ShouldBe(10);
+        score.Parts.Languages.ShouldBe(20);
     }
 
     [Fact]
-    public void Hours_score_25()
+    public void Time_scores_20()
     {
         // Arrange
-        var shift = new Shift(new GivenAShiftSide().WithOutOfHours(0.122).Build(), new GivenAShiftSide().WithOutOfHours(0.546).Build());
+        var shift = new Shift(new GivenAShiftSide().WithActiveDays(161).Build(), new GivenAShiftSide().WithActiveDays(277).Build());
 
         // Act
         var score = shift.Score();
 
         // Assert
-        score.Parts.Hours.ShouldBe(25);
+        score.Parts.Time.ShouldBe(20);
     }
 
     [Fact]
-    public void The_total_is_78()
+    public void The_total_is_69()
     {
         // Arrange
         var shift = TheSampleDevelopersShift();
@@ -68,7 +70,7 @@ public class WhenScoringTheSampleDeveloper
         var score = shift.Score();
 
         // Assert
-        score.Total.ShouldBe(78);
+        score.Total.ShouldBe(69);
     }
 
     [Fact]
@@ -100,14 +102,18 @@ public class WhenScoringTheSampleDeveloper
     private static Shift TheSampleDevelopersShift() => new(
         new GivenAShiftSide()
             .WithLinesAdded(40_459)
+            .WithCommits(638)
             .WithProjects(5)
             .WithLanguages("C#", "TypeScript", "Shell", "JavaScript", "SQL")
+            .WithActiveDays(161)
             .WithOutOfHours(0.122)
             .Build(),
         new GivenAShiftSide()
             .WithLinesAdded(226_832)
+            .WithCommits(1_604)
             .WithProjects(12)
             .WithLanguages("TypeScript", "C#", "Python", "Go", "Rust", "Swift", "SQL", "Shell")
+            .WithActiveDays(277)
             .WithOutOfHours(0.546)
             .Build());
 }

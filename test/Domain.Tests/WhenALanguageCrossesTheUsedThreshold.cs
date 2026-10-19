@@ -67,20 +67,4 @@ public class WhenALanguageCrossesTheUsedThreshold
         // Assert
         report.Shift.NewLanguages.ShouldBe(["Go"]);
     }
-
-    [Fact]
-    public void It_scores_2_5_points()
-    {
-        // Arrange
-        var profile = new GivenAProfile()
-            .WithRepo(new GivenARepo("main").Writing("TypeScript", 0.99).Writing("Go", 0.01).WithShareOfLines(pre: 1, post: 0.5))
-            .WithRepo(new GivenARepo("svc").Writing("Go", 1).WithShareOfLines(pre: 0, post: 0.5))
-            .Build();
-
-        // Act
-        var report = Report.From(profile);
-
-        // Assert
-        report.Score.Parts.Languages.ShouldBe(2.5);
-    }
 }
