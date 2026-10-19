@@ -76,3 +76,5 @@ The verdicts on the ladder name how far the user has changed, from "I'm an artis
 The post window used to run from the cut-off to the last complete week, and the pre window mirrored it. An old cut-off such as the ChatGPT launch then spanned about eight years, so nearly every repo the user had pushed to since then had to be fetched, and one such generation failed after more than three minutes. Now pre is the 26 weeks before the cut-off week and post is the latest 26 complete weeks. A cut-off less than 26 weeks ago shrinks both windows to the complete weeks since it, so they never overlap and always match in length.
 
 The weeks between the two windows count towards neither, except that a punch-card repo's side is still decided by the cut-off week, not by where the post window starts.
+
+The sample report uses the same windows: the 26 weeks before the default cut-off and the 26 before it was generated on 18 October 2026.

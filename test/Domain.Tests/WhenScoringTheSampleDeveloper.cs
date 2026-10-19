@@ -9,8 +9,8 @@ public class WhenScoringTheSampleDeveloper
     {
         // Arrange
         var shift = new Shift(
-            new GivenAShiftSide().WithLinesAdded(40_459).WithCommits(638).Build(),
-            new GivenAShiftSide().WithLinesAdded(226_832).WithCommits(1_604).Build());
+            new GivenAShiftSide().WithLinesAdded(38_306).WithCommits(639).Build(),
+            new GivenAShiftSide().WithLinesAdded(232_608).WithCommits(1_617).Build());
 
         // Act
         var score = shift.Score();
@@ -48,20 +48,20 @@ public class WhenScoringTheSampleDeveloper
     }
 
     [Fact]
-    public void Time_scores_20()
+    public void Time_scores_16()
     {
         // Arrange
-        var shift = new Shift(new GivenAShiftSide().WithActiveDays(161).Build(), new GivenAShiftSide().WithActiveDays(277).Build());
+        var shift = new Shift(new GivenAShiftSide().WithActiveDays(99).Build(), new GivenAShiftSide().WithActiveDays(155).Build());
 
         // Act
         var score = shift.Score();
 
         // Assert
-        score.Parts.Time.ShouldBe(20);
+        score.Parts.Time.ShouldBe(16);
     }
 
     [Fact]
-    public void The_total_is_69()
+    public void The_total_is_65()
     {
         // Arrange
         var shift = TheSampleDevelopersShift();
@@ -70,7 +70,7 @@ public class WhenScoringTheSampleDeveloper
         var score = shift.Score();
 
         // Assert
-        score.Total.ShouldBe(69);
+        score.Total.ShouldBe(65);
     }
 
     [Fact]
@@ -88,19 +88,19 @@ public class WhenScoringTheSampleDeveloper
 
     private static Shift TheSampleDevelopersShift() => new(
         new GivenAShiftSide()
-            .WithLinesAdded(40_459)
-            .WithCommits(638)
+            .WithLinesAdded(38_306)
+            .WithCommits(639)
             .WithProjects(5)
             .WithLanguages("C#", "TypeScript", "Shell", "JavaScript", "SQL")
-            .WithActiveDays(161)
-            .WithOutOfHours(0.122)
+            .WithActiveDays(99)
+            .WithOutOfHours(0.126)
             .Build(),
         new GivenAShiftSide()
-            .WithLinesAdded(226_832)
-            .WithCommits(1_604)
+            .WithLinesAdded(232_608)
+            .WithCommits(1_617)
             .WithProjects(12)
             .WithLanguages("TypeScript", "C#", "Python", "Go", "Rust", "Swift", "SQL", "Shell")
-            .WithActiveDays(277)
-            .WithOutOfHours(0.546)
+            .WithActiveDays(155)
+            .WithOutOfHours(0.552)
             .Build());
 }

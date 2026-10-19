@@ -6,8 +6,9 @@ public static class SampleProfile
 {
     public const string Handle = "sam-builds";
     private const int Seed = 20251124;
-    private const int Weeks = 47;
+    private const int Weeks = 26;
     private static readonly DateOnly CutoffWeekStart = new(2025, 11, 23);
+    private static readonly DateOnly PostStart = new(2026, 4, 19);
     private static readonly DateTimeOffset GeneratedAt = new(2026, 10, 18, 0, 0, 0, TimeSpan.Zero);
 
     private static readonly PerEra<double[]> DayWeight = new(
@@ -65,7 +66,7 @@ public static class SampleProfile
     private static (IReadOnlyList<Week> Weeks, int ActiveDays) WeeksFor(Era era, Mulberry32 random)
     {
         var daily = DailyCommits(era, random);
-        var start = era == Era.Pre ? CutoffWeekStart.AddDays(-Weeks * 7) : CutoffWeekStart;
+        var start = era == Era.Pre ? CutoffWeekStart.AddDays(-Weeks * 7) : PostStart;
         var weeks = new List<Week>();
         for (var k = 0; k < Weeks; k++)
         {

@@ -14,6 +14,6 @@ public class WhenARepoIsPrivate
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Projects.ShouldContain(new Project(null, 18_611));
+        report.Pre.Projects.ShouldContain(new Project(null, 17_621));
     }
 }

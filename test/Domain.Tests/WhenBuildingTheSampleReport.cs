@@ -5,7 +5,7 @@ namespace Domain.Tests;
 public class WhenBuildingTheSampleReport
 {
     [Fact]
-    public void Each_side_has_47_complete_weeks()
+    public void Each_side_has_26_complete_weeks()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -14,11 +14,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Weeks.ShouldBe(47);
+        report.Weeks.ShouldBe(26);
     }
 
     [Fact]
-    public void Pre_adds_40_459_lines()
+    public void Pre_adds_38_306_lines()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -27,11 +27,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Added.ShouldBe(40_459);
+        report.Pre.Added.ShouldBe(38_306);
     }
 
     [Fact]
-    public void Pre_deletes_12_665_lines()
+    public void Pre_deletes_12_125_lines()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -40,7 +40,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Deleted.ShouldBe(12_665);
+        report.Pre.Deleted.ShouldBe(12_125);
     }
 
     [Fact]
@@ -53,11 +53,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Commits.ShouldBe(638);
+        report.Pre.Commits.ShouldBe(639);
     }
 
     [Fact]
-    public void Post_adds_226_832_lines()
+    public void Post_adds_232_608_lines()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -66,11 +66,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.Added.ShouldBe(226_832);
+        report.Post.Added.ShouldBe(232_608);
     }
 
     [Fact]
-    public void Post_deletes_74_833_lines()
+    public void Post_deletes_72_522_lines()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -79,11 +79,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.Deleted.ShouldBe(74_833);
+        report.Post.Deleted.ShouldBe(72_522);
     }
 
     [Fact]
-    public void Post_has_1_604_commits()
+    public void Post_has_1_617_commits()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -92,7 +92,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.Commits.ShouldBe(1_604);
+        report.Post.Commits.ShouldBe(1_617);
     }
 
     [Fact]
@@ -170,7 +170,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Projects.ShouldContain(new Project("invoice-api", 18_611));
+        report.Pre.Projects.ShouldContain(new Project("invoice-api", 17_621));
     }
 
     [Fact]
@@ -183,7 +183,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Range.Start.ShouldBe(new DateOnly(2024, 12, 29));
+        report.Pre.Range.Start.ShouldBe(new DateOnly(2025, 5, 25));
     }
 
     [Fact]
@@ -209,7 +209,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.Range.Start.ShouldBe(new DateOnly(2025, 11, 23));
+        report.Post.Range.Start.ShouldBe(new DateOnly(2026, 4, 19));
     }
 
     [Fact]
@@ -235,11 +235,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Weekly.Count.ShouldBe(47);
+        report.Pre.Weekly.Count.ShouldBe(26);
     }
 
     [Fact]
-    public void Pre_was_active_on_161_days()
+    public void Pre_was_active_on_99_days()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -248,11 +248,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.ActiveDays.ShouldBe(161);
+        report.Pre.ActiveDays.ShouldBe(99);
     }
 
     [Fact]
-    public void Pre_was_active_3_4_days_a_week()
+    public void Pre_was_active_3_8_days_a_week()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -261,11 +261,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.ActiveDaysPerWeek.ShouldBe(3.4);
+        report.Pre.ActiveDaysPerWeek.ShouldBe(3.8);
     }
 
     [Fact]
-    public void Post_was_active_on_277_days()
+    public void Post_was_active_on_155_days()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -274,11 +274,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.ActiveDays.ShouldBe(277);
+        report.Post.ActiveDays.ShouldBe(155);
     }
 
     [Fact]
-    public void Post_was_active_5_9_days_a_week()
+    public void Post_was_active_6_days_a_week()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -287,7 +287,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.ActiveDaysPerWeek.ShouldBe(5.9);
+        report.Post.ActiveDaysPerWeek.ShouldBe(6);
     }
 
     [Fact]
@@ -300,7 +300,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.PerCommit.ShouldBe(63);
+        report.Pre.PerCommit.ShouldBe(60);
     }
 
     [Fact]
@@ -313,7 +313,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.PerCommit.ShouldBe(141);
+        report.Post.PerCommit.ShouldBe(144);
     }
 
     [Fact]
@@ -378,7 +378,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        (report.Pre.Punch!.Busiest.Day, report.Pre.Punch.Busiest.Hour).ShouldBe((2, 10));
+        (report.Pre.Punch!.Busiest.Day, report.Pre.Punch.Busiest.Hour).ShouldBe((1, 11));
     }
 
     [Fact]
@@ -391,7 +391,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        (report.Post.Punch!.Busiest.Day, report.Post.Punch.Busiest.Hour).ShouldBe((2, 21));
+        (report.Post.Punch!.Busiest.Day, report.Post.Punch.Busiest.Hour).ShouldBe((4, 20));
     }
 
     [Fact]
@@ -417,7 +417,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Post.Punch!.CodingWindow.ShouldBe(new CodingWindow(Start: 8, Length: 14));
+        report.Post.Punch!.CodingWindow.ShouldBe(new CodingWindow(Start: 9, Length: 14));
     }
 
     [Fact]
@@ -430,7 +430,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Pre.Punch!.HoursTouched.ShouldBe(15);
+        report.Pre.Punch!.HoursTouched.ShouldBe(14);
     }
 
     [Fact]
@@ -469,7 +469,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        Percent(report.Pre.Punch!.Evening).ShouldBe(7.1);
+        Percent(report.Pre.Punch!.Evening).ShouldBe(6.8);
     }
 
     [Fact]
@@ -482,7 +482,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        Percent(report.Pre.Punch!.Weekend).ShouldBe(5.1);
+        Percent(report.Pre.Punch!.Weekend).ShouldBe(5.8);
     }
 
     [Fact]
@@ -495,7 +495,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        Percent(report.Pre.Punch!.Combined).ShouldBe(12.2);
+        Percent(report.Pre.Punch!.Combined).ShouldBe(12.6);
     }
 
     [Fact]
@@ -508,7 +508,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        Percent(report.Post.Punch!.Evening).ShouldBe(30.6);
+        Percent(report.Post.Punch!.Evening).ShouldBe(30.5);
     }
 
     [Fact]
@@ -521,7 +521,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        Percent(report.Post.Punch!.Weekend).ShouldBe(24.0);
+        Percent(report.Post.Punch!.Weekend).ShouldBe(24.7);
     }
 
     [Fact]
@@ -534,7 +534,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        Percent(report.Post.Punch!.Combined).ShouldBe(54.6);
+        Percent(report.Post.Punch!.Combined).ShouldBe(55.2);
     }
 
     [Fact]
@@ -586,11 +586,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Shift.CommitsX.ShouldBe(1_604 / 638d);
+        report.Shift.CommitsX.ShouldBe(1_617 / 639d);
     }
 
     [Fact]
-    public void Out_of_hours_grows_about_four_and_a_half_times()
+    public void Out_of_hours_grows_about_four_and_a_third_times()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -599,11 +599,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Shift.OutOfHoursX!.Value.ShouldBeInRange(4.45, 4.50);
+        report.Shift.OutOfHoursX!.Value.ShouldBeInRange(4.35, 4.42);
     }
 
     [Fact]
-    public void The_score_parts_are_20_9_20_and_20()
+    public void The_score_parts_are_20_9_20_and_16()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -612,11 +612,11 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Score.Parts.ShouldBe(new ScoreParts(Output: 20, Projects: 9, Languages: 20, Time: 20));
+        report.Score.Parts.ShouldBe(new ScoreParts(Output: 20, Projects: 9, Languages: 20, Time: 16));
     }
 
     [Fact]
-    public void The_score_is_69()
+    public void The_score_is_65()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -625,7 +625,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Score.Total.ShouldBe(69);
+        report.Score.Total.ShouldBe(65);
     }
 
     [Fact]

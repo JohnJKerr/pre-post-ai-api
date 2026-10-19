@@ -46,6 +46,6 @@ public class WhenGettingASavedReport(ApiFactory factory)
         var report = await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/kept-dev");
 
         // Assert
-        report!.Score.Total.ShouldBe(69);
+        report!.Score.Total.ShouldBe(65);
     }
 }
