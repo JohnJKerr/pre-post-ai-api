@@ -52,3 +52,7 @@ ASP.NET Data Protection now guards only the OAuth state of a sign-in under way, 
 ## Repo names are never kept
 
 The report doesn't need to know what a repo is called, only how much of the work it holds, whether it's private, and when it started. So the GitHub adapter drops repo names, and real reports list every project with `name: null`. That goes further than the hard rule that private names never leave the back end: no name, public or private, reaches the database. Only the sample report has names, because its repos are made up and it must match the front end's fixture.
+
+## The app asks for Metadata only, so stats come from REST
+
+GraphQL commit history would avoid the stats endpoints' 202s and give each commit's time, which an active-hours measure needs. But reading commits needs the **Contents: read** permission, and GitHub's consent screen then tells users the app can read their code. That is too much to ask for a report about their habits. With **Metadata: read** alone, GraphQL returns no history for private repos, and a report built that way silently drops most of a user's work. So the adapter stays on REST `stats/contributors`, `stats/punch_card` and `languages`, which Metadata covers, and a cold account still waits for GitHub to compute its stats.
