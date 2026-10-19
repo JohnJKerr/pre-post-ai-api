@@ -1,0 +1,23 @@
+{
+  "data": {
+    "repository": {
+      "defaultBranchRef": {
+        "target": {
+          "all": { "totalCount": 9 },
+          "mine": {
+            "pageInfo": { "hasNextPage": false, "endCursor": "ledger-sync-1" },
+            "nodes": [
+              { "author": { "date": "2025-06-11T14:40:00+01:00" }, "additions": 30, "deletions": 2 },
+              { "author": { "date": "2025-06-11T14:30:00+01:00" }, "additions": 30, "deletions": 2 },
+              { "author": { "date": "2025-06-11T14:20:00+01:00" }, "additions": 30, "deletions": 3 },
+              { "author": { "date": "2025-06-11T14:10:00+01:00" }, "additions": 30, "deletions": 3 },
+              { "author": { "date": "2025-06-03T10:50:00+01:00" }, "additions": 100, "deletions": 10 },
+              { "author": { "date": "2025-06-03T10:30:00+01:00" }, "additions": 100, "deletions": 10 },
+              { "author": { "date": "2025-06-03T10:15:00+01:00" }, "additions": 100, "deletions": 10 }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -37,13 +37,20 @@ The token never leaves the back end and is never stored. Rejected alternatives:
 - **Giving the token to the front end:** puts a credential that can list private repo names within reach of any XSS.
 - **Hangfire:** serialises job arguments, and so the token, into its store.
 
-The queue is a bounded `Channel` read by four workers. GitHub's secondary rate limits are per token, so different users' jobs can run at once while each job's calls stay sequential. A restart loses jobs in flight, which is the intended failure, because the token is gone. A generation still pending after 30 minutes reads as failed.
+The queue is a bounded `Channel` read by four workers, so different users' jobs run at once. A restart loses jobs in flight, which is the intended failure, because the token is gone. A generation still pending after 30 minutes reads as failed.
 
-Because the job can wait as long as it needs, GitHub's 202 "still computing" is retried within the job. If a repo still isn't ready after 15 attempts, the generation fails and asks the user to sign in again in a minute.
+## Metadata comes from GraphQL, a few repos at a time
 
-## Repos are skipped rather than fetched in parallel
+The GitHub adapter makes only GraphQL calls:
+- **Repos:** listed most recently pushed first, with their languages. Listing stops at the first repo last pushed before the pre window starts, because neither it nor any repo after it can have activity in either window.
+- **Commits:** each repo's default-branch history between the start of the pre window and the end of the post window, filtered to the user. Every commit carries its time, additions and deletions. The adapter totals them by week (Sundays, in UTC) and into a punch card. The punch card uses the commit's own UTC offset, so it shows the user's local hours.
+- **Contribution calendar:** a year at a time, as before.
 
-`/user/repos` lists every repo the user can see, and each one costs three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+This replaced the REST `stats/contributors`, `stats/punch_card` and `languages` endpoints. The stats endpoints answer 202 until GitHub has computed them, and an account whose stats were cold waited up to 30 s per repo. Their punch card also covered every author, for the repo's whole life, with no dates. Per-commit timestamps are what an active-hours measure needs.
+
+Two consequences:
+- A repo's commit total (all authors) is now counted within the windows, not over its whole life, and the punch card holds only the user's own commits.
+- Listing commits costs about 1.3 s per 100, a third of that for GitHub to count lines. Done one repo after another, an account with 3,500 commits across 30 repos took two minutes. So four repos are fetched at once, which is far below GraphQL's secondary limits (100 concurrent requests, and a CPU-time budget). A call that is rate limited anyway (429, or 403 with `Retry-After` or no requests remaining) is retried after the wait GitHub asks for, up to three attempts.
 
 ## Data Protection keys stay in memory
 

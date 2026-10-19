@@ -7,8 +7,6 @@ internal class FakeGitHub(Exception? failure = null, bool hasCommits = true) : I
 {
     public static FakeGitHub WithNoCommits() => new(hasCommits: false);
 
-    public static FakeGitHub StillComputingStats() => new(new GitHubStatsPendingException("octo-dev/agent-runner"));
-
     public static FakeGitHub RejectingTheToken() => new(new GitHubTokenRejectedException());
 
     private static readonly RepoMetadata Repo = new(

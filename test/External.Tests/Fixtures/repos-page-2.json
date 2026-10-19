@@ -1,0 +1,20 @@
+{
+  "data": {
+    "viewer": {
+      "id": "U_octo-dev",
+      "repositories": {
+        "pageInfo": { "hasNextPage": false, "endCursor": "repos-2" },
+        "nodes": [
+          {
+            "owner": { "login": "octo-dev" },
+            "name": "old-tool",
+            "isPrivate": false,
+            "createdAt": "2019-04-02T09:00:00Z",
+            "pushedAt": "2025-08-01T00:00:00Z",
+            "languages": { "edges": [] }
+          }
+        ]
+      }
+    }
+  }
+}

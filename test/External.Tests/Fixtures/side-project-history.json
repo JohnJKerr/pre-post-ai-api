@@ -1,0 +1,21 @@
+{
+  "data": {
+    "repository": {
+      "defaultBranchRef": {
+        "target": {
+          "all": { "totalCount": 5 },
+          "mine": {
+            "pageInfo": { "hasNextPage": false, "endCursor": "side-project-1" },
+            "nodes": [
+              { "author": { "date": "2026-06-13T22:50:00Z" }, "additions": 180, "deletions": 18 },
+              { "author": { "date": "2026-06-13T22:40:00Z" }, "additions": 180, "deletions": 18 },
+              { "author": { "date": "2026-06-13T22:30:00Z" }, "additions": 180, "deletions": 18 },
+              { "author": { "date": "2026-06-13T22:20:00Z" }, "additions": 180, "deletions": 18 },
+              { "author": { "date": "2026-06-13T22:10:00Z" }, "additions": 180, "deletions": 18 }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "data": {
+    "viewer": {
+      "id": "U_octo-dev",
+      "repositories": {
+        "pageInfo": { "hasNextPage": false, "endCursor": "repos-1" },
+        "nodes": [
+          {
+            "owner": { "login": "octo-dev" },
+            "name": "side-project",
+            "isPrivate": true,
+            "createdAt": "2026-02-01T18:05:00Z",
+            "pushedAt": "2026-06-14T21:00:00Z",
+            "languages": { "edges": [{ "size": 8000, "node": { "name": "Rust" } }] }
+          },
+          {
+            "owner": { "login": "octo-dev" },
+            "name": "ledger-sync",
+            "isPrivate": false,
+            "createdAt": "2025-03-14T10:22:31Z",
+            "pushedAt": "2025-09-01T08:00:00Z",
+            "languages": { "edges": [{ "size": 30000, "node": { "name": "C#" } }, { "size": 10000, "node": { "name": "SQL" } }] }
+          }
+        ]
+      }
+    }
+  }
+}

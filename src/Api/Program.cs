@@ -25,7 +25,6 @@ builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<GenerationQueue>();
 builder.Services.AddHostedService<ReportGenerator>();
-builder.Services.AddSingleton(GitHubOptions.Default);
 builder.Services.AddHttpClient<IGitHubMetadata, GitHubMetadata>(client =>
 {
     client.BaseAddress = new Uri("https://api.github.com");
