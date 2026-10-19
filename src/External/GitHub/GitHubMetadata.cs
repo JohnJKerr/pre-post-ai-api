@@ -54,6 +54,15 @@ public class GitHubMetadata(HttpClient http) : IGitHubMetadata
         }
         """;
 
+    private const string MergedPullRequestsQuery = """
+        query($search: String!, $cursor: String) {
+          search(query: $search, type: ISSUE, first: 100, after: $cursor) {
+            pageInfo { hasNextPage endCursor }
+            nodes { ... on PullRequest { mergedAt } }
+          }
+        }
+        """;
+
     private const string CalendarQuery = """
         query($from: DateTime!, $to: DateTime!) {
           viewer {
@@ -67,13 +76,17 @@ public class GitHubMetadata(HttpClient http) : IGitHubMetadata
     public async Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to)
     {
         var (viewerId, repos) = await ReposPushedSince(user, from);
-        var metadata = new RepoMetadata[repos.Count];
+        var histories = new (RepoMetadata Metadata, IReadOnlyList<CommitNode> Commits)[repos.Count];
         await Parallel.ForEachAsync(
             Enumerable.Range(0, repos.Count),
             new ParallelOptions { MaxDegreeOfParallelism = ReposAtOnce },
-            async (index, _) => metadata[index] = await MetadataFor(user, viewerId, repos[index], from, to));
+            async (index, _) => histories[index] = await HistoryOf(user, viewerId, repos[index], from, to));
 
-        return new GitHubActivity(metadata, await ContributionDays(user, from, to));
+        return new GitHubActivity(
+            histories.Select(h => h.Metadata).ToArray(),
+            await ContributionDays(user, from, to),
+            histories.SelectMany(h => h.Commits).Select(c => c.Author.Date.DateTime).ToArray(),
+            await PullRequestsMergedOn(user, from, to));
     }
 
     // Repos come most recently pushed first, so the first one nobody has pushed to since the pre
@@ -96,7 +109,7 @@ public class GitHubMetadata(HttpClient http) : IGitHubMetadata
     private static bool PushedSince(RepoNode repo, DateOnly from) =>
         repo.PushedAt is { } pushedAt && DateOnly.FromDateTime(pushedAt.UtcDateTime) >= from;
 
-    private async Task<RepoMetadata> MetadataFor(GitHubUser user, string viewerId, RepoNode repo, DateOnly from, DateOnly to)
+    private async Task<(RepoMetadata, IReadOnlyList<CommitNode>)> HistoryOf(GitHubUser user, string viewerId, RepoNode repo, DateOnly from, DateOnly to)
     {
         var commits = new List<CommitNode>();
         var totalCommits = 0;
@@ -119,13 +132,14 @@ public class GitHubMetadata(HttpClient http) : IGitHubMetadata
             cursor = history.Mine.PageInfo.EndCursor;
         }
 
-        return new RepoMetadata(
+        var metadata = new RepoMetadata(
             repo.IsPrivate,
             DateOnly.FromDateTime(repo.CreatedAt.UtcDateTime),
             repo.Languages.Edges.ToDictionary(e => e.Node.Name, e => e.Size),
             WeeksOf(commits),
             totalCommits,
             PunchCardOf(commits));
+        return (metadata, commits);
     }
 
     // Weeks start on Sunday in UTC, as GitHub's own weekly stats do.
@@ -141,6 +155,20 @@ public class GitHubMetadata(HttpClient http) : IGitHubMetadata
         .GroupBy(c => (Day: (int)c.Author.Date.DayOfWeek, c.Author.Date.Hour))
         .Select(cell => new PunchCell(cell.Key.Day, cell.Key.Hour, cell.Count()))
         .ToArray();
+
+    // Search finds pull requests in every repo the token can see, not only the ones with recent pushes.
+    private async Task<IReadOnlyList<DateOnly>> PullRequestsMergedOn(GitHubUser user, DateOnly from, DateOnly to)
+    {
+        var search = string.Create(CultureInfo.InvariantCulture, $"is:pr is:merged author:{user.Handle} merged:{from:yyyy-MM-dd}..{to:yyyy-MM-dd}");
+        var days = new List<DateOnly>();
+        for (string? cursor = null; ;)
+        {
+            var results = (await Query<SearchData>(user, MergedPullRequestsQuery, new { search, cursor })).Search;
+            days.AddRange(results.Nodes.Where(pr => pr.MergedAt is not null).Select(pr => DateOnly.FromDateTime(pr.MergedAt!.Value.UtcDateTime)));
+            if (!results.PageInfo.HasNextPage) return days;
+            cursor = results.PageInfo.EndCursor;
+        }
+    }
 
     private async Task<IReadOnlyList<DateOnly>> ContributionDays(GitHubUser user, DateOnly from, DateOnly to)
     {

@@ -63,6 +63,14 @@ internal record CommitNode(
 
 internal record CommitAuthor([property: JsonPropertyName("date")] DateTimeOffset Date);
 
+internal record SearchData([property: JsonPropertyName("search")] PullRequestConnection Search);
+
+internal record PullRequestConnection(
+    [property: JsonPropertyName("pageInfo")] PageInfo PageInfo,
+    [property: JsonPropertyName("nodes")] IReadOnlyList<PullRequestNode> Nodes);
+
+internal record PullRequestNode([property: JsonPropertyName("mergedAt")] DateTimeOffset? MergedAt);
+
 internal record CalendarData([property: JsonPropertyName("viewer")] CalendarViewer Viewer);
 
 internal record CalendarViewer([property: JsonPropertyName("contributionsCollection")] ContributionsCollection ContributionsCollection);

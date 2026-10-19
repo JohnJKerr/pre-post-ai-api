@@ -1,0 +1,11 @@
+{
+  "data": {
+    "search": {
+      "pageInfo": { "hasNextPage": false, "endCursor": "pull-requests-1" },
+      "nodes": [
+        { "mergedAt": "2026-06-13T23:30:00Z" },
+        { "mergedAt": "2025-06-11T15:00:00Z" }
+      ]
+    }
+  }
+}

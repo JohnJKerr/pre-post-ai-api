@@ -43,9 +43,12 @@ internal record GraphQlCall(HttpRequestMessage Request, JsonNode Body)
 
     public bool IsForCalendar => Query.Contains("contributionsCollection(");
 
+    public bool IsForPullRequests => Query.Contains("search(");
+
     public string Key =>
         IsForRepos ? $"repos {Variable("cursor")}"
         : IsForHistory ? $"history {Variable("owner")}/{Variable("name")} {Variable("cursor")}"
         : IsForCalendar ? $"calendar {Variable("from")![..4]}"
+        : IsForPullRequests ? $"pull requests {Variable("cursor")}"
         : throw new InvalidOperationException($"Unexpected query: {Query}");
 }

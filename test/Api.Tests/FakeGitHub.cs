@@ -18,6 +18,6 @@ internal class FakeGitHub(Exception? failure = null, bool hasCommits = true) : I
         [new PunchCell(2, 21, 25)]);
 
     public Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to) => failure is null
-        ? Task.FromResult(hasCommits ? new GitHubActivity([Repo], [new DateOnly(2026, 6, 8)]) : new GitHubActivity([], []))
+        ? Task.FromResult(hasCommits ? new GitHubActivity([Repo], [new DateOnly(2026, 6, 8)], [new DateTime(2026, 6, 8, 21, 0, 0)], []) : new GitHubActivity([], [], [], []))
         : throw failure;
 }

@@ -12,6 +12,8 @@ internal class GivenGitHubActivity
 
     private readonly List<RepoMetadata> _repos = [];
     private readonly List<DateOnly> _contributionDays = [];
+    private readonly List<DateTime> _commitTimes = [];
+    private readonly List<DateOnly> _pullRequestsMergedOn = [];
 
     public GivenGitHubActivity WithRepo(GivenAGitHubRepo repo)
     {
@@ -25,7 +27,19 @@ internal class GivenGitHubActivity
         return this;
     }
 
-    public GitHubActivity Build() => new(_repos, _contributionDays);
+    public GivenGitHubActivity WithCommitsAt(params DateTime[] localTimes)
+    {
+        _commitTimes.AddRange(localTimes);
+        return this;
+    }
+
+    public GivenGitHubActivity WithPullRequestsMergedOn(params DateOnly[] days)
+    {
+        _pullRequestsMergedOn.AddRange(days);
+        return this;
+    }
+
+    public GitHubActivity Build() => new(_repos, _contributionDays, _commitTimes, _pullRequestsMergedOn);
 
     public Profile Assemble() => Profile.Assemble(GitHubId, "octo-dev", Cutoff.Default, Build(), Now);
 }
