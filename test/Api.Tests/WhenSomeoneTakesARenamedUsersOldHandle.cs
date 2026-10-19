@@ -19,6 +19,6 @@ public class WhenSomeoneTakesARenamedUsersOldHandle(ApiFactory factory)
         await newOwner.WaitForTheGeneration(await newOwner.SignInWithGitHub(cutoff: "2022-11-30"));
 
         // Assert
-        (await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/passed-on"))!.Cutoff.Label.ShouldBe("ChatGPT launch");
+        (await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/passed-on"))!.Cutoff.Date.ShouldBe("2022-11-30");
     }
 }

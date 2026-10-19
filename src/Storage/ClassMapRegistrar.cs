@@ -17,9 +17,16 @@ public static class ClassMapRegistrar
         {
             if (_registered) return;
 
+            // Ignoring extra elements lets documents saved before a field was dropped still load,
+            // such as a cut-off's old label.
             ConventionRegistry.Register(
                 "pre-post",
-                new ConventionPack { new CamelCaseElementNameConvention(), new EnumRepresentationConvention(BsonType.String) },
+                new ConventionPack
+                {
+                    new CamelCaseElementNameConvention(),
+                    new EnumRepresentationConvention(BsonType.String),
+                    new IgnoreExtraElementsConvention(true),
+                },
                 type => type.Namespace == typeof(Profile).Namespace);
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.DateTime));
             BsonClassMap.RegisterClassMap<Profile>(map =>

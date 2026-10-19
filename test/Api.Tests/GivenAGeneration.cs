@@ -14,7 +14,7 @@ internal class GivenAGeneration
 
     public GivenAGeneration WithCutoffOn(DateOnly date)
     {
-        _generation = _generation with { Cutoff = Cutoff.On(date) };
+        _generation = _generation with { Cutoff = new Cutoff(date) };
         return this;
     }
 

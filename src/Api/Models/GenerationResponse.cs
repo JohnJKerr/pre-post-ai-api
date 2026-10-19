@@ -7,7 +7,7 @@ public record GenerationResponse(string Status, CutoffResponse Cutoff, string? H
 {
     public static GenerationResponse From(Generation generation) => new(
         generation.Status.ToString().ToLowerInvariant(),
-        new CutoffResponse(generation.Cutoff.Label, Dates.Format(generation.Cutoff.Date)),
+        new CutoffResponse(Dates.Format(generation.Cutoff.Date)),
         generation.Status == GenerationStatus.Ready ? generation.Handle : null,
         generation.Message);
 }

@@ -19,7 +19,7 @@ public record ReportResponse(
         report.Handle,
         report.IsSample,
         report.GeneratedAt.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture),
-        new CutoffResponse(report.Cutoff.Label, Dates.Format(report.Cutoff.Date)),
+        new CutoffResponse(Dates.Format(report.Cutoff.Date)),
         report.Weeks,
         WindowSummaryResponse.From(report.Pre),
         WindowSummaryResponse.From(report.Post),
@@ -28,6 +28,6 @@ public record ReportResponse(
         new ScalesResponse(report.Scales.WeekMax, report.Scales.ProjectMax, report.Scales.CellMax, report.Scales.HourMax));
 }
 
-public record CutoffResponse(string Label, string Date);
+public record CutoffResponse(string Date);
 
 public record ScalesResponse(int WeekMax, int ProjectMax, int CellMax, double HourMax);

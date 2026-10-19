@@ -77,7 +77,7 @@ public class WhenGitHubSendsTheUserBack(ApiFactory factory)
     }
 
     [Fact]
-    public async Task Their_report_compares_either_side_of_Claude_Opus_4_5_by_default()
+    public async Task Their_report_compares_either_side_of_24_November_2025_by_default()
     {
         // Arrange
         var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("default-dev", 10_005));
@@ -87,6 +87,6 @@ public class WhenGitHubSendsTheUserBack(ApiFactory factory)
         var report = await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/default-dev");
 
         // Assert
-        report!.Cutoff.ShouldBe(new CutoffResponse("Claude Opus 4.5", "2025-11-24"));
+        report!.Cutoff.ShouldBe(new CutoffResponse("2025-11-24"));
     }
 }

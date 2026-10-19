@@ -109,7 +109,7 @@ public class WhenPollingAGeneration(ApiFactory factory)
         var generation = await factory.CreateClient().GetFromJsonAsync<GenerationResponse>($"/api/generations/{id}");
 
         // Assert
-        generation!.Cutoff.ShouldBe(new CutoffResponse("ChatGPT launch", "2022-11-30"));
+        generation!.Cutoff.ShouldBe(new CutoffResponse("2022-11-30"));
     }
 
     [Fact]

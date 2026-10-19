@@ -18,6 +18,6 @@ public class WhenRegeneratingAReport(ApiFactory factory)
         await browser.WaitForTheGeneration(await browser.SignInWithGitHub(cutoff: "2022-11-30"));
 
         // Assert
-        (await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/second-go"))!.Cutoff.Label.ShouldBe("ChatGPT launch");
+        (await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/second-go"))!.Cutoff.Date.ShouldBe("2022-11-30");
     }
 }

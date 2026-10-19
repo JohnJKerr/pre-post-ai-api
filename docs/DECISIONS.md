@@ -78,3 +78,9 @@ The post window used to run from the cut-off to the last complete week, and the 
 The weeks between the two windows count towards neither, except that a punch-card repo's side is still decided by the cut-off week, not by where the post window starts.
 
 The sample report uses the same windows: the 26 weeks before the default cut-off and the 26 before it was generated on 18 October 2026.
+
+## The front end names cut-offs
+
+The API works from the cut-off date alone, and a report or generation returns its cut-off as `{ date }`. Which release a date stands for, such as "Claude Opus 4.5" for 2025-11-24, is presentation, and the front end already holds the list it offers on its generate page.
+
+Profiles and generations saved earlier still carry `cutoff.label`. The domain's Mongo conventions ignore extra elements, so those documents load without a migration.

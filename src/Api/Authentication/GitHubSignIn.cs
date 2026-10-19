@@ -74,7 +74,7 @@ public static class GitHubSignIn
         }
 
         var services = context.HttpContext.RequestServices;
-        var cutoff = Cutoff.On(DateOnly.ParseExact(context.Properties!.Items[CutoffItem]!, "yyyy-MM-dd", CultureInfo.InvariantCulture));
+        var cutoff = new Cutoff(DateOnly.ParseExact(context.Properties!.Items[CutoffItem]!, "yyyy-MM-dd", CultureInfo.InvariantCulture));
         var generation = Generation.Start(user.Id, user.Handle, cutoff, services.GetRequiredService<TimeProvider>().GetUtcNow());
         await services.GetRequiredService<IGenerationRepository>().Save(generation);
         await services.GetRequiredService<GenerationQueue>().Enqueue(new GenerationRequest(generation, user), context.HttpContext.RequestAborted);

@@ -5,10 +5,10 @@ using Shouldly;
 namespace Api.Tests;
 
 [Collection(ApiCollection.Name)]
-public class WhenSigningInWithTheChatGPTLaunchAsTheCutoff(ApiFactory factory)
+public class WhenSigningInWithACutoff(ApiFactory factory)
 {
     [Fact]
-    public async Task The_report_compares_either_side_of_the_ChatGPT_launch()
+    public async Task The_report_compares_either_side_of_it()
     {
         // Arrange
         var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs("early-adopter", 10_101));
@@ -18,6 +18,6 @@ public class WhenSigningInWithTheChatGPTLaunchAsTheCutoff(ApiFactory factory)
         var report = await factory.CreateClient().GetFromJsonAsync<ReportResponse>("/api/reports/early-adopter");
 
         // Assert
-        report!.Cutoff.ShouldBe(new CutoffResponse("ChatGPT launch", "2022-11-30"));
+        report!.Cutoff.ShouldBe(new CutoffResponse("2022-11-30"));
     }
 }
