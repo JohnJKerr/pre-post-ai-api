@@ -31,7 +31,7 @@ public class WhenGrowthIsExtreme
     }
 
     [Fact]
-    public void The_verdict_is_I_run_a_lights_out_factory()
+    public void The_verdict_is_I_m_a_machine_literally()
     {
         // Arrange
         var shift = ExtremeGrowth();
@@ -40,7 +40,7 @@ public class WhenGrowthIsExtreme
         var score = shift.Score();
 
         // Assert
-        score.Verdict.ShouldBe("I run a lights-out factory");
+        score.Verdict.ShouldBe("I'm a machine (literally)");
     }
 
     private static Shift ExtremeGrowth() => new(

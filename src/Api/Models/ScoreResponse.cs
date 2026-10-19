@@ -7,7 +7,6 @@ public record ScoreResponse(
     ScorePartsResponse Parts,
     int Rung,
     string Verdict,
-    string? Tag,
     IReadOnlyList<RungResponse> Ladder)
 {
     public static ScoreResponse From(Score score)
@@ -20,7 +19,7 @@ public record ScoreResponse(
             new ScorePartResponse(score.Parts.Time, max.Time));
         var ladder = Score.Ladder.Select(r => new RungResponse(r.Min, r.Verdict)).ToArray();
 
-        return new ScoreResponse(score.Total, parts, score.Rung, score.Verdict, score.Tag, ladder);
+        return new ScoreResponse(score.Total, parts, score.Rung, score.Verdict, ladder);
     }
 }
 

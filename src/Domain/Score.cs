@@ -1,18 +1,18 @@
 namespace Domain;
 
-public record Score(ScoreParts Parts, string? Tag)
+public record Score(ScoreParts Parts)
 {
     private const double CommitsMax = 28;
     private const double PerNewLanguage = 5;
 
     public static readonly IReadOnlyList<Rung> Ladder =
     [
-        new(0, "I'm still hand-crafting"),
-        new(15, "I'm still prompting"),
-        new(30, "I've got a pair programmer"),
-        new(45, "I run a one-person dev shop"),
-        new(65, "I built a software factory"),
-        new(85, "I run a lights-out factory"),
+        new(0, "I'm an artisan"),
+        new(15, "I've hired an apprentice"),
+        new(30, "I'm a centaur (half human, half model)"),
+        new(45, "I'm a cyborg"),
+        new(65, "I've been assimilated"),
+        new(85, "I'm a machine (literally)"),
     ];
 
     public double Total => Parts.Total;
@@ -33,16 +33,8 @@ public record Score(ScoreParts Parts, string? Tag)
         var languages = Math.Min(max.Languages, PerNewLanguage * shift.NewLanguages.Count);
         var time = shift.ActiveDaysX is { } activeDaysX ? RoundedPart(max.Time, max.Time * Math.Log2(activeDaysX)) : 0;
 
-        return new Score(new ScoreParts(commits + lines, projects, languages, time), TagFor(shift));
+        return new Score(new ScoreParts(commits + lines, projects, languages, time));
     }
 
     private static double RoundedPart(double max, double value) => Rounding.HalfUp(Math.Clamp(value, 0, max));
-
-    private static string? TagFor(Shift shift) => shift.HoursShift switch
-    {
-        null => null,
-        >= 15 when shift.Post.OutOfHours >= 0.4 => "and it runs nights and weekends",
-        <= -10 => "and I got my evenings back",
-        _ => "and I still clock off on time",
-    };
 }

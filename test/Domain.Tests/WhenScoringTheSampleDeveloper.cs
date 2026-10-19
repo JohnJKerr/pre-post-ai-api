@@ -74,7 +74,7 @@ public class WhenScoringTheSampleDeveloper
     }
 
     [Fact]
-    public void The_verdict_is_I_built_a_software_factory()
+    public void The_verdict_is_I_ve_been_assimilated()
     {
         // Arrange
         var shift = TheSampleDevelopersShift();
@@ -83,20 +83,7 @@ public class WhenScoringTheSampleDeveloper
         var score = shift.Score();
 
         // Assert
-        score.Verdict.ShouldBe("I built a software factory");
-    }
-
-    [Fact]
-    public void The_tag_is_and_it_runs_nights_and_weekends()
-    {
-        // Arrange
-        var shift = new Shift(new GivenAShiftSide().WithOutOfHours(0.122).Build(), new GivenAShiftSide().WithOutOfHours(0.546).Build());
-
-        // Act
-        var score = shift.Score();
-
-        // Assert
-        score.Tag.ShouldBe("and it runs nights and weekends");
+        score.Verdict.ShouldBe("I've been assimilated");
     }
 
     private static Shift TheSampleDevelopersShift() => new(

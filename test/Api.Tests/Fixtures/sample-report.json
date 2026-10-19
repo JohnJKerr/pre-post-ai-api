@@ -2713,32 +2713,31 @@
       }
     },
     "rung": 4,
-    "verdict": "I built a software factory",
-    "tag": "and it runs nights and weekends",
+    "verdict": "I've been assimilated",
     "ladder": [
       {
         "min": 0,
-        "verdict": "I'm still hand-crafting"
+        "verdict": "I'm an artisan"
       },
       {
         "min": 15,
-        "verdict": "I'm still prompting"
+        "verdict": "I've hired an apprentice"
       },
       {
         "min": 30,
-        "verdict": "I've got a pair programmer"
+        "verdict": "I'm a centaur (half human, half model)"
       },
       {
         "min": 45,
-        "verdict": "I run a one-person dev shop"
+        "verdict": "I'm a cyborg"
       },
       {
         "min": 65,
-        "verdict": "I built a software factory"
+        "verdict": "I've been assimilated"
       },
       {
         "min": 85,
-        "verdict": "I run a lights-out factory"
+        "verdict": "I'm a machine (literally)"
       }
     ]
   },

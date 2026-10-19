@@ -65,6 +65,8 @@ The score is out of 100, in four parts. Each part rounds to whole points before 
 - **Time (25):** `25 × log2(post / pre)` of active days from the contribution calendar, so twice as many days earns the full amount and fewer days score 0. Active days are dated and cover every repo, private ones included. Active hours would be a better measure, but they need commit timestamps (see above).
 - **Projects (15):** unchanged, `15 × log2(post / pre) / 2`.
 
-The out-of-hours share is no longer scored. It came only from punch-card-eligible repos, which can be a small fraction of the work. It still sets the tag.
+The out-of-hours share is no longer scored. It came only from punch-card-eligible repos, which can be a small fraction of the work.
 
 Every part measures change relative to the user's own past. Someone already coding six days a week has little room to grow their active days, and that's intended: the score is about how much AI changed their work, not how much they work.
+
+The verdicts on the ladder name how far the user has changed, from "I'm an artisan" to "I'm a machine (literally)", rather than what they run. A big score can come from a small base, and someone who went from never coding to two days a week has changed a lot without running a software factory. There is no tag under the verdict; the front end shows imagery for it instead.

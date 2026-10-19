@@ -17,17 +17,4 @@ public class WhenOutOfHoursDropsByTenPoints
         // Assert
         shift.HoursShift.ShouldBe(-10);
     }
-
-    [Fact]
-    public void The_tag_is_and_I_got_my_evenings_back()
-    {
-        // Arrange
-        var shift = new Shift(new GivenAShiftSide().WithOutOfHours(0.3).Build(), new GivenAShiftSide().WithOutOfHours(0.2).Build());
-
-        // Act
-        var score = shift.Score();
-
-        // Assert
-        score.Tag.ShouldBe("and I got my evenings back");
-    }
 }

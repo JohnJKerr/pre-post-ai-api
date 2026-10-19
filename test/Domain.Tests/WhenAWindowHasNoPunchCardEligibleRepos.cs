@@ -42,17 +42,4 @@ public class WhenAWindowHasNoPunchCardEligibleRepos
         // Assert
         report.Shift.OutOfHoursX.ShouldBeNull();
     }
-
-    [Fact]
-    public void There_is_no_tag()
-    {
-        // Arrange
-        var profile = new GivenTheSampleProfile().WithNoPunchCardEligibleReposBeforeTheCutoff().Build();
-
-        // Act
-        var report = Report.From(profile);
-
-        // Assert
-        report.Score.Tag.ShouldBeNull();
-    }
 }

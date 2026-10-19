@@ -629,7 +629,7 @@ public class WhenBuildingTheSampleReport
     }
 
     [Fact]
-    public void The_verdict_is_I_built_a_software_factory()
+    public void The_verdict_is_I_ve_been_assimilated()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -638,20 +638,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Score.Verdict.ShouldBe("I built a software factory");
-    }
-
-    [Fact]
-    public void The_tag_is_and_it_runs_nights_and_weekends()
-    {
-        // Arrange
-        var profile = new GivenTheSampleProfile().Build();
-
-        // Act
-        var report = Report.From(profile);
-
-        // Assert
-        report.Score.Tag.ShouldBe("and it runs nights and weekends");
+        report.Score.Verdict.ShouldBe("I've been assimilated");
     }
 
     private static double Percent(double share) => Math.Round(share * 100, 1);

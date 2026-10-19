@@ -17,17 +17,4 @@ public class WhenEitherSideHasNoPunchData
         // Assert
         shift.HoursShift.ShouldBeNull();
     }
-
-    [Fact]
-    public void There_is_no_tag()
-    {
-        // Arrange
-        var shift = new Shift(new GivenAShiftSide().WithOutOfHours(0.1).Build(), new GivenAShiftSide().WithNoPunchData().Build());
-
-        // Act
-        var score = shift.Score();
-
-        // Assert
-        score.Tag.ShouldBeNull();
-    }
 }

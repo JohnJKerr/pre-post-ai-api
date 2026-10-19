@@ -18,7 +18,7 @@ public class WhenThereIsNoGrowth
     }
 
     [Fact]
-    public void The_verdict_is_I_m_still_hand_crafting()
+    public void The_verdict_is_I_m_an_artisan()
     {
         // Arrange
         var side = new GivenAShiftSide().Build();
@@ -27,19 +27,6 @@ public class WhenThereIsNoGrowth
         var score = new Shift(side, side).Score();
 
         // Assert
-        score.Verdict.ShouldBe("I'm still hand-crafting");
-    }
-
-    [Fact]
-    public void The_tag_is_and_I_still_clock_off_on_time()
-    {
-        // Arrange
-        var side = new GivenAShiftSide().Build();
-
-        // Act
-        var score = new Shift(side, side).Score();
-
-        // Assert
-        score.Tag.ShouldBe("and I still clock off on time");
+        score.Verdict.ShouldBe("I'm an artisan");
     }
 }

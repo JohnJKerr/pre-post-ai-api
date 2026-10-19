@@ -23,7 +23,7 @@ public record Shift(ShiftSide Pre, ShiftSide Post)
         .Select(l => l.Key)
         .ToArray();
 
-    // Rounded to 1e-6 points so float noise can't push a shift across the -10 / +15 thresholds.
+    // Rounded to 1e-6 points so float noise doesn't show in the report.
     public double? HoursShift => Pre.OutOfHours is { } pre && Post.OutOfHours is { } post
         ? Rounding.HalfUp((post - pre) * 1e8) / 1e6
         : null;
