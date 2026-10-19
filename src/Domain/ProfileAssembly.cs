@@ -43,7 +43,7 @@ internal class ProfileAssembly(GitHubActivity activity, PerEra<Window> windows)
         if (repo.TotalCommits == 0 || (double)authored / repo.TotalCommits < PunchCardAuthorship) return null;
 
         var activeWeeks = repo.AuthorWeeks.Where(w => w.Commits > 0).ToArray();
-        var cutoffWeekStart = windows.Post.Start;
+        var cutoffWeekStart = windows.Pre.End.AddDays(1);
         Era? side = activeWeeks.All(w => w.Start < cutoffWeekStart) ? Era.Pre
             : activeWeeks.All(w => w.Start >= cutoffWeekStart) ? Era.Post
             : null;

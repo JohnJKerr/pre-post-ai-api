@@ -54,7 +54,7 @@ public class WhenAssemblingAProfile
         var profile = activity.Assemble();
 
         // Assert
-        profile.Activity.Pre.Weeks.Count.ShouldBe(47);
+        profile.Activity.Pre.Weeks.Count.ShouldBe(26);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class WhenAssemblingAProfile
         var profile = activity.Assemble();
 
         // Assert
-        profile.Activity.Pre.Weeks[0].Start.ShouldBe(new DateOnly(2024, 12, 29));
+        profile.Activity.Pre.Weeks[0].Start.ShouldBe(new DateOnly(2025, 5, 25));
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class WhenAssemblingAProfile
     {
         // Arrange
         var activity = new GivenGitHubActivity()
-            .WithRepo(new GivenAGitHubRepo().CreatedOn(new DateOnly(2026, 2, 1)));
+            .WithRepo(new GivenAGitHubRepo().CreatedOn(new DateOnly(2026, 6, 1)));
 
         // Act
         var profile = activity.Assemble();

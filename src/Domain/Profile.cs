@@ -15,8 +15,7 @@ public record Profile(
 
     public static Profile Assemble(long gitHubId, string handle, Cutoff cutoff, GitHubActivity activity, DateTimeOffset now)
     {
-        var post = Window.After(cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
-        var assembly = new ProfileAssembly(activity, new PerEra<Window>(post.Preceding(), post));
+        var assembly = new ProfileAssembly(activity, Window.Around(cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime)));
 
         return new Profile(
             gitHubId,

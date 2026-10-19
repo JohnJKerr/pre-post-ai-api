@@ -37,9 +37,9 @@ public class ReportGenerator(
         try
         {
             var now = time.GetUtcNow();
-            var post = Window.After(generation.Cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
+            var windows = Window.Around(generation.Cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
             using var scope = scopes.CreateScope();
-            var activity = await scope.ServiceProvider.GetRequiredService<IGitHubMetadata>().Fetch(user, post.Preceding().Start, post.End);
+            var activity = await scope.ServiceProvider.GetRequiredService<IGitHubMetadata>().Fetch(user, windows.Pre.Start, windows.Post.End);
 
             var profile = Profile.Assemble(user.Id, user.Handle, generation.Cutoff, activity, now);
             if (!profile.HasCommits) return generation.FindNothingToCompare(time.GetUtcNow());

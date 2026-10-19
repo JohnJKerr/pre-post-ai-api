@@ -49,6 +49,23 @@ public class WhenChoosingPunchCardRepos
     }
 
     [Fact]
+    public void A_repo_with_activity_between_the_cutoff_and_the_post_window_is_eligible_after_it()
+    {
+        // Arrange
+        var activity = new GivenGitHubActivity()
+            .WithRepo(new GivenAGitHubRepo()
+                .WithAuthorWeek(BetweenTheWindows, added: 300, commits: 3)
+                .WithAuthorWeek(PostWeek, added: 100, commits: 1)
+                .WithPunchCell(day: 0, hour: 0, commits: 4));
+
+        // Act
+        var profile = activity.Assemble();
+
+        // Assert
+        profile.Repos.Single().PunchCardEra.ShouldBe(Era.Post);
+    }
+
+    [Fact]
     public void A_repo_with_no_commits_in_either_window_is_not_eligible()
     {
         // Arrange

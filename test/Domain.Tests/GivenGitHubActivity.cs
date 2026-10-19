@@ -8,6 +8,7 @@ internal class GivenGitHubActivity
     public static readonly DateTimeOffset Now = new(2026, 10, 18, 9, 0, 0, TimeSpan.Zero);
     public static readonly DateOnly PreWeek = new(2025, 6, 1);
     public static readonly DateOnly PostWeek = new(2026, 6, 7);
+    public static readonly DateOnly BetweenTheWindows = new(2026, 1, 4);
     public static readonly DateOnly BeforeBothWindows = new(2023, 1, 1);
 
     private readonly List<RepoMetadata> _repos = [];
