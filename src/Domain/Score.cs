@@ -9,7 +9,7 @@ public record Score(ScoreParts Parts)
     [
         new(0, "I'm an artisan"),
         new(15, "I've hired an apprentice"),
-        new(30, "I'm a centaur (half human, half model)"),
+        new(30, "I've grown robot arms"),
         new(45, "I'm a cyborg"),
         new(65, "I've been assimilated"),
         new(85, "I'm a machine (literally)"),
