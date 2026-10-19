@@ -17,16 +17,12 @@ internal class ProfileAssembly(GitHubActivity activity, PerEra<Window> windows)
         var window = windows[era];
         var weeks = window.WeekStarts.Select(start => WeekAcrossRepos(start)).ToArray();
         var activeDays = activity.ContributionDays.Distinct().Count(window.Contains);
-        var activeHours = activity.CommitTimes.Select(StartOfHour).Distinct().Count(hour => window.Contains(DateOnly.FromDateTime(hour)));
-        var mergedPullRequests = activity.PullRequestsMergedOn.Count(window.Contains);
         var eligible = activity.Repos.Where(r => PunchCardEraOf(r) == era).ToArray();
         var commits = CommitsIn(activity.Repos, window);
         var punchShare = commits > 0 ? (double)CommitsIn(eligible, window) / commits : 0;
 
-        return new WindowActivity(weeks, PunchCardAcross(eligible), activeDays, punchShare, activeHours, mergedPullRequests);
+        return new WindowActivity(weeks, PunchCardAcross(eligible), activeDays, punchShare);
     }
-
-    private static DateTime StartOfHour(DateTime time) => time.Date.AddHours(time.Hour);
 
     private Repo RepoFrom(RepoMetadata repo) => new(
         Name: null,

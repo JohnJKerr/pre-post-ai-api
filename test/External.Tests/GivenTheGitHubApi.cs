@@ -12,7 +12,6 @@ internal class GivenTheGitHubApi
         Serving("repos ", "repos.json");
         Serving("calendar 2024", "calendar-2025.json");
         Serving("calendar 2025", "calendar-2026.json");
-        Serving("pull requests ", "merged-pull-requests.json");
         foreach (var repo in new[] { "ledger-sync", "side-project" }) Serving($"history octo-dev/{repo} ", $"{repo}-history.json");
     }
 
@@ -85,17 +84,6 @@ internal class GivenTheGitHubApi
             }
             """));
         _responses["repos "] = [Json(page.ToJsonString())];
-        return this;
-    }
-
-    public GivenTheGitHubApi WithASecondPageOfMergedPullRequests()
-    {
-        var firstPage = Fixture("merged-pull-requests.json");
-        firstPage["data"]!["search"]!["pageInfo"]!["hasNextPage"] = true;
-        _responses["pull requests "] = [Json(firstPage.ToJsonString())];
-        _responses["pull requests pull-requests-1"] = [Json("""
-            { "data": { "search": { "pageInfo": { "hasNextPage": false, "endCursor": "pull-requests-2" }, "nodes": [{ "mergedAt": "2026-07-01T10:00:00Z" }] } } }
-            """)];
         return this;
     }
 
