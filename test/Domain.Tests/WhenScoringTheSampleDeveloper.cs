@@ -74,7 +74,7 @@ public class WhenScoringTheSampleDeveloper
     }
 
     [Fact]
-    public void The_verdict_is_I_ve_been_assimilated()
+    public void The_verdict_is_I_m_a_machine_literally()
     {
         // Arrange
         var shift = TheSampleDevelopersShift();
@@ -83,7 +83,7 @@ public class WhenScoringTheSampleDeveloper
         var score = shift.Score();
 
         // Assert
-        score.Verdict.ShouldBe("I've been assimilated");
+        score.Verdict.ShouldBe("I'm a machine (literally)");
     }
 
     private static Shift TheSampleDevelopersShift() => new(

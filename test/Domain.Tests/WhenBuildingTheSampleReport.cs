@@ -629,7 +629,7 @@ public class WhenBuildingTheSampleReport
     }
 
     [Fact]
-    public void The_verdict_is_I_ve_been_assimilated()
+    public void The_verdict_is_I_m_a_machine_literally()
     {
         // Arrange
         var profile = new GivenTheSampleProfile().Build();
@@ -638,7 +638,7 @@ public class WhenBuildingTheSampleReport
         var report = Report.From(profile);
 
         // Assert
-        report.Score.Verdict.ShouldBe("I've been assimilated");
+        report.Score.Verdict.ShouldBe("I'm a machine (literally)");
     }
 
     private static double Percent(double share) => Math.Round(share * 100, 1);

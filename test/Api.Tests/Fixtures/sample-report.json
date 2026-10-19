@@ -2713,7 +2713,7 @@
       }
     },
     "rung": 4,
-    "verdict": "I've been assimilated",
+    "verdict": "I'm a machine (literally)",
     "ladder": [
       {
         "min": 0,
@@ -2733,11 +2733,11 @@
       },
       {
         "min": 65,
-        "verdict": "I've been assimilated"
+        "verdict": "I'm a machine (literally)"
       },
       {
         "min": 85,
-        "verdict": "I'm a machine (literally)"
+        "verdict": "I am the Singularity"
       }
     ]
   },
