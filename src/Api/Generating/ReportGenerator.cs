@@ -47,6 +47,10 @@ public class ReportGenerator(
             await profiles.Save(profile);
             return generation.Complete(time.GetUtcNow());
         }
+        catch (GitHubStatsPendingException)
+        {
+            return generation.Fail("GitHub is still crunching your repository stats. Sign in again in a minute to retry.", time.GetUtcNow());
+        }
         catch (GitHubTokenRejectedException)
         {
             return generation.Fail("GitHub didn't accept your sign-in. Sign in again.", time.GetUtcNow());

@@ -9,89 +9,72 @@ internal class GivenTheGitHubApi
 
     public GivenTheGitHubApi()
     {
-        Serving("repos ", "repos.json");
-        Serving("calendar 2024", "calendar-2025.json");
-        Serving("calendar 2025", "calendar-2026.json");
-        foreach (var repo in new[] { "ledger-sync", "side-project" }) Serving($"history octo-dev/{repo} ", $"{repo}-history.json");
+        Serving("/user/repos?per_page=100", "user-repos.json");
+        _responses["/graphql"] = [Json(File.ReadAllText("Fixtures/calendar-2025.json")), Json(File.ReadAllText("Fixtures/calendar-2026.json"))];
+        foreach (var repo in new[] { "ledger-sync", "side-project" })
+        {
+            Serving($"/repos/octo-dev/{repo}/stats/contributors", $"{repo}-contributors.json");
+            Serving($"/repos/octo-dev/{repo}/stats/punch_card", $"{repo}-punch-card.json");
+            Serving($"/repos/octo-dev/{repo}/languages", $"{repo}-languages.json");
+        }
+    }
+
+    public GivenTheGitHubApi WithStatsStillComputing(string repo, int times)
+    {
+        var path = $"/repos/octo-dev/{repo}/stats/contributors";
+        _responses[path].InsertRange(0, Enumerable.Repeat(Status(HttpStatusCode.Accepted), times));
+        return this;
+    }
+
+    public GivenTheGitHubApi WithStatsNeverReady(string repo)
+    {
+        _responses[$"/repos/octo-dev/{repo}/stats/contributors"] = [Status(HttpStatusCode.Accepted)];
+        return this;
     }
 
     public GivenTheGitHubApi WithTheTokenExpiredBeforeFetching(string repo)
     {
-        _responses[$"history octo-dev/{repo} "] = [Status(HttpStatusCode.Unauthorized)];
-        return this;
-    }
-
-    public GivenTheGitHubApi WithASecondaryRateLimitFetching(string repo)
-    {
-        _responses[$"history octo-dev/{repo} "].Insert(0, () =>
-        {
-            var response = new HttpResponseMessage(HttpStatusCode.Forbidden);
-            response.Headers.RetryAfter = new System.Net.Http.Headers.RetryConditionHeaderValue(TimeSpan.Zero);
-            return response;
-        });
-        return this;
-    }
-
-    public GivenTheGitHubApi WithAnErrorFetching(string repo)
-    {
-        _responses[$"history octo-dev/{repo} "] = [Json("""{ "data": null, "errors": [{ "message": "Something went wrong." }] }""")];
+        _responses[$"/repos/octo-dev/{repo}/stats/contributors"] = [Status(HttpStatusCode.Unauthorized)];
         return this;
     }
 
     public GivenTheGitHubApi WithEmptyRepo(string repo)
     {
-        _responses[$"history octo-dev/{repo} "] = [Json("""{ "data": { "repository": { "defaultBranchRef": null } } }""")];
+        _responses[$"/repos/octo-dev/{repo}/stats/contributors"] = [Status(HttpStatusCode.NoContent)];
+        _responses[$"/repos/octo-dev/{repo}/stats/punch_card"] = [Status(HttpStatusCode.NoContent)];
+        _responses[$"/repos/octo-dev/{repo}/languages"] = [Json("{}")];
         return this;
     }
 
     public GivenTheGitHubApi WithASecondPageOfRepos()
     {
-        var firstPage = Fixture("repos.json");
-        firstPage["data"]!["viewer"]!["repositories"]!["pageInfo"]!["hasNextPage"] = true;
-        _responses["repos "] = [Json(firstPage.ToJsonString())];
-        Serving("repos repos-1", "repos-page-2.json");
+        const string secondPage = "/user/repos?per_page=100&page=2";
+        var firstPage = File.ReadAllText("Fixtures/user-repos.json");
+        _responses["/user/repos?per_page=100"] = [() =>
+        {
+            var response = Json(firstPage)();
+            response.Headers.Add("Link", $"<https://api.github.com{secondPage}>; rel=\"next\", <https://api.github.com{secondPage}>; rel=\"last\"");
+            return response;
+        }];
+        Serving(secondPage, "user-repos-page-2.json");
         return WithEmptyRepo("old-tool");
     }
 
-    public GivenTheGitHubApi WithASecondPageOfCommits(string repo)
-    {
-        var firstPage = Fixture($"{repo}-history.json");
-        var history = firstPage["data"]!["repository"]!["defaultBranchRef"]!["target"]!;
-        history["mine"]!["pageInfo"]!["hasNextPage"] = true;
-        var secondPage = firstPage.DeepClone();
-        secondPage["data"]!["repository"]!["defaultBranchRef"]!["target"]!["mine"] = JsonNode.Parse("""
-            {
-              "pageInfo": { "hasNextPage": false, "endCursor": "page-2" },
-              "nodes": [{ "author": { "date": "2025-06-12T09:00:00+01:00" }, "additions": 8, "deletions": 1 }]
-            }
-            """);
-        _responses[$"history octo-dev/{repo} "] = [Json(firstPage.ToJsonString())];
-        _responses[$"history octo-dev/{repo} {repo}-1"] = [Json(secondPage.ToJsonString())];
-        return this;
-    }
-
-    // Repos come most recently pushed first, so one pushed before the pre window ends the list
-    // that matters, even with more pages to come.
     public GivenTheGitHubApi WithARepoLastPushedBeforeBothWindows(string repo)
     {
-        var page = Fixture("repos.json");
-        var repositories = page["data"]!["viewer"]!["repositories"]!;
-        repositories["pageInfo"]!["hasNextPage"] = true;
-        repositories["nodes"]!.AsArray().Add(JsonNode.Parse($$"""
-            {
-              "owner": { "login": "octo-dev" }, "name": "{{repo}}", "isPrivate": false,
-              "createdAt": "2018-05-01T00:00:00Z", "pushedAt": "2024-12-28T23:59:59Z", "languages": { "edges": [] }
-            }
+        var repos = JsonNode.Parse(File.ReadAllText("Fixtures/user-repos.json"))!.AsArray();
+        repos.Add(JsonNode.Parse($$"""
+            { "id": 9, "name": "{{repo}}", "full_name": "octo-dev/{{repo}}", "private": false, "owner": { "login": "octo-dev" },
+              "created_at": "2018-05-01T00:00:00Z", "pushed_at": "2024-12-28T23:59:59Z" }
             """));
-        _responses["repos "] = [Json(page.ToJsonString())];
+        _responses["/user/repos?per_page=100"] = [Json(repos.ToJsonString())];
         return this;
     }
 
     public FakeGitHubApi Build() => new(_responses.ToDictionary(r => r.Key, r => new Queue<Func<HttpResponseMessage>>(r.Value)));
 
-    private void Serving(string key, string fixture) => _responses[key] = [Json(File.ReadAllText($"Fixtures/{fixture}"))];
-
-    private static JsonNode Fixture(string name) => JsonNode.Parse(File.ReadAllText($"Fixtures/{name}"))!;
+    private void Serving(string pathAndQuery, string fixture) =>
+        _responses[pathAndQuery] = [Json(File.ReadAllText($"Fixtures/{fixture}"))];
 
     private static Func<HttpResponseMessage> Json(string body) => () => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(body) };
 

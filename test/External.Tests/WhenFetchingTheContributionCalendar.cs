@@ -27,6 +27,6 @@ public class WhenFetchingTheContributionCalendar
         await GitHubClient.FetchFrom(api);
 
         // Assert
-        api.Calls.Count(c => c.IsForCalendar).ShouldBe(2);
+        api.Requests.Count(r => r.RequestUri!.AbsolutePath == "/graphql").ShouldBe(2);
     }
 }
