@@ -12,7 +12,7 @@ public record Score(ScoreParts Parts)
         new(30, "I've grown robot arms"),
         new(45, "I'm a cyborg"),
         new(65, "I'm a machine (literally)"),
-        new(85, "I am the Singularity"),
+        new(85, "I started the robot uprising"),
     ];
 
     public double Total => Parts.Total;

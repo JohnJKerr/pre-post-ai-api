@@ -69,4 +69,4 @@ The out-of-hours share is no longer scored. It came only from punch-card-eligibl
 
 Every part measures change relative to the user's own past. Someone already coding six days a week has little room to grow their active days, and that's intended: the score is about how much AI changed their work, not how much they work.
 
-The verdicts on the ladder name how far the user has changed, from "I'm an artisan" to "I am the Singularity", rather than what they run. A big score can come from a small base, and someone who went from never coding to two days a week has changed a lot without running a software factory. There is no tag under the verdict; the front end shows imagery for it instead.
+The verdicts on the ladder name how far the user has changed, from "I'm an artisan" to "I started the robot uprising", rather than what they run. A big score can come from a small base, and someone who went from never coding to two days a week has changed a lot without running a software factory. There is no tag under the verdict; the front end shows imagery for it instead.

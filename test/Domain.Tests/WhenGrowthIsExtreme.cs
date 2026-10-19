@@ -31,7 +31,7 @@ public class WhenGrowthIsExtreme
     }
 
     [Fact]
-    public void The_verdict_is_I_am_the_Singularity()
+    public void The_verdict_is_I_started_the_robot_uprising()
     {
         // Arrange
         var shift = ExtremeGrowth();
@@ -40,7 +40,7 @@ public class WhenGrowthIsExtreme
         var score = shift.Score();
 
         // Assert
-        score.Verdict.ShouldBe("I am the Singularity");
+        score.Verdict.ShouldBe("I started the robot uprising");
     }
 
     private static Shift ExtremeGrowth() => new(
