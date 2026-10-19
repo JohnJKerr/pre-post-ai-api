@@ -24,7 +24,10 @@ public class ReportGenerator(
     {
         await foreach (var request in queue.Requests(stoppingToken))
         {
-            await generations.Save(await Generate(request));
+            var generation = await Generate(request);
+            logger.LogInformation("Generation {GenerationId} for {Handle} finished {Status} in {Seconds:0.0} s.",
+                generation.Id, generation.Handle, generation.Status, generation.Took?.TotalSeconds);
+            await generations.Save(generation);
         }
     }
 
@@ -39,19 +42,19 @@ public class ReportGenerator(
             var activity = await scope.ServiceProvider.GetRequiredService<IGitHubMetadata>().Fetch(user, post.Preceding().Start, post.End);
 
             var profile = Profile.Assemble(user.Id, user.Handle, generation.Cutoff, activity, now);
-            if (!profile.HasCommits) return generation.FindNothingToCompare();
+            if (!profile.HasCommits) return generation.FindNothingToCompare(time.GetUtcNow());
 
             await profiles.Save(profile);
-            return generation.Complete();
+            return generation.Complete(time.GetUtcNow());
         }
         catch (GitHubTokenRejectedException)
         {
-            return generation.Fail("GitHub didn't accept your sign-in. Sign in again.");
+            return generation.Fail("GitHub didn't accept your sign-in. Sign in again.", time.GetUtcNow());
         }
         catch (Exception exception)
         {
             logger.LogError(exception, "Generation {GenerationId} for {Handle} failed.", generation.Id, generation.Handle);
-            return generation.Fail("Something went wrong generating your report. Sign in to try again.");
+            return generation.Fail("Something went wrong generating your report. Sign in to try again.", time.GetUtcNow());
         }
     }
 }

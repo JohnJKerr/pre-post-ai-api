@@ -9,7 +9,8 @@ public record Generation(
     Cutoff Cutoff,
     DateTimeOffset StartedAt,
     GenerationStatus Status,
-    string? Message)
+    string? Message,
+    DateTimeOffset? FinishedAt = null)
 {
     // Long enough for a large account whose stats GitHub is still computing. A generation still
     // pending after this was lost, most likely to a restart, since the job holds the token only in memory.
@@ -18,15 +19,18 @@ public record Generation(
     public static Generation Start(long gitHubId, string handle, Cutoff cutoff, DateTimeOffset now) =>
         new(Guid.NewGuid().ToString("N"), gitHubId, handle, cutoff, now, GenerationStatus.Pending, Message: null);
 
-    public Generation Complete() => this with { Status = GenerationStatus.Ready };
+    public TimeSpan? Took => FinishedAt - StartedAt;
+
+    public Generation Complete(DateTimeOffset now) => this with { Status = GenerationStatus.Ready, FinishedAt = now };
 
     // No commits in either window: nothing is saved, because an empty report isn't worth showing.
-    public Generation FindNothingToCompare() => this with { Status = GenerationStatus.Empty };
+    public Generation FindNothingToCompare(DateTimeOffset now) => this with { Status = GenerationStatus.Empty, FinishedAt = now };
 
-    public Generation Fail(string message) => this with { Status = GenerationStatus.Failed, Message = message };
+    public Generation Fail(string message, DateTimeOffset now) =>
+        this with { Status = GenerationStatus.Failed, Message = message, FinishedAt = now };
 
     public Generation AsOf(DateTimeOffset now) =>
         Status == GenerationStatus.Pending && now - StartedAt > Abandoned
-            ? Fail("Something interrupted your report. Sign in to try again.")
+            ? Fail("Something interrupted your report. Sign in to try again.", now)
             : this;
 }

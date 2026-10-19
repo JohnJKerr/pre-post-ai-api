@@ -47,7 +47,7 @@ public class WhenAGenerationIsPendingForTooLong
     public void A_finished_generation_is_left_as_it_is()
     {
         // Arrange
-        var generation = new GivenAGeneration().Build().Complete();
+        var generation = new GivenAGeneration().Build().Complete(GivenAGeneration.FinishedAt);
 
         // Act
         var current = generation.AsOf(GivenAGeneration.StartedAt.AddDays(1));

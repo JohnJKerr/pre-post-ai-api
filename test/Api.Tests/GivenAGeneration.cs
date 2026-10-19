@@ -20,13 +20,13 @@ internal class GivenAGeneration
 
     public GivenAGeneration Completed()
     {
-        _generation = _generation.Complete();
+        _generation = _generation.Complete(ApiFactory.Now);
         return this;
     }
 
     public GivenAGeneration FailedBecause(string message)
     {
-        _generation = _generation.Fail(message);
+        _generation = _generation.Fail(message, ApiFactory.Now);
         return this;
     }
 
