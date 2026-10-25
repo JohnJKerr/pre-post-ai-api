@@ -31,6 +31,22 @@ The GitHub App needs one repository permission, **Metadata: read**, and a callba
 
 Behind a proxy or load balancer that ends TLS, list its address ranges in `ForwardedHeaders:KnownNetworks` (for example `["10.0.0.0/8"]`). The API then trusts its `X-Forwarded-Proto` and `X-Forwarded-Host`, so the OAuth `redirect_uri` is the public https address.
 
+## Deploying
+
+The `Dockerfile` builds a runtime image that serves plain http on port 8080 as a non-root user, so TLS ends at a proxy (see `ForwardedHeaders:KnownNetworks` above). It takes its settings from environment variables:
+
+```bash
+docker build -t pre-post-ai-api .
+docker run -p 8080:8080 \
+  -e Mongo__ConnectionString=<connection string> \
+  -e Mongo__Database=<database> \
+  -e GitHub__AppSlug=<app slug> \
+  -e GitHub__ClientId=<app client id> \
+  -e GitHub__ClientSecret=<app client secret> \
+  -e ForwardedHeaders__KnownNetworks__0=<proxy range, e.g. 10.0.0.0/8> \
+  pre-post-ai-api
+```
+
 ## Endpoints
 
 | Method and path | Purpose |
