@@ -4,8 +4,6 @@ namespace Domain;
 
 internal class ProfileAssembly(GitHubActivity activity, PerEra<Window> windows)
 {
-    private const double PunchCardAuthorship = 0.9;
-
     private readonly PerEra<int> _addedInWindow = new(
         AddedIn(activity.Repos, windows.Pre),
         AddedIn(activity.Repos, windows.Post));
@@ -37,19 +35,7 @@ internal class ProfileAssembly(GitHubActivity activity, PerEra<Window> windows)
         : windows.Post.Contains(createdOn) ? Era.Post
         : null;
 
-    private Era? PunchCardEraOf(RepoMetadata repo)
-    {
-        var authored = repo.AuthorWeeks.Sum(w => w.Commits);
-        if (repo.TotalCommits == 0 || (double)authored / repo.TotalCommits < PunchCardAuthorship) return null;
-
-        var activeWeeks = repo.AuthorWeeks.Where(w => w.Commits > 0).ToArray();
-        var cutoffWeekStart = windows.Pre.End.AddDays(1);
-        Era? side = activeWeeks.All(w => w.Start < cutoffWeekStart) ? Era.Pre
-            : activeWeeks.All(w => w.Start >= cutoffWeekStart) ? Era.Post
-            : null;
-
-        return side is { } era && CommitsIn([repo], windows[era]) > 0 ? era : null;
-    }
+    private Era? PunchCardEraOf(RepoMetadata repo) => repo.PunchCardEra(windows);
 
     private static IReadOnlyList<PunchCell> PunchCardAcross(IReadOnlyList<RepoMetadata> repos)
     {

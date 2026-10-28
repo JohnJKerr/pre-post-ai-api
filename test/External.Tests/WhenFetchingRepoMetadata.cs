@@ -81,7 +81,7 @@ public class WhenFetchingRepoMetadata
         var activity = await GitHubClient.FetchFrom(api);
 
         // Assert
-        activity.Repos[0].PunchCard.ShouldBe([new PunchCell(2, 10, 6), new PunchCell(3, 14, 3)]);
+        activity.Repos[1].PunchCard.ShouldBe([new PunchCell(6, 22, 5)]);
     }
 
     [Fact]

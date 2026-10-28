@@ -24,14 +24,25 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
     {
         var repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100");
         var recent = repos.Where(r => PushedSince(r, windows.Pre.Start)).ToArray();
-        var metadata = new List<RepoMetadata>();
         var statsDeadline = time.GetUtcNow() + options.StatsTimeout;
         var contributors = await GetStatsForRepos<ContributorResponse[]>(user, recent,
             r => $"/repos/{r.FullName}/stats/contributors", statsDeadline);
-        var punchCards = await GetStatsForRepos<int[][]>(user, recent,
+        var metadata = recent.Select((repo, index) => MetadataFor(user, repo, contributors[index] ?? [])).ToArray();
+        var punchIndices = Enumerable.Range(0, recent.Length)
+            .Where(index => metadata[index].PunchCardEra(windows) is not null).ToArray();
+        var punchRepos = punchIndices.Select(index => recent[index]).ToArray();
+        var punchCards = await GetStatsForRepos<int[][]>(user, punchRepos,
             r => $"/repos/{r.FullName}/stats/punch_card", statsDeadline);
+        for (var i = 0; i < punchIndices.Length; i++)
+            metadata[punchIndices[i]] = metadata[punchIndices[i]] with
+            {
+                PunchCard = (punchCards[i] ?? []).Select(cell => new PunchCell(cell[0], cell[1], cell[2])).ToArray(),
+            };
         for (var i = 0; i < recent.Length; i++)
-            metadata.Add(await MetadataFor(user, recent[i], contributors[i] ?? [], punchCards[i] ?? []));
+            metadata[i] = metadata[i] with
+            {
+                LanguageBytes = await Get<Dictionary<string, long>>(user, $"/repos/{recent[i].FullName}/languages") ?? [],
+            };
 
         return new GitHubActivity(metadata, await ContributionDays(user, windows));
     }
@@ -73,18 +84,17 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
             ?? throw new HttpRequestException("GitHub didn't return a contribution calendar.");
     }
 
-    private async Task<RepoMetadata> MetadataFor(GitHubUser user, RepoResponse repo, ContributorResponse[] contributors, int[][] punchCard)
+    private static RepoMetadata MetadataFor(GitHubUser user, RepoResponse repo, ContributorResponse[] contributors)
     {
-        var languages = await Get<Dictionary<string, long>>(user, $"/repos/{repo.FullName}/languages") ?? [];
         var author = contributors.FirstOrDefault(c => string.Equals(c.Author?.Login, user.Handle, StringComparison.OrdinalIgnoreCase));
 
         return new RepoMetadata(
             repo.Private,
             DateOnly.FromDateTime(repo.CreatedAt.UtcDateTime),
-            languages,
+            new Dictionary<string, long>(),
             author?.Weeks.Select(WeekFrom).ToArray() ?? [],
             contributors.Sum(c => c.Total),
-            punchCard.Select(cell => new PunchCell(cell[0], cell[1], cell[2])).ToArray());
+            []);
     }
 
     private static Week WeekFrom(ContributorWeekResponse week) =>

@@ -43,11 +43,15 @@ Because the job can wait as long as it needs, GitHub's 202 "still computing" is 
 
 ## Repos are skipped rather than fetched in parallel
 
-`/user/repos` lists every repo the user can see, and each one initially costs three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+`/user/repos` lists every repo the user can see, and each recent one costs up to three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
 
 ## Start cold stats across repos before waiting
 
 GitHub starts computing a repository's statistics when its endpoint first returns 202. Fetch the contributor stats for every recent repo with serial HTTP calls, then retry pending repos after a shared delay; do the same for punch cards. This overlaps GitHub's background computation across repos without sending concurrent requests. The one five-minute deadline still covers both phases and all repos.
+
+## Request punch cards only for eligible repos
+
+Contributor stats already tell us whether a repo meets the report's punch-card rule: at least 90% authored by the user, all their commits on one side of the cut-off, and commits inside that side's scoring window. The adapter and profile assembly use the same eligibility calculation. An ineligible repo's punch-card data never enters the report, so its punch-card endpoint is not requested.
 
 ## Data Protection keys stay in memory
 
