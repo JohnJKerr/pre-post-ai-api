@@ -53,6 +53,10 @@ GitHub starts computing a repository's statistics when its endpoint first return
 
 Contributor stats already tell us whether a repo meets the report's punch-card rule: at least 90% authored by the user, all their commits on one side of the cut-off, and commits inside that side's scoring window. The adapter and profile assembly use the same eligibility calculation. An ineligible repo's punch-card data never enters the report, so its punch-card endpoint is not requested.
 
+## Request languages only for repos with added lines in a scoring window
+
+The report weights a repo's current language mix by the user's added lines in each scoring window. If the user added no lines in either window, that repo's language bytes cannot affect either side's language shares, so its languages endpoint is not requested. Its contributor data and creation date remain available for the report's other measures.
+
 ## Data Protection keys stay in memory
 
 ASP.NET Data Protection now guards only the OAuth state of a sign-in under way, for about 15 minutes, so its keys are ephemeral. A restart in the middle of a sign-in sends that user to the front end's `/?error=sign-in-failed` to try again. With more than one instance, a sign-in must return to the instance that started it (sticky sessions); otherwise persist the keys again.

@@ -29,4 +29,17 @@ public class WhenARepoIsEmpty
         // Assert
         activity.Repos[1].PunchCard.ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task Its_languages_are_not_requested()
+    {
+        // Arrange
+        var api = new GivenTheGitHubApi().WithEmptyRepo("side-project").Build();
+
+        // Act
+        await GitHubClient.FetchFrom(api);
+
+        // Assert
+        api.Requests.ShouldNotContain(r => r.RequestUri!.AbsolutePath == "/repos/octo-dev/side-project/languages");
+    }
 }

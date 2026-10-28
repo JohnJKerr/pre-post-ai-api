@@ -39,10 +39,12 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
                 PunchCard = (punchCards[i] ?? []).Select(cell => new PunchCell(cell[0], cell[1], cell[2])).ToArray(),
             };
         for (var i = 0; i < recent.Length; i++)
-            metadata[i] = metadata[i] with
-            {
-                LanguageBytes = await Get<Dictionary<string, long>>(user, $"/repos/{recent[i].FullName}/languages") ?? [],
-            };
+            if (metadata[i].AuthorWeeks.Any(w => w.Added > 0 &&
+                (windows.Pre.Contains(w.Start) || windows.Post.Contains(w.Start))))
+                metadata[i] = metadata[i] with
+                {
+                    LanguageBytes = await Get<Dictionary<string, long>>(user, $"/repos/{recent[i].FullName}/languages") ?? [],
+                };
 
         return new GitHubActivity(metadata, await ContributionDays(user, windows));
     }
