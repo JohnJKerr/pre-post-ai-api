@@ -39,11 +39,15 @@ The token never leaves the back end and is never stored. Rejected alternatives:
 
 The queue is a bounded `Channel` read by four workers. GitHub's secondary rate limits are per token, so different users' jobs can run at once while each job's calls stay sequential. A restart loses jobs in flight, which is the intended failure, because the token is gone. A generation still pending after 30 minutes reads as failed.
 
-Because the job can wait as long as it needs, GitHub's 202 "still computing" is retried within the job. GitHub computes a repo's stats only once asked, and a push discards them, so after a busy day many repos are cold at once. Because repos are fetched one after another, their waits add up, so the whole fetch gets one five-minute deadline, retrying every 5 seconds. If a repo still isn't ready when it passes, the generation fails and asks the user to sign in again in a minute.
+Because the job can wait as long as it needs, GitHub's 202 "still computing" is retried within the job. GitHub computes a repo's stats only once asked, and a push discards them, so after a busy day many repos are cold at once. The whole fetch gets one five-minute deadline, retrying every 5 seconds. If a repo still isn't ready when it passes, the generation fails and asks the user to sign in again in a minute.
 
 ## Repos are skipped rather than fetched in parallel
 
-`/user/repos` lists every repo the user can see, and each one costs three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+`/user/repos` lists every repo the user can see, and each one initially costs three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+
+## Start cold stats across repos before waiting
+
+GitHub starts computing a repository's statistics when its endpoint first returns 202. Fetch the contributor stats for every recent repo with serial HTTP calls, then retry pending repos after a shared delay; do the same for punch cards. This overlaps GitHub's background computation across repos without sending concurrent requests. The one five-minute deadline still covers both phases and all repos.
 
 ## Data Protection keys stay in memory
 

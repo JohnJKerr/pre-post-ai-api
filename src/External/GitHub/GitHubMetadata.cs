@@ -23,14 +23,20 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
     public async Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to)
     {
         var repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100");
+        var recent = repos.Where(r => PushedSince(r, from)).ToArray();
         var metadata = new List<RepoMetadata>();
         var statsDeadline = time.GetUtcNow() + options.StatsTimeout;
-        foreach (var repo in repos.Where(r => PushedSince(r, from))) metadata.Add(await MetadataFor(user, repo, statsDeadline));
+        var contributors = await GetStatsForRepos<ContributorResponse[]>(user, recent,
+            r => $"/repos/{r.FullName}/stats/contributors", statsDeadline);
+        var punchCards = await GetStatsForRepos<int[][]>(user, recent,
+            r => $"/repos/{r.FullName}/stats/punch_card", statsDeadline);
+        for (var i = 0; i < recent.Length; i++)
+            metadata.Add(await MetadataFor(user, recent[i], contributors[i] ?? [], punchCards[i] ?? []));
 
         return new GitHubActivity(metadata, await ContributionDays(user, from, to));
     }
 
-    // Each repo costs three calls, made one after another as GitHub asks. A repo nobody has pushed
+    // Each repo costs three calls. A repo nobody has pushed
     // to since the pre window started can't have activity in either window.
     private static bool PushedSince(RepoResponse repo, DateOnly from) =>
         repo.PushedAt is { } pushedAt && DateOnly.FromDateTime(pushedAt.UtcDateTime) >= from;
@@ -70,10 +76,8 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
 
     private static DateOnly Min(DateOnly a, DateOnly b) => a < b ? a : b;
 
-    private async Task<RepoMetadata> MetadataFor(GitHubUser user, RepoResponse repo, DateTimeOffset statsDeadline)
+    private async Task<RepoMetadata> MetadataFor(GitHubUser user, RepoResponse repo, ContributorResponse[] contributors, int[][] punchCard)
     {
-        var contributors = await GetStats<ContributorResponse[]>(user, $"/repos/{repo.FullName}/stats/contributors", statsDeadline) ?? [];
-        var punchCard = await GetStats<int[][]>(user, $"/repos/{repo.FullName}/stats/punch_card", statsDeadline) ?? [];
         var languages = await Get<Dictionary<string, long>>(user, $"/repos/{repo.FullName}/languages") ?? [];
         var author = contributors.FirstOrDefault(c => string.Equals(c.Author?.Login, user.Handle, StringComparison.OrdinalIgnoreCase));
 
@@ -89,17 +93,33 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
     private static Week WeekFrom(ContributorWeekResponse week) =>
         new(DateOnly.FromDateTime(DateTimeOffset.FromUnixTimeSeconds(week.W).UtcDateTime), week.A, week.D, week.C);
 
-    // One deadline covers every repo in the fetch, so a few slow repos can't add up to a long wait.
-    private async Task<T?> GetStats<T>(GitHubUser user, string path, DateTimeOffset deadline)
+    // Ask for every repo's stats before waiting, while keeping HTTP calls serial.
+    private async Task<T?[]> GetStatsForRepos<T>(GitHubUser user, IReadOnlyList<RepoResponse> repos,
+        Func<RepoResponse, string> pathFor, DateTimeOffset deadline) where T : class
     {
-        while (true)
+        var results = new T?[repos.Count];
+        var pending = Enumerable.Range(0, repos.Count).ToArray();
+        while (pending.Length > 0)
         {
-            using var response = await Send(user, path);
-            if (response.StatusCode != HttpStatusCode.Accepted) return await Read<T>(response);
-            if (time.GetUtcNow() >= deadline) throw new GitHubStatsPendingException(path);
+            var next = new List<int>();
+            foreach (var index in pending)
+            {
+                var path = pathFor(repos[index]);
+                using var response = await Send(user, path);
+                if (response.StatusCode == HttpStatusCode.Accepted)
+                {
+                    if (time.GetUtcNow() >= deadline) throw new GitHubStatsPendingException(path);
+                    next.Add(index);
+                }
+                else results[index] = await Read<T>(response);
+            }
 
+            if (next.Count == 0) break;
             await Task.Delay(options.StatsRetryDelay, time);
+            pending = next.ToArray();
         }
+
+        return results;
     }
 
     private async Task<IReadOnlyList<T>> GetEveryPage<T>(GitHubUser user, string firstPage)
