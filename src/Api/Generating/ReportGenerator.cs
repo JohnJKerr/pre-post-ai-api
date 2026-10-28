@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Domain;
 using Domain.GitHub;
 using Domain.Repositories;
@@ -34,17 +35,28 @@ public class ReportGenerator(
     private async Task<Generation> Generate(GenerationRequest request)
     {
         var (generation, user) = request;
+        var fetchMs = 0d;
+        var assemblyMs = 0d;
+        var saveMs = 0d;
         try
         {
             var now = time.GetUtcNow();
             var windows = Window.Around(generation.Cutoff.Date, DateOnly.FromDateTime(now.UtcDateTime));
             using var scope = scopes.CreateScope();
-            var activity = await scope.ServiceProvider.GetRequiredService<IGitHubMetadata>().Fetch(user, windows);
+            var started = Stopwatch.GetTimestamp();
+            GitHubActivity activity;
+            try { activity = await scope.ServiceProvider.GetRequiredService<IGitHubMetadata>().Fetch(user, windows); }
+            finally { fetchMs = Stopwatch.GetElapsedTime(started).TotalMilliseconds; }
 
-            var profile = Profile.Assemble(user.Id, user.Handle, generation.Cutoff, activity, now);
+            started = Stopwatch.GetTimestamp();
+            Profile profile;
+            try { profile = Profile.Assemble(user.Id, user.Handle, generation.Cutoff, activity, now); }
+            finally { assemblyMs = Stopwatch.GetElapsedTime(started).TotalMilliseconds; }
             if (!profile.HasCommits) return generation.FindNothingToCompare(time.GetUtcNow());
 
-            await profiles.Save(profile);
+            started = Stopwatch.GetTimestamp();
+            try { await profiles.Save(profile); }
+            finally { saveMs = Stopwatch.GetElapsedTime(started).TotalMilliseconds; }
             return generation.Complete(time.GetUtcNow());
         }
         catch (GitHubStatsPendingException)
@@ -59,6 +71,11 @@ public class ReportGenerator(
         {
             logger.LogError(exception, "Generation {GenerationId} for {Handle} failed.", generation.Id, generation.Handle);
             return generation.Fail("Something went wrong generating your report. Sign in to try again.", time.GetUtcNow());
+        }
+        finally
+        {
+            logger.LogInformation("Generation {GenerationId} phases: fetch {FetchMs:0} ms, assembly {AssemblyMs:0} ms, save {SaveMs:0} ms.",
+                generation.Id, fetchMs, assemblyMs, saveMs);
         }
     }
 }

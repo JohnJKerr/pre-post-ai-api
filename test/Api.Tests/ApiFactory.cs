@@ -1,4 +1,5 @@
 using Api.Authentication;
+using Api.Generating;
 using Domain;
 using Domain.GitHub;
 using Domain.Repositories;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using Microsoft.Extensions.Logging;
 using Testcontainers.MongoDb;
 
 namespace Api.Tests;
@@ -31,11 +33,13 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     // The browser keeps real cookies, so the server's clock is the real one: the OAuth correlation
     // cookie would otherwise expire at the fake time.
-    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null, FakeGitHubOAuth? gitHubOAuth = null) =>
+    internal HttpClient CreateBrowserSigningInWithGitHub(IGitHubMetadata? gitHub = null, FakeGitHubOAuth? gitHubOAuth = null,
+        ILogger<ReportGenerator>? generationLog = null) =>
         WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
                 services.AddSingleton(TimeProvider.System);
                 services.AddSingleton(gitHub ?? new FakeGitHub());
+                if (generationLog is not null) services.AddSingleton(generationLog);
                 services.PostConfigure<OAuthOptions>(GitHubSignIn.Scheme, options => options.Backchannel = new HttpClient(gitHubOAuth ?? new FakeGitHubOAuth()));
             }))
             .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") });

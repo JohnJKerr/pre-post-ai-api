@@ -59,7 +59,7 @@ The report weights a repo's current language mix by the user's added lines in ea
 
 ## Log GitHub fetch phases without repository identifiers
 
-The overall generation duration does not show whether GitHub listing, cold stats, languages or contribution calendars dominate. Each adapter fetch now logs the count of recent repos, the number of 202 stats responses and the elapsed time for those four phases, including when a fetch fails. The log contains neither repo names nor the user's token.
+The overall generation duration does not show whether GitHub listing, cold stats, languages or contribution calendars dominate. Each adapter fetch now logs the count of recent repos, the number of 202 stats responses and the elapsed time for those four phases, including when a fetch fails. The generation worker also logs fetch, profile assembly and save durations, including partial timings on failure. These phase logs contain neither repo names nor the user's token.
 
 ## Data Protection keys stay in memory
 
