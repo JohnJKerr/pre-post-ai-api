@@ -1,3 +1,4 @@
+using Domain;
 using Domain.GitHub;
 using External.GitHub;
 using Microsoft.Extensions.Time.Testing;
@@ -15,5 +16,7 @@ internal static class GitHubClient
             new FakeTimeProvider { AutoAdvanceAmount = GitHubOptions.Default.StatsRetryDelay });
 
     public static Task<GitHubActivity> FetchFrom(FakeGitHubApi api) =>
-        Over(api).Fetch(User, new DateOnly(2024, 12, 29), new DateOnly(2026, 10, 17));
+        Over(api).Fetch(User, new PerEra<Window>(
+            new(new DateOnly(2024, 12, 29), 26),
+            new(new DateOnly(2026, 4, 19), 26)));
 }

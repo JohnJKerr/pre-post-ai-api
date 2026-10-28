@@ -20,10 +20,10 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         }
         """;
 
-    public async Task<GitHubActivity> Fetch(GitHubUser user, DateOnly from, DateOnly to)
+    public async Task<GitHubActivity> Fetch(GitHubUser user, PerEra<Window> windows)
     {
         var repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100");
-        var recent = repos.Where(r => PushedSince(r, from)).ToArray();
+        var recent = repos.Where(r => PushedSince(r, windows.Pre.Start)).ToArray();
         var metadata = new List<RepoMetadata>();
         var statsDeadline = time.GetUtcNow() + options.StatsTimeout;
         var contributors = await GetStatsForRepos<ContributorResponse[]>(user, recent,
@@ -33,7 +33,7 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         for (var i = 0; i < recent.Length; i++)
             metadata.Add(await MetadataFor(user, recent[i], contributors[i] ?? [], punchCards[i] ?? []));
 
-        return new GitHubActivity(metadata, await ContributionDays(user, from, to));
+        return new GitHubActivity(metadata, await ContributionDays(user, windows));
     }
 
     // Each repo costs three calls. A repo nobody has pushed
@@ -41,13 +41,12 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
     private static bool PushedSince(RepoResponse repo, DateOnly from) =>
         repo.PushedAt is { } pushedAt && DateOnly.FromDateTime(pushedAt.UtcDateTime) >= from;
 
-    private async Task<IReadOnlyList<DateOnly>> ContributionDays(GitHubUser user, DateOnly from, DateOnly to)
+    private async Task<IReadOnlyList<DateOnly>> ContributionDays(GitHubUser user, PerEra<Window> windows)
     {
         var days = new List<DateOnly>();
-        for (var start = from; start <= to; start = start.AddYears(1))
+        foreach (var window in new[] { windows.Pre, windows.Post }.Where(w => w.Weeks > 0))
         {
-            var end = Min(start.AddYears(1).AddDays(-1), to);
-            var calendar = await CalendarBetween(user, start, end);
+            var calendar = await CalendarBetween(user, window.Start, window.End);
             days.AddRange(calendar.Weeks.SelectMany(w => w.ContributionDays).Where(d => d.ContributionCount > 0).Select(d => d.Date));
         }
 
@@ -73,8 +72,6 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         return body?.Data?.Viewer.ContributionsCollection.ContributionCalendar
             ?? throw new HttpRequestException("GitHub didn't return a contribution calendar.");
     }
-
-    private static DateOnly Min(DateOnly a, DateOnly b) => a < b ? a : b;
 
     private async Task<RepoMetadata> MetadataFor(GitHubUser user, RepoResponse repo, ContributorResponse[] contributors, int[][] punchCard)
     {

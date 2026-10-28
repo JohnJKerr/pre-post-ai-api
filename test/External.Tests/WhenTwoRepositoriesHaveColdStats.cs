@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Domain;
 using External.GitHub;
 using Shouldly;
 
@@ -21,7 +22,9 @@ public class WhenTwoRepositoriesHaveColdStats
         var elapsed = Stopwatch.StartNew();
 
         // Act
-        await metadata.Fetch(GitHubClient.User, new DateOnly(2024, 12, 29), new DateOnly(2026, 10, 17));
+        await metadata.Fetch(GitHubClient.User, new PerEra<Window>(
+            new(new DateOnly(2024, 12, 29), 26),
+            new(new DateOnly(2026, 4, 19), 26)));
 
         // Assert
         elapsed.Elapsed.ShouldBeLessThan(TimeSpan.FromMilliseconds(1600));

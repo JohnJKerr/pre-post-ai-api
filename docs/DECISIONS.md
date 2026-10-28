@@ -83,6 +83,10 @@ The weeks between the two windows count towards neither, except that a punch-car
 
 The sample report uses the same windows: the 26 weeks before the default cut-off and the 26 before it was generated on 18 October 2026.
 
+## Fetch contribution calendars only for scoring windows
+
+The pre and post windows can be years apart, but the days between them do not enter the report. Pass both windows to the GitHub adapter and request one contribution calendar for each. Each window is at most 26 weeks, so it fits within GitHub's one-year contribution query range. This also gives the adapter the exact windows when deciding which per-repo metadata is useful.
+
 ## The front end names cut-offs
 
 The API works from the cut-off date alone, and a report or generation returns its cut-off as `{ date }`. Which release a date stands for, such as "Claude Opus 4.5" for 2025-11-24, is presentation, and the front end already holds the list it offers on its generate page.
