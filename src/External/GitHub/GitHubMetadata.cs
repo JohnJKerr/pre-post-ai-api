@@ -150,29 +150,35 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         Func<RepoResponse, string> pathFor, DateTimeOffset deadline, FetchMetrics metrics) where T : class
     {
         var results = new T?[repos.Count];
-        var pending = Enumerable.Range(0, repos.Count).ToArray();
-        while (pending.Length > 0)
+        IReadOnlyList<int> pending = Enumerable.Range(0, repos.Count).ToArray();
+        while (pending.Count > 0)
         {
-            var next = new List<int>();
-            foreach (var index in pending)
-            {
-                var path = pathFor(repos[index]);
-                using var response = await Send(user, path);
-                if (response.StatusCode == HttpStatusCode.Accepted)
-                {
-                    metrics.StatsPendingResponses++;
-                    if (time.GetUtcNow() >= deadline) throw new GitHubStatsPendingException(path);
-                    next.Add(index);
-                }
-                else results[index] = await Read<T>(response);
-            }
-
-            if (next.Count == 0) break;
-            await Task.Delay(options.StatsRetryDelay, time);
-            pending = next.ToArray();
+            pending = await FetchStatsRound(user, repos, pending, results, pathFor, deadline, metrics);
+            if (pending.Count > 0) await Task.Delay(options.StatsRetryDelay, time);
         }
 
         return results;
+    }
+
+    private async Task<IReadOnlyList<int>> FetchStatsRound<T>(GitHubUser user, IReadOnlyList<RepoResponse> repos,
+        IReadOnlyList<int> pending, T?[] results, Func<RepoResponse, string> pathFor,
+        DateTimeOffset deadline, FetchMetrics metrics) where T : class
+    {
+        var next = new List<int>();
+        foreach (var index in pending)
+        {
+            var path = pathFor(repos[index]);
+            using var response = await Send(user, path);
+            if (response.StatusCode == HttpStatusCode.Accepted)
+            {
+                metrics.StatsPendingResponses++;
+                if (time.GetUtcNow() >= deadline) throw new GitHubStatsPendingException(path);
+                next.Add(index);
+            }
+            else results[index] = await Read<T>(response);
+        }
+
+        return next;
     }
 
     private async Task<IReadOnlyList<T>> GetEveryPage<T>(GitHubUser user, string firstPage)

@@ -61,8 +61,7 @@ public record WindowSummary
     {
         var weighted = new Dictionary<string, double>();
         foreach (var repo in repos.Where(r => r.Share[era] > 0))
-            foreach (var (language, share) in repo.Languages.Where(l => !Markup.Contains(l.Key)))
-                weighted[language] = weighted.GetValueOrDefault(language) + share * repo.Share[era];
+            AddLanguagesFrom(repo, era, weighted);
 
         var total = weighted.Values.Sum();
         if (total == 0) return [];
@@ -71,5 +70,11 @@ public record WindowSummary
             .Select(l => new LanguageShare(l.Key, l.Value / total))
             .OrderByDescending(l => l.Share)
             .ToArray();
+    }
+
+    private static void AddLanguagesFrom(Repo repo, Era era, Dictionary<string, double> weighted)
+    {
+        foreach (var (language, share) in repo.Languages.Where(l => !Markup.Contains(l.Key)))
+            weighted[language] = weighted.GetValueOrDefault(language) + share * repo.Share[era];
     }
 }

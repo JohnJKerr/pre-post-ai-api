@@ -10,13 +10,24 @@ public record CodingWindow(int Start, int Length)
     public static CodingWindow Holding80PercentOf(IReadOnlyList<HourShare> hourShares)
     {
         for (var length = 1; length <= 24; length++)
-            for (var start = 0; start < 24; start++)
-            {
-                var share = 0d;
-                for (var k = 0; k < length; k++) share += hourShares[(start + k) % 24].Share;
-                if (share >= Target - FloatTolerance) return new CodingWindow(start, length);
-            }
+            if (FirstWindowOfLength(hourShares, length) is { } window) return window;
 
         return new CodingWindow(0, 24);
+    }
+
+    private static CodingWindow? FirstWindowOfLength(IReadOnlyList<HourShare> hourShares, int length)
+    {
+        for (var start = 0; start < 24; start++)
+            if (ShareFrom(hourShares, start, length) >= Target - FloatTolerance)
+                return new CodingWindow(start, length);
+
+        return null;
+    }
+
+    private static double ShareFrom(IReadOnlyList<HourShare> hourShares, int start, int length)
+    {
+        var share = 0d;
+        for (var k = 0; k < length; k++) share += hourShares[(start + k) % 24].Share;
+        return share;
     }
 }
