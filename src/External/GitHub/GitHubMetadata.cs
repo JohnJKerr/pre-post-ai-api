@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Net;
@@ -5,10 +6,11 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Domain;
 using Domain.GitHub;
+using Microsoft.Extensions.Logging;
 
 namespace External.GitHub;
 
-public partial class GitHubMetadata(HttpClient http, GitHubOptions options, TimeProvider time) : IGitHubMetadata
+public partial class GitHubMetadata(HttpClient http, GitHubOptions options, TimeProvider time, ILogger<GitHubMetadata> logger) : IGitHubMetadata
 {
     private const string CalendarQuery = """
         query($from: DateTime!, $to: DateTime!) {
@@ -22,34 +24,75 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
 
     public async Task<GitHubActivity> Fetch(GitHubUser user, PerEra<Window> windows)
     {
-        var repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100");
-        var recent = repos.Where(r => PushedSince(r, windows.Pre.Start)).ToArray();
-        var statsDeadline = time.GetUtcNow() + options.StatsTimeout;
-        var contributors = await GetStatsForRepos<ContributorResponse[]>(user, recent,
-            r => $"/repos/{r.FullName}/stats/contributors", statsDeadline);
-        var metadata = recent.Select((repo, index) => MetadataFor(user, repo, contributors[index] ?? [])).ToArray();
-        var punchIndices = Enumerable.Range(0, recent.Length)
-            .Where(index => metadata[index].PunchCardEra(windows) is not null).ToArray();
-        var punchRepos = punchIndices.Select(index => recent[index]).ToArray();
-        var punchCards = await GetStatsForRepos<int[][]>(user, punchRepos,
-            r => $"/repos/{r.FullName}/stats/punch_card", statsDeadline);
-        for (var i = 0; i < punchIndices.Length; i++)
-            metadata[punchIndices[i]] = metadata[punchIndices[i]] with
-            {
-                PunchCard = (punchCards[i] ?? []).Select(cell => new PunchCell(cell[0], cell[1], cell[2])).ToArray(),
-            };
-        for (var i = 0; i < recent.Length; i++)
-            if (metadata[i].AuthorWeeks.Any(w => w.Added > 0 &&
-                (windows.Pre.Contains(w.Start) || windows.Post.Contains(w.Start))))
-                metadata[i] = metadata[i] with
-                {
-                    LanguageBytes = await Get<Dictionary<string, long>>(user, $"/repos/{recent[i].FullName}/languages") ?? [],
-                };
+        var metrics = new FetchMetrics();
+        try
+        {
+            var started = Stopwatch.GetTimestamp();
+            IReadOnlyList<RepoResponse> repos;
+            try { repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100"); }
+            finally { metrics.Listing = Stopwatch.GetElapsedTime(started); }
 
-        return new GitHubActivity(metadata, await ContributionDays(user, windows));
+            var recent = repos.Where(r => PushedSince(r, windows.Pre.Start)).ToArray();
+            metrics.RecentRepoCount = recent.Length;
+            var statsDeadline = time.GetUtcNow() + options.StatsTimeout;
+            RepoMetadata[] metadata;
+            started = Stopwatch.GetTimestamp();
+            try
+            {
+                var contributors = await GetStatsForRepos<ContributorResponse[]>(user, recent,
+                    r => $"/repos/{r.FullName}/stats/contributors", statsDeadline, metrics);
+                metadata = recent.Select((repo, index) => MetadataFor(user, repo, contributors[index] ?? [])).ToArray();
+                var punchIndices = Enumerable.Range(0, recent.Length)
+                    .Where(index => metadata[index].PunchCardEra(windows) is not null).ToArray();
+                var punchRepos = punchIndices.Select(index => recent[index]).ToArray();
+                var punchCards = await GetStatsForRepos<int[][]>(user, punchRepos,
+                    r => $"/repos/{r.FullName}/stats/punch_card", statsDeadline, metrics);
+                for (var i = 0; i < punchIndices.Length; i++)
+                    metadata[punchIndices[i]] = metadata[punchIndices[i]] with
+                    {
+                        PunchCard = (punchCards[i] ?? []).Select(cell => new PunchCell(cell[0], cell[1], cell[2])).ToArray(),
+                    };
+            }
+            finally { metrics.Stats = Stopwatch.GetElapsedTime(started); }
+
+            started = Stopwatch.GetTimestamp();
+            try
+            {
+                for (var i = 0; i < recent.Length; i++)
+                    if (metadata[i].AuthorWeeks.Any(w => w.Added > 0 &&
+                        (windows.Pre.Contains(w.Start) || windows.Post.Contains(w.Start))))
+                        metadata[i] = metadata[i] with
+                        {
+                            LanguageBytes = await Get<Dictionary<string, long>>(user, $"/repos/{recent[i].FullName}/languages") ?? [],
+                        };
+            }
+            finally { metrics.Languages = Stopwatch.GetElapsedTime(started); }
+
+            started = Stopwatch.GetTimestamp();
+            try { return new GitHubActivity(metadata, await ContributionDays(user, windows)); }
+            finally { metrics.Calendars = Stopwatch.GetElapsedTime(started); }
+        }
+        finally
+        {
+            logger.LogInformation(
+                "GitHub fetch: {RecentRepoCount} recent repos, {StatsPendingResponses} pending stats responses; listing {ListingMs:0} ms, stats {StatsMs:0} ms, languages {LanguagesMs:0} ms, calendars {CalendarsMs:0} ms.",
+                metrics.RecentRepoCount, metrics.StatsPendingResponses,
+                metrics.Listing.TotalMilliseconds, metrics.Stats.TotalMilliseconds,
+                metrics.Languages.TotalMilliseconds, metrics.Calendars.TotalMilliseconds);
+        }
     }
 
-    // Each repo costs three calls. A repo nobody has pushed
+    private sealed class FetchMetrics
+    {
+        public int RecentRepoCount { get; set; }
+        public int StatsPendingResponses { get; set; }
+        public TimeSpan Listing { get; set; }
+        public TimeSpan Stats { get; set; }
+        public TimeSpan Languages { get; set; }
+        public TimeSpan Calendars { get; set; }
+    }
+
+    // Each recent repo costs up to three calls. A repo nobody has pushed
     // to since the pre window started can't have activity in either window.
     private static bool PushedSince(RepoResponse repo, DateOnly from) =>
         repo.PushedAt is { } pushedAt && DateOnly.FromDateTime(pushedAt.UtcDateTime) >= from;
@@ -104,7 +147,7 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
 
     // Ask for every repo's stats before waiting, while keeping HTTP calls serial.
     private async Task<T?[]> GetStatsForRepos<T>(GitHubUser user, IReadOnlyList<RepoResponse> repos,
-        Func<RepoResponse, string> pathFor, DateTimeOffset deadline) where T : class
+        Func<RepoResponse, string> pathFor, DateTimeOffset deadline, FetchMetrics metrics) where T : class
     {
         var results = new T?[repos.Count];
         var pending = Enumerable.Range(0, repos.Count).ToArray();
@@ -117,6 +160,7 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
                 using var response = await Send(user, path);
                 if (response.StatusCode == HttpStatusCode.Accepted)
                 {
+                    metrics.StatsPendingResponses++;
                     if (time.GetUtcNow() >= deadline) throw new GitHubStatsPendingException(path);
                     next.Add(index);
                 }

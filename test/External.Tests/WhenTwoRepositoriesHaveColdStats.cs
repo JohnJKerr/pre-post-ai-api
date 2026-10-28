@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Domain;
 using External.GitHub;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shouldly;
 
 namespace External.Tests;
@@ -18,7 +19,8 @@ public class WhenTwoRepositoriesHaveColdStats
         var metadata = new GitHubMetadata(
             new HttpClient(api) { BaseAddress = new Uri("https://api.github.com") },
             new GitHubOptions(TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(5)),
-            TimeProvider.System);
+            TimeProvider.System,
+            NullLogger<GitHubMetadata>.Instance);
         var elapsed = Stopwatch.StartNew();
 
         // Act
