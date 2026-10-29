@@ -12,7 +12,7 @@ internal class GivenTheGitHubApi
     public GivenTheGitHubApi()
     {
         Serving(RepoList, "user-repos.json");
-        _responses["/graphql"] = [Json(File.ReadAllText("Fixtures/calendar-2025.json")), Json(File.ReadAllText("Fixtures/calendar-2026.json"))];
+        _responses["/graphql"] = [Json(BothCalendars())];
         foreach (var repo in new[] { "ledger-sync", "side-project" })
         {
             Serving($"/repos/octo-dev/{repo}/stats/contributors", $"{repo}-contributors.json");
@@ -95,6 +95,23 @@ internal class GivenTheGitHubApi
 
     private void Serving(string pathAndQuery, string fixture) =>
         _responses[pathAndQuery] = [Json(File.ReadAllText($"Fixtures/{fixture}"))];
+
+    private static string BothCalendars()
+    {
+        var pre = JsonNode.Parse(File.ReadAllText("Fixtures/calendar-2025.json"))!;
+        var post = JsonNode.Parse(File.ReadAllText("Fixtures/calendar-2026.json"))!;
+        return new JsonObject
+        {
+            ["data"] = new JsonObject
+            {
+                ["viewer"] = new JsonObject
+                {
+                    ["w0"] = JsonNode.Parse(pre["data"]!["viewer"]!["contributionsCollection"]!.ToJsonString()),
+                    ["w1"] = JsonNode.Parse(post["data"]!["viewer"]!["contributionsCollection"]!.ToJsonString()),
+                },
+            },
+        }.ToJsonString();
+    }
 
     private static Func<HttpResponseMessage> Json(string body) => () => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(body) };
 

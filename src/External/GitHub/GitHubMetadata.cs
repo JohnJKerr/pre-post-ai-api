@@ -12,10 +12,25 @@ namespace External.GitHub;
 
 public partial class GitHubMetadata(HttpClient http, GitHubOptions options, TimeProvider time, ILogger<GitHubMetadata> logger) : IGitHubMetadata
 {
-    private const string CalendarQuery = """
-        query($from: DateTime!, $to: DateTime!) {
+    // One contributionsCollection spans at most a year, and the two windows can be years
+    // apart, so each window needs its own field. Aliases let both share a single round trip.
+    private const string OneCalendarQuery = """
+        query($from0: DateTime!, $to0: DateTime!) {
           viewer {
-            contributionsCollection(from: $from, to: $to) {
+            w0: contributionsCollection(from: $from0, to: $to0) {
+              contributionCalendar { weeks { contributionDays { date contributionCount } } }
+            }
+          }
+        }
+        """;
+
+    private const string TwoCalendarQuery = """
+        query($from0: DateTime!, $to0: DateTime!, $from1: DateTime!, $to1: DateTime!) {
+          viewer {
+            w0: contributionsCollection(from: $from0, to: $to0) {
+              contributionCalendar { weeks { contributionDays { date contributionCount } } }
+            }
+            w1: contributionsCollection(from: $from1, to: $to1) {
               contributionCalendar { weeks { contributionDays { date contributionCount } } }
             }
           }
@@ -115,34 +130,46 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
 
     private async Task<IReadOnlyList<DateOnly>> ContributionDays(GitHubUser user, PerEra<Window> windows)
     {
-        var days = new List<DateOnly>();
-        foreach (var window in new[] { windows.Pre, windows.Post }.Where(w => w.Weeks > 0))
-        {
-            var calendar = await CalendarBetween(user, window.Start, window.End);
-            days.AddRange(calendar.Weeks.SelectMany(w => w.ContributionDays).Where(d => d.ContributionCount > 0).Select(d => d.Date));
-        }
+        var requested = new[] { windows.Pre, windows.Post }.Where(window => window.Weeks > 0).ToArray();
+        if (requested.Length == 0) return [];
 
-        return days;
+        var calendars = await CalendarsFor(user, requested);
+        return calendars
+            .SelectMany(calendar => calendar.Weeks)
+            .SelectMany(week => week.ContributionDays)
+            .Where(day => day.ContributionCount > 0)
+            .Select(day => day.Date)
+            .ToArray();
     }
 
-    private async Task<ContributionCalendar> CalendarBetween(GitHubUser user, DateOnly start, DateOnly end)
+    private async Task<IReadOnlyList<ContributionCalendar>> CalendarsFor(GitHubUser user, IReadOnlyList<Window> windows)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "/graphql");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.AccessToken);
         request.Content = JsonContent.Create(new
         {
-            query = CalendarQuery,
-            variables = new
-            {
-                from = string.Create(CultureInfo.InvariantCulture, $"{start:yyyy-MM-dd}T00:00:00Z"),
-                to = string.Create(CultureInfo.InvariantCulture, $"{end:yyyy-MM-dd}T23:59:59Z"),
-            },
+            query = windows.Count == 1 ? OneCalendarQuery : TwoCalendarQuery,
+            variables = CalendarVariables(windows),
         });
         using var response = await http.SendAsync(request);
-        var body = await Read<GraphQlResponse<CalendarData>>(response);
+        var body = await Read<GraphQlResponse<CalendarsData>>(response);
+        var viewer = body?.Data?.Viewer ?? throw new HttpRequestException("GitHub didn't return a contribution calendar.");
 
-        return body?.Data?.Viewer.ContributionsCollection.ContributionCalendar
-            ?? throw new HttpRequestException("GitHub didn't return a contribution calendar.");
+        return Enumerable.Range(0, windows.Count).Select(index =>
+            viewer.GetValueOrDefault($"w{index}")?.ContributionCalendar
+            ?? throw new HttpRequestException("GitHub didn't return a contribution calendar.")).ToArray();
+    }
+
+    private static Dictionary<string, string> CalendarVariables(IReadOnlyList<Window> windows)
+    {
+        var variables = new Dictionary<string, string>();
+        for (var i = 0; i < windows.Count; i++)
+        {
+            variables[$"from{i}"] = string.Create(CultureInfo.InvariantCulture, $"{windows[i].Start:yyyy-MM-dd}T00:00:00Z");
+            variables[$"to{i}"] = string.Create(CultureInfo.InvariantCulture, $"{windows[i].End:yyyy-MM-dd}T23:59:59Z");
+        }
+
+        return variables;
     }
 
     private static RepoMetadata MetadataFor(GitHubUser user, RepoResponse repo, ContributorResponse[] contributors)

@@ -97,7 +97,7 @@ The sample report uses the same windows: the 26 weeks before the default cut-off
 
 ## Fetch contribution calendars only for scoring windows
 
-The pre and post windows can be years apart, but the days between them do not enter the report. Pass both windows to the GitHub adapter and request one contribution calendar for each. Each window is at most 26 weeks, so it fits within GitHub's one-year contribution query range. This also gives the adapter the exact windows when deciding which per-repo metadata is useful.
+The pre and post windows can be years apart, but the days between them do not enter the report. Pass both windows to the GitHub adapter and request a contribution calendar for each. Each window is at most 26 weeks, so it fits within GitHub's one-year contribution query range. A `contributionsCollection` cannot cover both when they are years apart, but one GraphQL query can ask for each under its own field alias, so the two calendars share a round trip. The windows also tell the adapter which per-repo metadata is useful.
 
 ## The front end names cut-offs
 

@@ -23,9 +23,7 @@ internal record ContributorWeekResponse(
 
 internal record GraphQlResponse<T>([property: JsonPropertyName("data")] T? Data);
 
-internal record CalendarData([property: JsonPropertyName("viewer")] CalendarViewer Viewer);
-
-internal record CalendarViewer([property: JsonPropertyName("contributionsCollection")] ContributionsCollection ContributionsCollection);
+internal record CalendarsData([property: JsonPropertyName("viewer")] Dictionary<string, ContributionsCollection> Viewer);
 
 internal record ContributionsCollection([property: JsonPropertyName("contributionCalendar")] ContributionCalendar ContributionCalendar);
 
