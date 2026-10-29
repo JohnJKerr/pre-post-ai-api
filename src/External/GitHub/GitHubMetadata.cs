@@ -1,10 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.IO.Compression;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using Domain;
 using Domain.GitHub;
@@ -14,9 +12,6 @@ namespace External.GitHub;
 
 public partial class GitHubMetadata(HttpClient http, GitHubOptions options, TimeProvider time, ILogger<GitHubMetadata> logger) : IGitHubMetadata
 {
-    // Same defaults as HttpContent.ReadFromJsonAsync. Decompression stays here, rather than on
-    // the typed client's handler, so a gzipped body is not decoded twice.
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     // One contributionsCollection spans at most a year, and the two windows can be years
     // apart, so each window needs its own field. Aliases let both share a single round trip.
     private const string OneCalendarQuery = """
@@ -249,11 +244,8 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         return await http.SendAsync(request);
     }
 
-    private static void Prepare(HttpRequestMessage request, GitHubUser user)
-    {
+    private static void Prepare(HttpRequestMessage request, GitHubUser user) =>
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.AccessToken);
-        request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-    }
 
     private static async Task<T?> Read<T>(HttpResponseMessage response)
     {
@@ -261,15 +253,8 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         response.EnsureSuccessStatusCode();
         if (response.StatusCode == HttpStatusCode.NoContent) return default;
 
-        await using var stream = await response.Content.ReadAsStreamAsync();
-        if (!IsGzip(response)) return await JsonSerializer.DeserializeAsync<T>(stream, JsonOptions);
-
-        await using var gzip = new GZipStream(stream, CompressionMode.Decompress);
-        return await JsonSerializer.DeserializeAsync<T>(gzip, JsonOptions);
+        return await response.Content.ReadFromJsonAsync<T>();
     }
-
-    private static bool IsGzip(HttpResponseMessage response) =>
-        response.Content.Headers.ContentEncoding.Any(encoding => encoding.Equals("gzip", StringComparison.OrdinalIgnoreCase));
 
     [GeneratedRegex("<(?<url>[^>]+)>;\\s*rel=\"next\"")]
     private static partial Regex NextLink();

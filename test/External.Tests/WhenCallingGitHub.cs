@@ -8,12 +8,12 @@ public class WhenCallingGitHub
     public async Task The_request_asks_for_gzip()
     {
         // Arrange
-        var api = new GivenTheGitHubApi().Build();
+        await using var server = new GivenTheGitHubApi().Listen();
 
         // Act
-        await GitHubClient.FetchFrom(api);
+        await GitHubClient.FetchFrom(server);
 
         // Assert
-        api.Requests.ShouldAllBe(request => request.Headers.AcceptEncoding.Any(encoding => encoding.Value == "gzip"));
+        server.Requests.ShouldAllBe(request => request.Headers.AcceptEncoding.Any(encoding => encoding.Value == "gzip"));
     }
 }

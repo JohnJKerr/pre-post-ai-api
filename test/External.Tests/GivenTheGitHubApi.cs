@@ -103,6 +103,8 @@ internal class GivenTheGitHubApi
 
     public FakeGitHubApi Build() => new(_responses.ToDictionary(r => r.Key, r => new Queue<Func<HttpResponseMessage>>(r.Value)));
 
+    public ListeningGitHub Listen() => new(Build());
+
     private void Serving(string pathAndQuery, string fixture) =>
         _responses[pathAndQuery] = [Json(File.ReadAllText($"Fixtures/{fixture}"))];
 

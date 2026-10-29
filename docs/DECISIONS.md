@@ -61,9 +61,9 @@ The report weights a repo's current language mix by the user's added lines in ea
 
 The overall generation duration does not show whether GitHub listing, cold stats, languages or contribution calendars dominate. Each adapter fetch now logs the count of recent repos, the number of 202 stats responses and the elapsed time for those four phases, including when a fetch fails. The generation worker also logs fetch, profile assembly and save durations, including partial timings on failure. These phase logs contain neither repo names nor the user's token.
 
-## Ask GitHub to gzip responses
+## Let the HTTP handler decompress GitHub responses
 
-Contributor statistics are a week-by-week history for every author, and that JSON compresses well. Each request sends `Accept-Encoding: gzip`, and the adapter decompresses the body itself. The typed client's handler is left with automatic decompression off, so a response is not decoded twice.
+Contributor statistics are a week-by-week history for every author, and that JSON compresses well. The GitHub client's primary handler sets `AutomaticDecompression` to `DecompressionMethods.All`. That handler sends `Accept-Encoding` and decompresses the body, and the adapter reads the JSON it is given. Decompression stays on the handler so the adapter cannot decode a body the handler has already decoded.
 
 ## Data Protection keys stay in memory
 

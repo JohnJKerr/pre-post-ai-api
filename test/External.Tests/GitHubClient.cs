@@ -22,4 +22,12 @@ internal static class GitHubClient
 
     public static Task<GitHubActivity> FetchFrom(FakeGitHubApi api) =>
         Over(api).Fetch(User, Windows);
+
+    public static async Task<GitHubActivity> FetchFrom(ListeningGitHub server)
+    {
+        using var client = new HttpClient(GitHubHttp.PrimaryHandler()) { BaseAddress = server.BaseAddress };
+        return await new GitHubMetadata(client, GitHubOptions.NoDelay,
+            new FakeTimeProvider { AutoAdvanceAmount = GitHubOptions.Default.StatsRetryDelay },
+            NullLogger<GitHubMetadata>.Instance).Fetch(User, Windows);
+    }
 }

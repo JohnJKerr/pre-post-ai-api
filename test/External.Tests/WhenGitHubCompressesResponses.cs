@@ -8,10 +8,10 @@ public class WhenGitHubCompressesResponses
     public async Task The_fetch_still_reads_them()
     {
         // Arrange
-        var api = new GivenTheGitHubApi().WithGzippedResponses().Build();
+        await using var server = new GivenTheGitHubApi().WithGzippedResponses().Listen();
 
         // Act
-        var activity = await GitHubClient.FetchFrom(api);
+        var activity = await GitHubClient.FetchFrom(server);
 
         // Assert
         activity.Repos.Count.ShouldBe(2);
