@@ -61,6 +61,10 @@ The report weights a repo's current language mix by the user's added lines in ea
 
 The overall generation duration does not show whether GitHub listing, cold stats, languages or contribution calendars dominate. Each adapter fetch now logs the count of recent repos, the number of 202 stats responses and the elapsed time for those four phases, including when a fetch fails. The generation worker also logs fetch, profile assembly and save durations, including partial timings on failure. These phase logs contain neither repo names nor the user's token.
 
+## Ask GitHub to gzip responses
+
+Contributor statistics are a week-by-week history for every author, and that JSON compresses well. Each request sends `Accept-Encoding: gzip`, and the adapter decompresses the body itself. The typed client's handler is left with automatic decompression off, so a response is not decoded twice.
+
 ## Data Protection keys stay in memory
 
 ASP.NET Data Protection now guards only the OAuth state of a sign-in under way, for about 15 minutes, so its keys are ephemeral. A restart in the middle of a sign-in sends that user to the front end's `/?error=sign-in-failed` to try again. With more than one instance, a sign-in must return to the instance that started it (sticky sessions); otherwise persist the keys again.

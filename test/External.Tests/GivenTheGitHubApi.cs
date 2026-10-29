@@ -1,4 +1,7 @@
+using System.IO.Compression;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json.Nodes;
 
 namespace External.Tests;
@@ -8,6 +11,7 @@ internal class GivenTheGitHubApi
     private const string RepoList = "/user/repos?per_page=100&sort=pushed&direction=desc";
 
     private readonly Dictionary<string, List<Func<HttpResponseMessage>>> _responses = [];
+    private bool _gzip;
 
     public GivenTheGitHubApi()
     {
@@ -37,6 +41,12 @@ internal class GivenTheGitHubApi
     public GivenTheGitHubApi WithTheTokenExpiredBeforeFetching(string repo)
     {
         _responses[$"/repos/octo-dev/{repo}/stats/contributors"] = [Status(HttpStatusCode.Unauthorized)];
+        return this;
+    }
+
+    public GivenTheGitHubApi WithGzippedResponses()
+    {
+        _gzip = true;
         return this;
     }
 
@@ -113,7 +123,22 @@ internal class GivenTheGitHubApi
         }.ToJsonString();
     }
 
-    private static Func<HttpResponseMessage> Json(string body) => () => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(body) };
+    private Func<HttpResponseMessage> Json(string body) => () => new HttpResponseMessage(HttpStatusCode.OK)
+    {
+        Content = _gzip ? Gzip(body) : new StringContent(body),
+    };
+
+    private static StreamContent Gzip(string body)
+    {
+        var compressed = new MemoryStream();
+        using (var gzip = new GZipStream(compressed, CompressionLevel.SmallestSize, leaveOpen: true))
+            gzip.Write(Encoding.UTF8.GetBytes(body));
+        compressed.Position = 0;
+        var content = new StreamContent(compressed);
+        content.Headers.ContentEncoding.Add("gzip");
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        return content;
+    }
 
     private static Func<HttpResponseMessage> Status(HttpStatusCode status) => () => new HttpResponseMessage(status);
 }
