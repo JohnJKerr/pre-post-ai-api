@@ -43,7 +43,7 @@ Because the job can wait as long as it needs, GitHub's 202 "still computing" is 
 
 ## Repos are skipped rather than fetched in parallel
 
-`/user/repos` lists every repo the user can see, and each recent one costs up to three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+`/user/repos` lists every repo the user can see, and each recent one costs up to three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. The list is requested most-recently-pushed first (`sort=pushed`), and paging stops once the last repo on a page was pushed before the pre window: later pages are older and cannot add activity. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
 
 ## Start cold stats across repos before waiting
 

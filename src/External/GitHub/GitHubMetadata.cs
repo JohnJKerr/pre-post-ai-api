@@ -28,11 +28,9 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         try
         {
             var started = Stopwatch.GetTimestamp();
-            IReadOnlyList<RepoResponse> repos;
-            try { repos = await GetEveryPage<RepoResponse>(user, "/user/repos?per_page=100"); }
+            RepoResponse[] recent;
+            try { recent = await RecentRepos(user, windows.Pre.Start); }
             finally { metrics.Listing = Stopwatch.GetElapsedTime(started); }
-
-            var recent = repos.Where(r => PushedSince(r, windows.Pre.Start)).ToArray();
             metrics.RecentRepoCount = recent.Length;
             var statsDeadline = time.GetUtcNow() + options.StatsTimeout;
             RepoMetadata[] metadata;
@@ -92,8 +90,26 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         public TimeSpan Calendars { get; set; }
     }
 
-    // Each recent repo costs up to three calls. A repo nobody has pushed
-    // to since the pre window started can't have activity in either window.
+    // Listed most-recently-pushed first, so once the last repo on a page is older than
+    // the pre window every later page is older too. A repo nobody has pushed to since
+    // the pre window started can't have activity in either window.
+    private const string RepoList = "/user/repos?per_page=100&sort=pushed&direction=desc";
+
+    private async Task<RepoResponse[]> RecentRepos(GitHubUser user, DateOnly from)
+    {
+        var recent = new List<RepoResponse>();
+        for (var page = RepoList; page is not null;)
+        {
+            using var response = await Send(user, page);
+            var repos = await Read<RepoResponse[]>(response) ?? [];
+            recent.AddRange(repos.Where(repo => PushedSince(repo, from)));
+            var pageEndsBeforeWindow = repos.Length > 0 && !PushedSince(repos[^1], from);
+            page = pageEndsBeforeWindow ? null : NextPage(response);
+        }
+
+        return recent.ToArray();
+    }
+
     private static bool PushedSince(RepoResponse repo, DateOnly from) =>
         repo.PushedAt is { } pushedAt && DateOnly.FromDateTime(pushedAt.UtcDateTime) >= from;
 
@@ -179,19 +195,6 @@ public partial class GitHubMetadata(HttpClient http, GitHubOptions options, Time
         }
 
         return next;
-    }
-
-    private async Task<IReadOnlyList<T>> GetEveryPage<T>(GitHubUser user, string firstPage)
-    {
-        var items = new List<T>();
-        for (var page = firstPage; page is not null;)
-        {
-            using var response = await Send(user, page);
-            items.AddRange(await Read<T[]>(response) ?? []);
-            page = NextPage(response);
-        }
-
-        return items;
     }
 
     private static string? NextPage(HttpResponseMessage response)

@@ -5,11 +5,13 @@ namespace External.Tests;
 
 internal class GivenTheGitHubApi
 {
+    private const string RepoList = "/user/repos?per_page=100&sort=pushed&direction=desc";
+
     private readonly Dictionary<string, List<Func<HttpResponseMessage>>> _responses = [];
 
     public GivenTheGitHubApi()
     {
-        Serving("/user/repos?per_page=100", "user-repos.json");
+        Serving(RepoList, "user-repos.json");
         _responses["/graphql"] = [Json(File.ReadAllText("Fixtures/calendar-2025.json")), Json(File.ReadAllText("Fixtures/calendar-2026.json"))];
         foreach (var repo in new[] { "ledger-sync", "side-project" })
         {
@@ -48,9 +50,9 @@ internal class GivenTheGitHubApi
 
     public GivenTheGitHubApi WithASecondPageOfRepos()
     {
-        const string secondPage = "/user/repos?per_page=100&page=2";
+        var secondPage = RepoList + "&page=2";
         var firstPage = File.ReadAllText("Fixtures/user-repos.json");
-        _responses["/user/repos?per_page=100"] = [() =>
+        _responses[RepoList] = [() =>
         {
             var response = Json(firstPage)();
             response.Headers.Add("Link", $"<https://api.github.com{secondPage}>; rel=\"next\", <https://api.github.com{secondPage}>; rel=\"last\"");
@@ -63,13 +65,31 @@ internal class GivenTheGitHubApi
     public GivenTheGitHubApi WithARepoLastPushedBeforeBothWindows(string repo)
     {
         var repos = JsonNode.Parse(File.ReadAllText("Fixtures/user-repos.json"))!.AsArray();
-        repos.Add(JsonNode.Parse($$"""
-            { "id": 9, "name": "{{repo}}", "full_name": "octo-dev/{{repo}}", "private": false, "owner": { "login": "octo-dev" },
-              "created_at": "2018-05-01T00:00:00Z", "pushed_at": "2024-12-28T23:59:59Z" }
-            """));
-        _responses["/user/repos?per_page=100"] = [Json(repos.ToJsonString())];
+        repos.Add(OlderRepo(repo));
+        _responses[RepoList] = [Json(repos.ToJsonString())];
         return this;
     }
+
+    // The next page exists, but this page already ends with a repo pushed before the pre window.
+    public GivenTheGitHubApi WithAPageThatEndsBeforeThePreWindow()
+    {
+        var secondPage = RepoList + "&page=2";
+        var repos = JsonNode.Parse(File.ReadAllText("Fixtures/user-repos.json"))!.AsArray();
+        repos.Add(OlderRepo("abandoned"));
+        _responses[RepoList] = [() =>
+        {
+            var response = Json(repos.ToJsonString())();
+            response.Headers.Add("Link", $"<https://api.github.com{secondPage}>; rel=\"next\"");
+            return response;
+        }];
+        Serving(secondPage, "user-repos-page-2.json");
+        return WithEmptyRepo("old-tool");
+    }
+
+    private static JsonNode OlderRepo(string repo) => JsonNode.Parse($$"""
+        { "id": 9, "name": "{{repo}}", "full_name": "octo-dev/{{repo}}", "private": false, "owner": { "login": "octo-dev" },
+          "created_at": "2018-05-01T00:00:00Z", "pushed_at": "2024-12-28T23:59:59Z" }
+        """)!;
 
     public FakeGitHubApi Build() => new(_responses.ToDictionary(r => r.Key, r => new Queue<Func<HttpResponseMessage>>(r.Value)));
 
