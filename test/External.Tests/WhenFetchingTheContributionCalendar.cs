@@ -18,7 +18,7 @@ public class WhenFetchingTheContributionCalendar
     }
 
     [Fact]
-    public async Task The_calendar_is_fetched_a_year_at_a_time()
+    public async Task Both_windows_share_one_request()
     {
         // Arrange
         var api = new GivenTheGitHubApi().Build();
@@ -27,6 +27,6 @@ public class WhenFetchingTheContributionCalendar
         await GitHubClient.FetchFrom(api);
 
         // Assert
-        api.Requests.Count(r => r.RequestUri!.AbsolutePath == "/graphql").ShouldBe(2);
+        api.Requests.Count(r => r.RequestUri!.AbsolutePath == "/graphql").ShouldBe(1);
     }
 }

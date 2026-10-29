@@ -18,6 +18,6 @@ public class WhenTheScoringWindowsAreFarApart
         await GitHubClient.Over(api).Fetch(GitHubClient.User, windows);
 
         // Assert
-        api.Requests.Count(r => r.RequestUri!.AbsolutePath == "/graphql").ShouldBe(2);
+        api.Requests.Count(r => r.RequestUri!.AbsolutePath == "/graphql").ShouldBe(1);
     }
 }

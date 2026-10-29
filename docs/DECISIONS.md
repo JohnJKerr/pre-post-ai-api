@@ -43,7 +43,7 @@ Because the job can wait as long as it needs, GitHub's 202 "still computing" is 
 
 ## Repos are skipped rather than fetched in parallel
 
-`/user/repos` lists every repo the user can see, and each recent one costs up to three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
+`/user/repos` lists every repo the user can see, and each recent one costs up to three calls. Repos last pushed before the pre window starts are skipped, because they can't have activity in either window. The list is requested most-recently-pushed first (`sort=pushed`), and paging stops once the last repo on a page was pushed before the pre window: later pages are older and cannot add activity. Within a job, the calls stay sequential: GitHub's REST guidance is to make requests serially rather than concurrently, to avoid secondary rate limits.
 
 ## Start cold stats across repos before waiting
 
@@ -60,6 +60,10 @@ The report weights a repo's current language mix by the user's added lines in ea
 ## Log GitHub fetch phases without repository identifiers
 
 The overall generation duration does not show whether GitHub listing, cold stats, languages or contribution calendars dominate. Each adapter fetch now logs the count of recent repos, the number of 202 stats responses and the elapsed time for those four phases, including when a fetch fails. The generation worker also logs fetch, profile assembly and save durations, including partial timings on failure. These phase logs contain neither repo names nor the user's token.
+
+## Let the HTTP handler decompress GitHub responses
+
+Contributor statistics are a week-by-week history for every author, and that JSON compresses well. The GitHub client's primary handler sets `AutomaticDecompression` to `DecompressionMethods.All`. That handler sends `Accept-Encoding` and decompresses the body, and the adapter reads the JSON it is given. Decompression stays on the handler so the adapter cannot decode a body the handler has already decoded.
 
 ## Data Protection keys stay in memory
 
@@ -97,10 +101,14 @@ The sample report uses the same windows: the 26 weeks before the default cut-off
 
 ## Fetch contribution calendars only for scoring windows
 
-The pre and post windows can be years apart, but the days between them do not enter the report. Pass both windows to the GitHub adapter and request one contribution calendar for each. Each window is at most 26 weeks, so it fits within GitHub's one-year contribution query range. This also gives the adapter the exact windows when deciding which per-repo metadata is useful.
+The pre and post windows can be years apart, but the days between them do not enter the report. Pass both windows to the GitHub adapter and request a contribution calendar for each. Each window is at most 26 weeks, so it fits within GitHub's one-year contribution query range. A `contributionsCollection` cannot cover both when they are years apart, but one GraphQL query can ask for each under its own field alias, so the two calendars share a round trip. The windows also tell the adapter which per-repo metadata is useful.
 
 ## The front end names cut-offs
 
 The API works from the cut-off date alone, and a report or generation returns its cut-off as `{ date }`. Which release a date stands for, such as "Claude Opus 4.5" for 2025-11-24, is presentation, and the front end already holds the list it offers on its generate page.
 
 Profiles and generations saved earlier still carry `cutoff.label`. The domain's Mongo conventions ignore extra elements, so those documents load without a migration.
+
+## API tests pin MongoDB 7.0
+
+The test container followed the floating tag `mongo:8`. On 26 Oct 2026 that tag moved to 8.3.13, which refused to start on GitHub-hosted runners, and every API test then waited an hour for a container that had already quit. Deploy config does not name a production major (the README's `mongo:8` is only the local database), so the tests pin `mongo:7.0`.

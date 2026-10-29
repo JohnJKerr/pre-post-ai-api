@@ -32,7 +32,7 @@ builder.Services.AddHttpClient<IGitHubMetadata, GitHubMetadata>(client =>
     client.DefaultRequestHeaders.UserAgent.ParseAdd("pre-post-ai");
     client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
     client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
-});
+}).ConfigurePrimaryHttpMessageHandler(GitHubHttp.PrimaryHandler);
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     // TLS can end at a load balancer. Without this the OAuth redirect_uri would be http and GitHub

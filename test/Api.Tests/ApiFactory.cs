@@ -19,7 +19,9 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public static readonly DateTimeOffset Now = new(2026, 10, 18, 9, 0, 0, TimeSpan.Zero);
     public const string FrontEndOrigin = "https://shift.example";
 
-    private readonly MongoDbContainer _mongo = new MongoDbBuilder().WithImage("mongo:8").Build();
+    // Pinned. The floating mongo:8 tag moved to 8.3.13 on 26 Oct 2026 and refused
+    // to start on GitHub runners. See docs/DECISIONS.md.
+    private readonly MongoDbContainer _mongo = new MongoDbBuilder().WithImage("mongo:7.0").Build();
 
     public Task InitializeAsync() => _mongo.StartAsync();
 
