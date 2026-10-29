@@ -108,3 +108,7 @@ The pre and post windows can be years apart, but the days between them do not en
 The API works from the cut-off date alone, and a report or generation returns its cut-off as `{ date }`. Which release a date stands for, such as "Claude Opus 4.5" for 2025-11-24, is presentation, and the front end already holds the list it offers on its generate page.
 
 Profiles and generations saved earlier still carry `cutoff.label`. The domain's Mongo conventions ignore extra elements, so those documents load without a migration.
+
+## API tests pin MongoDB 7.0
+
+The test container followed the floating tag `mongo:8`. On 26 Oct 2026 that tag moved to 8.3.13, which refused to start on GitHub-hosted runners, and every API test then waited an hour for a container that had already quit. Deploy config does not name a production major (the README's `mongo:8` is only the local database), so the tests pin `mongo:7.0`.
