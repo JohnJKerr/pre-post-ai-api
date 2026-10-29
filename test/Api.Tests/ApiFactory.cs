@@ -19,7 +19,14 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public static readonly DateTimeOffset Now = new(2026, 10, 18, 9, 0, 0, TimeSpan.Zero);
     public const string FrontEndOrigin = "https://shift.example";
 
-    private readonly MongoDbContainer _mongo = new MongoDbBuilder().WithImage("mongo:8").Build();
+    // mongo:8 is 8.3, which exits on GitHub-hosted Ubuntu: uname -r is 7.0.0, and
+    // that falls in the rseq range it refuses (SERVER-131779). The runner kernel
+    // is already past the bug. glibc owning rseq is what lets mongod start there,
+    // so the readiness wait is not left hanging for an hour.
+    private readonly MongoDbContainer _mongo = new MongoDbBuilder()
+        .WithImage("mongo:8")
+        .WithEnvironment("GLIBC_TUNABLES", "glibc.pthread.rseq=1")
+        .Build();
 
     public Task InitializeAsync() => _mongo.StartAsync();
 
