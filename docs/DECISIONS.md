@@ -12,6 +12,10 @@ MongoDB holds each user's `Profile` (the metadata gathered from GitHub), not the
 
 The brief makes a repo punch-card eligible when the user wrote at least 90% of its commits and all their activity in it sits on one side of the cut-off. We also require that they committed in that window. Without it, a repo last touched before the pre window would count as eligible for pre: it would add an old punch card to the window and push `coverage.eligible` above `coverage.total`.
 
+## The report count has its own route and counts profiles
+
+`count` is a valid GitHub username, so the count is served at `GET /api/report-count` rather than under `/api/reports/{handle}`, for the same reason as the sample report. It counts profiles, not generations: there is one profile per GitHub user id, so generating again or renaming adds nothing, and an `empty` or `failed` generation saves no profile. It is anonymous, like the other reads, because it exposes only a total.
+
 ## Rounding follows JavaScript
 
 The reference implementation uses `Math.round`, which rounds halves towards positive infinity. `Rounding.HalfUp` does the same, because .NET's default banker's rounding would move scores and line counts.
