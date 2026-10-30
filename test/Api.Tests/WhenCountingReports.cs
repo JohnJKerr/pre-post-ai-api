@@ -34,6 +34,48 @@ public class WhenCountingReports(ApiFactory factory)
         (await TheCount()).ShouldBe(before + 1);
     }
 
+    [Fact]
+    public async Task Generating_again_adds_nothing()
+    {
+        // Arrange
+        await GenerateAReportAs("repeat-visitor", 11_002);
+        var before = await TheCount();
+
+        // Act
+        await GenerateAReportAs("repeat-visitor", 11_002);
+
+        // Assert
+        (await TheCount()).ShouldBe(before);
+    }
+
+    [Fact]
+    public async Task Renaming_adds_nothing()
+    {
+        // Arrange
+        await GenerateAReportAs("old-name", 11_003);
+        var before = await TheCount();
+
+        // Act
+        await GenerateAReportAs("new-name", 11_003);
+
+        // Assert
+        (await TheCount()).ShouldBe(before);
+    }
+
+    [Fact]
+    public async Task A_generation_with_no_commits_adds_nothing()
+    {
+        // Arrange
+        var before = await TheCount();
+        var browser = factory.CreateBrowserSigningInWithGitHub(FakeGitHub.WithNoCommits(), gitHubOAuth: FakeGitHubOAuth.SigningInAs("no-commits", 11_004));
+
+        // Act
+        await browser.WaitForTheGeneration(await browser.SignInWithGitHub());
+
+        // Assert
+        (await TheCount()).ShouldBe(before);
+    }
+
     private async Task GenerateAReportAs(string login, long gitHubId)
     {
         var browser = factory.CreateBrowserSigningInWithGitHub(gitHubOAuth: FakeGitHubOAuth.SigningInAs(login, gitHubId));
