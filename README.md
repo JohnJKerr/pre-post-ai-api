@@ -55,5 +55,6 @@ docker run -p 8080:8080 \
 | `GET /api/generations/{id}` | `{ status, cutoff: { date }, handle, message }`, where `status` is `pending`, `ready` (`handle` names the report), `empty` (no commits in either window, nothing saved) or `failed` (`message` says why). 404 if unknown. |
 | `GET /api/reports/{handle}` | A saved report (200) or 404 |
 | `GET /api/sample-report` | The seeded sample report |
+| `GET /api/report-count` | `{ count }`, how many people have generated a report |
 
 There's no session. Signing in hands the user's GitHub token to a background job that generates the report, and the token is never stored. Errors are `{ "message": string }`, written to be shown to people.

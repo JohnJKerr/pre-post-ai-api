@@ -25,6 +25,8 @@ public class MongoProfileRepository(IMongoDatabase database) : IProfileRepositor
             .SortByDescending(p => p.GeneratedAt)
             .FirstOrDefaultAsync();
 
+    public Task<long> Count() => _profiles.CountDocumentsAsync(FilterDefinition<Profile>.Empty);
+
     private Task EnsureHandleIndex() => _profiles.Indexes.CreateOneAsync(new CreateIndexModel<Profile>(
         Builders<Profile>.IndexKeys.Ascending(p => p.Handle).Descending(p => p.GeneratedAt),
         new CreateIndexOptions { Name = "handle_generatedAt", Collation = CaseInsensitive }));
