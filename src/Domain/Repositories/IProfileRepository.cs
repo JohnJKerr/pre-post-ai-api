@@ -4,4 +4,5 @@ public interface IProfileRepository
 {
     Task Save(Profile profile);
     Task<Profile?> GetByHandle(string handle);
+    Task<long> Count();
 }
